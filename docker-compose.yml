@@ -9,6 +9,12 @@ services:
         - db-data:/var/lib/mysql
   pdns:
     image: psitrax/powerdns
+    entrypoint: >
+      /entrypoint.sh
+      --api=yes --api-key=pdnsapikey
+      --webserver-address=0.0.0.0 --webserver-port=8081 --webserver-allow-from=0.0.0.0/0
+    ports:
+      - 8081:8081
   django:
     build: .
     volumes:
