@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  mysql:
+    image: mariadb:10.1
+    environment:
+        MYSQL_ROOT_PASSWORD: root
+    volumes:
+        - db-data:/var/lib/mysql
+  pdns:
+    image: psitrax/powerdns
+  django:
+    build: .
+    volumes:
+      - .:/app
+    ports:
+      - 8080:8080
+
+volumes:
+  db-data:
