@@ -24,4 +24,5 @@ for details.
 ### Other Settings
 
 * `PDNS_APIKEY`: powerdns API key, see [pdns documentation](https://doc.powerdns.com/authoritative/http-api/index.html#enabling-the-api).
+* `PDNS_APIURL`
 * `DB_URL`: database configuration, as [a single URL](https://github.com/kennethreitz/dj-database-url#url-schema).

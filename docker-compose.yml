@@ -24,6 +24,7 @@ services:
     environment:
       PDNSADM_SECRET_KEY: 'secret'
       PDNSADM_DEBUG: 'true'
+      PDNSADM_PDNS_APIURL: 'http://pdns:8081/api/v1'
       PDNSADM_PDNS_APIKEY: 'pdnsapikey'
 
 volumes:

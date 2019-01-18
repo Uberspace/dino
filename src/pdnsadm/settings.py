@@ -43,6 +43,7 @@ def env(name, default='__unset', kind=str):
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG', False, bool)
 ALLOWED_HOSTS = env('ALLOWED_HOSTS', [], list)
+PDNS_APIURL = env('PDNS_APIURL')
 PDNS_APIKEY = env('PDNS_APIKEY')
 
 # Application definition
