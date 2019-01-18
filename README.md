@@ -3,8 +3,7 @@
 ## Setup
 
 ```
-virtualenv env --python python3.7
-. env/bin/activate
-cd src
-pip install -e .
+docker-compose up --build
 ```
+
+visit http://localhost:8080 :)
