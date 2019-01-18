@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # 1st party
+    'pdnsadm.common',
     'pdnsadm.prototype',
 ]
 
