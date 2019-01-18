@@ -21,6 +21,10 @@ services:
       - ./src:/app
     ports:
       - 8080:8080
+    environment:
+      PDNSADM_SECRET_KEY: 'secret'
+      PDNSADM_DEBUG: 'true'
+      PDNSADM_PDNS_APIKEY: 'pdnsapikey'
 
 volumes:
   db-data:

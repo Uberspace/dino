@@ -11,22 +11,38 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from django.core.exceptions import ImproperlyConfigured
+import distutils.util
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
+def env(name, default='__unset', kind=str):
+    env_name = f'PDNSADM_{name.upper()}'
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'pojok&^51-#bmx)*s$!6g8(jcx8537v2i9oth(g+01@qwk1pt6'
+    try:
+        value = os.environ[env_name]
+    except LookupError:
+        if default != '__unset':
+            return default
+        else:
+            raise ImproperlyConfigured(f'Environment variable ${env_name} is not set.')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+    if kind == str:
+        return value
+    elif kind == list:
+        return value.split(',')
+    elif kind == bool:
+        return distutils.util.strtobool(value)
+    else:
+        raise Exception(f'Invalid variable type {kind} for {name}/{env_name}.')
 
-ALLOWED_HOSTS = []
 
+SECRET_KEY = env('SECRET_KEY')
+DEBUG = env('DEBUG', False, bool)
+ALLOWED_HOSTS = env('ALLOWED_HOSTS', [], list)
+PDNS_APIKEY = env('PDNS_APIKEY')
 
 # Application definition
 
