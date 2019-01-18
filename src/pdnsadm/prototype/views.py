@@ -23,10 +23,12 @@ class pdns():
 
 class NoModelListViewMixin():
     paginate_by = 10
+    context_paginator_name = 'paginator'
     context_object_name = 'objects'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context[self.context_paginator_name] = self._paginator
         context[self.context_object_name] = self.current_page
         return context
 
