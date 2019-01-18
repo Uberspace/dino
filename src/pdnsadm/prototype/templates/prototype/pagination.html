@@ -1,0 +1,27 @@
+<nav aria-label="Pagination">
+    <ul class="pagination text-center" role="navigation" aria-label="Pagination">
+        {% if objects.has_previous %}
+        <li><a href="?page={{ objects.previous_page_number }}" aria-label="Previous page">
+            Previous <span class="show-for-sr">page</span>
+        </a></li>
+        {% else %}
+        <li class="disabled">Previous <span class="show-for-sr">page</span></li>
+        {% endif %}
+
+        {% for p in paginator.page_range %}
+        {% if p == objects.number %}
+        <li class="current"><span class="show-for-sr">You're on page</span> {{ objects.number }}</li>
+        {% else %}
+        <li><a href="?page={{ p }}" aria-label="Page {{ p }}">{{ p }}</a></li>
+        {% endif %}
+        {% endfor %}
+
+        {% if objects.has_next %}
+        <li><a href="?page={{ objects.next_page_number }}" aria-label="Next page">
+            Next <span class="show-for-sr">page</span>
+        </a></li>
+        {% else %}
+        <li class="disabled">Next <span class="show-for-sr">page</span></li>
+        {% endif %}
+    </ul>
+</nav>
