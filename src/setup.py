@@ -21,6 +21,7 @@ setup(
     keywords='dns powerdns pdns admin administration',
     install_requires=[
         'Django==2.1.*',
+        'dj-database-url==0.5.*',
     ],
     extras_require={
         'dev': [
