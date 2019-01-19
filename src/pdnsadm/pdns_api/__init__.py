@@ -1,6 +1,5 @@
-from django.conf import settings
-
 import powerdns
+from django.conf import settings
 
 
 def records_axfr(self):

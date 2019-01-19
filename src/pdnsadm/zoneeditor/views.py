@@ -1,6 +1,6 @@
-from django.views.generic.base import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django import forms
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.base import TemplateView
 
 from pdnsadm.pdns_api import pdns
 
