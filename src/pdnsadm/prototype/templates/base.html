@@ -4,6 +4,10 @@
 <div class="grid-container">
     <div class="grid-x grid-margin-x">
         <div class="cell">
+            <div class="float-right">
+                <a href="{% url 'account_logout' %}">logout</a>
+            </div>
+            <h1>pdnsadm</h1>
             {% block content %}{% endblock %}
         </div>
     </div>
