@@ -35,6 +35,7 @@ class pdns():
 
 class NoModelSearchMixin():
     filter_properties = []
+    max_objects = 20
 
     class SearchForm(forms.Form):
         q = forms.CharField(max_length=100, label="Search")
@@ -42,6 +43,10 @@ class NoModelSearchMixin():
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['search_form'] = NoModelSearchMixin.SearchForm(initial={'q': self.request.GET.get('q')})
+        objects = self.get_final_objects()
+        context['objects'] = objects[:self.max_objects]
+        context['count_all'] = len(objects)
+        context['count_shown'] = len(context['objects'])
         return context
 
     def get_final_objects(self):
@@ -59,33 +64,7 @@ class NoModelSearchMixin():
             return self.get_objects()
 
 
-class NoModelListViewMixin():
-    paginate_by = 10
-    context_paginator_name = 'paginator'
-    context_object_name = 'objects'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context[self.context_paginator_name] = self._paginator
-        context[self.context_object_name] = self.current_page
-        return context
-
-    @property
-    def current_page(self):
-        return self._paginator.page(self.request.GET.get('page', 1))
-
-    @property
-    def _paginator(self):
-        return Paginator(self.get_final_objects(), self.paginate_by)
-
-    def get_final_objects(self):
-        return self.get_objects()
-
-    def get_objects(self):
-        raise NotImplementedError()
-
-
-class HomePageView(NoModelSearchMixin, NoModelListViewMixin, LoginRequiredMixin, TemplateView):
+class HomePageView(NoModelSearchMixin, LoginRequiredMixin, TemplateView):
     template_name = "prototype/home.html"
     filter_properties = ['name']
 
@@ -93,7 +72,7 @@ class HomePageView(NoModelSearchMixin, NoModelListViewMixin, LoginRequiredMixin,
         return pdns().server.zones
 
 
-class ZoneView(NoModelSearchMixin, NoModelListViewMixin, LoginRequiredMixin, TemplateView):
+class ZoneView(NoModelSearchMixin, LoginRequiredMixin, TemplateView):
     template_name = "prototype/zone.html"
     filter_properties = ['name']
 
