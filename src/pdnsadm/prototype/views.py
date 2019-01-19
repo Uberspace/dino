@@ -10,6 +10,16 @@ from django import forms
 import powerdns
 
 
+def records_axfr(self):
+    """Get zone's records as AXFR"""
+    lines = (r.split('\t') for r in self._get(self.url + '/export')['zone'].strip().split('\n'))
+    return [
+        {'name': r[0], 'ttl': r[1], 'type': r[2], 'content': r[3]}
+        for r in lines
+    ]
+
+powerdns.interface.PDNSZone.records_axfr = records_axfr
+
 class pdns():
     def __init__(self):
         api_client = powerdns.PDNSApiClient(
@@ -89,4 +99,4 @@ class ZoneView(NoModelSearchMixin, NoModelListViewMixin, LoginRequiredMixin, Tem
 
     def get_objects(self):
         zone = pdns().server.get_zone(self.kwargs['zone'])
-        return zone.records
+        return zone.records_axfr()
