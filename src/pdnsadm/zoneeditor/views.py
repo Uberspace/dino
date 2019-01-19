@@ -5,7 +5,8 @@ from django import forms
 from pdnsadm.pdns_api import pdns
 
 
-class NoModelSearchMixin():
+class PDNSDataView():
+    """ provide filtering and basic context for objects w/o a database """
     filter_properties = []
     max_objects = 20
 
@@ -14,7 +15,7 @@ class NoModelSearchMixin():
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['search_form'] = NoModelSearchMixin.SearchForm(initial={'q': self.request.GET.get('q')})
+        context['search_form'] = PDNSDataView.SearchForm(initial={'q': self.request.GET.get('q')})
         objects = self.get_final_objects()
         context['objects'] = objects[:self.max_objects]
         context['count_all'] = len(objects)
@@ -36,7 +37,7 @@ class NoModelSearchMixin():
             return self.get_objects()
 
 
-class ZoneListView(NoModelSearchMixin, LoginRequiredMixin, TemplateView):
+class ZoneListView(PDNSDataView, LoginRequiredMixin, TemplateView):
     template_name = "zoneeditor/zone_list.html"
     filter_properties = ['name']
 
@@ -44,7 +45,7 @@ class ZoneListView(NoModelSearchMixin, LoginRequiredMixin, TemplateView):
         return pdns().server.zones
 
 
-class ZoneRecordsView(NoModelSearchMixin, LoginRequiredMixin, TemplateView):
+class ZoneRecordsView(PDNSDataView, LoginRequiredMixin, TemplateView):
     template_name = "zoneeditor/zone_records.html"
     filter_properties = ['name']
 
