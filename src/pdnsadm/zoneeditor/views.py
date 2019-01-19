@@ -1,8 +1,4 @@
-import random
-
 from django.views.generic.base import TemplateView
-from django.shortcuts import render
-from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django import forms
 
@@ -40,16 +36,16 @@ class NoModelSearchMixin():
             return self.get_objects()
 
 
-class HomePageView(NoModelSearchMixin, LoginRequiredMixin, TemplateView):
-    template_name = "prototype/home.html"
+class ZoneListView(NoModelSearchMixin, LoginRequiredMixin, TemplateView):
+    template_name = "zoneeditor/zone_list.html"
     filter_properties = ['name']
 
     def get_objects(self):
         return pdns().server.zones
 
 
-class ZoneView(NoModelSearchMixin, LoginRequiredMixin, TemplateView):
-    template_name = "prototype/zone.html"
+class ZoneRecordsView(NoModelSearchMixin, LoginRequiredMixin, TemplateView):
+    template_name = "zoneeditor/zone_records.html"
     filter_properties = ['name']
 
     def get_context_data(self, **kwargs):

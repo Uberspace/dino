@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block breadcrumbs %}
-<li><a href="{% url 'prototype:zones' %}">Zones</a></li>
+<li><a href="{% url 'zoneeditor:zone_list' %}">Zones</a></li>
 {% endblock %}
 
 {% block content %}
@@ -16,7 +16,7 @@
         {% for zone in objects %}
         <tr>
             <td>
-                <a href="{% url 'prototype:zone' zone=zone.name %}">{{ zone.name }}</a>
+                <a href="{% url 'zoneeditor:zone_detail' zone=zone.name %}">{{ zone.name }}</a>
             </td>
         </tr>
         {% endfor %}
