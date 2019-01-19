@@ -76,6 +76,10 @@ class ZoneView(NoModelSearchMixin, LoginRequiredMixin, TemplateView):
     template_name = "prototype/zone.html"
     filter_properties = ['name']
 
+    @property
+    def zone_name(self):
+        return self.kwargs['zone'].rstrip('.') + '.'
+
     def get_objects(self):
-        zone = pdns().server.get_zone(self.kwargs['zone'])
+        zone = pdns().server.get_zone(self.zone_name)
         return zone.records_axfr()
