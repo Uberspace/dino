@@ -42,7 +42,7 @@ class ZoneListView(PDNSDataView, LoginRequiredMixin, TemplateView):
     filter_properties = ['name']
 
     def get_objects(self):
-        return pdns().server.zones
+        return pdns().get_zones()
 
 
 class ZoneRecordsView(PDNSDataView, LoginRequiredMixin, TemplateView):
@@ -59,5 +59,4 @@ class ZoneRecordsView(PDNSDataView, LoginRequiredMixin, TemplateView):
         return self.kwargs['zone'].rstrip('.') + '.'
 
     def get_objects(self):
-        zone = pdns().server.get_zone(self.zone_name)
-        return zone.records_axfr()
+        return pdns().get_records(self.zone_name)
