@@ -49,3 +49,11 @@ class HomePageView(NoModelListViewMixin, TemplateView):
 
     def get_objects(self):
         return pdns().server.zones
+
+
+class ZoneView(NoModelListViewMixin, TemplateView):
+    template_name = "prototype/zone.html"
+
+    def get_objects(self):
+        zone = pdns().server.get_zone(self.kwargs['zone'])
+        return zone.records

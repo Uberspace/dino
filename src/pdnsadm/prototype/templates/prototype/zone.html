@@ -4,15 +4,19 @@
 <table>
     <thead>
         <tr>
+            <th width="200">Type</th>
             <th width="200">Name</th>
+            <th width="200">Content</th>
+            <th width="200">TTL</th>
         </tr>
     </thead>
     <tbody>
-        {% for zone in objects %}
+        {% for rr in objects %}
         <tr>
-            <td>
-                <a href="{% url 'prototype:zone' zone=zone.name %}">{{ zone.name }}</a>
-            </td>
+            <td>{{ rr.type }}</td>
+            <td>{{ rr.name }}</td>
+            <td>{{ rr.content }}</td>
+            <td>{{ rr.ttl }}</td>
         </tr>
         {% endfor %}
     </tbody>
