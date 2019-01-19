@@ -56,10 +56,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # 1st party
     'pdnsadm.common',
     'pdnsadm.prototype',
+
+    # 3rd party
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -92,6 +99,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'pdnsadm.wsgi.application'
 
+# Authentication
+# https://docs.djangoproject.com/en/2.1/topics/auth/
+# https://django-allauth.readthedocs.io/en/latest/
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+SITE_ID = 1
+ACCOUNT_ADAPTER = 'pdnsadm.common.allauth.NoNewUsersAccountAdapter'
+LOGIN_REDIRECT_URL = '/'
+ENABLE_SIGNUP = False
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases

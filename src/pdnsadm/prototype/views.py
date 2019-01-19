@@ -4,6 +4,7 @@ from django.views.generic.base import TemplateView
 from django.shortcuts import render
 from django.conf import settings
 from django.core.paginator import Paginator
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 import powerdns
 
@@ -44,14 +45,14 @@ class NoModelListViewMixin():
         raise NotImplementedError()
 
 
-class HomePageView(NoModelListViewMixin, TemplateView):
+class HomePageView(NoModelListViewMixin, LoginRequiredMixin, TemplateView):
     template_name = "prototype/home.html"
 
     def get_objects(self):
         return pdns().server.zones
 
 
-class ZoneView(NoModelListViewMixin, TemplateView):
+class ZoneView(NoModelListViewMixin, LoginRequiredMixin, TemplateView):
     template_name = "prototype/zone.html"
 
     def get_objects(self):
