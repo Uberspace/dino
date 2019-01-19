@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django import forms
 
 import powerdns
 
@@ -20,6 +21,32 @@ class pdns():
     @property
     def server(self):
         return self.api.servers[0]
+
+
+class NoModelSearchMixin():
+    filter_properties = []
+
+    class SearchForm(forms.Form):
+        q = forms.CharField(max_length=100, label="Search")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_form'] = NoModelSearchMixin.SearchForm(initial={'q': self.request.GET.get('q')})
+        return context
+
+    def get_final_objects(self):
+        q = self.request.GET.get('q')
+
+        if q:
+            return [
+                o for o in self.get_objects()
+                if any(
+                    q in (o.get(p) if isinstance(o, dict) else getattr(o, p))
+                    for p in self.filter_properties
+                )
+            ]
+        else:
+            return self.get_objects()
 
 
 class NoModelListViewMixin():
@@ -39,21 +66,26 @@ class NoModelListViewMixin():
 
     @property
     def _paginator(self):
-        return Paginator(self.get_objects(), self.paginate_by)
+        return Paginator(self.get_final_objects(), self.paginate_by)
+
+    def get_final_objects(self):
+        return self.get_objects()
 
     def get_objects(self):
         raise NotImplementedError()
 
 
-class HomePageView(NoModelListViewMixin, LoginRequiredMixin, TemplateView):
+class HomePageView(NoModelSearchMixin, NoModelListViewMixin, LoginRequiredMixin, TemplateView):
     template_name = "prototype/home.html"
+    filter_properties = ['name']
 
     def get_objects(self):
         return pdns().server.zones
 
 
-class ZoneView(NoModelListViewMixin, LoginRequiredMixin, TemplateView):
+class ZoneView(NoModelSearchMixin, NoModelListViewMixin, LoginRequiredMixin, TemplateView):
     template_name = "prototype/zone.html"
+    filter_properties = ['name']
 
     def get_objects(self):
         zone = pdns().server.get_zone(self.kwargs['zone'])
