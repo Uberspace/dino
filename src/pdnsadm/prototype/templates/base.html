@@ -8,6 +8,12 @@
                 <a href="{% url 'account_logout' %}">logout</a>
             </div>
             <h1>pdnsadm</h1>
+            <nav>
+                <ul class="breadcrumbs">
+                    <li><a href="/">Home</a></li>
+                    {% block breadcrumbs %}{% endblock %}
+                </ul>
+            </nav>
             {% block content %}{% endblock %}
         </div>
     </div>

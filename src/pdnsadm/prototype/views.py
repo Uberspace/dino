@@ -76,6 +76,11 @@ class ZoneView(NoModelSearchMixin, LoginRequiredMixin, TemplateView):
     template_name = "prototype/zone.html"
     filter_properties = ['name']
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['zone_name'] = self.zone_name
+        return context
+
     @property
     def zone_name(self):
         return self.kwargs['zone'].rstrip('.') + '.'

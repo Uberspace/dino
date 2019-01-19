@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
 
+{% block breadcrumbs %}
+<li><a href="{% url 'prototype:zones' %}">Zones</a></li>
+{% endblock %}
+
 {% block content %}
 <form method="GET">{{ search_form.as_p }}</form>
 <table>
