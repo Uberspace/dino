@@ -38,7 +38,7 @@ class NoModelSearchMixin():
     max_objects = 20
 
     class SearchForm(forms.Form):
-        q = forms.CharField(max_length=100, label="Search")
+        q = forms.CharField(max_length=100, label="Search", required=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
