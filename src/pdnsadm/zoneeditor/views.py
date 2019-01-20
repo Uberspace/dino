@@ -2,6 +2,7 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.core.validators import RegexValidator, URLValidator
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
@@ -48,8 +49,12 @@ class ZoneListView(PDNSDataView, LoginRequiredMixin, TemplateView):
         return pdns().get_zones()
 
 
+class ZoneNameValidator(RegexValidator):
+    regex = fr'^{URLValidator.hostname_re}{URLValidator.domain_re}{URLValidator.tld_re}\Z'
+
+
 class ZoneCreateForm(forms.Form):
-    name = forms.CharField()
+    name = forms.CharField(validators=(ZoneNameValidator(),))
 
     def create_zone(self):
         pdns().create_zone(
