@@ -10,6 +10,15 @@
                 <a href="{% url 'account_logout' %}">logout</a>
             </div>
             <h1>pdnsadm</h1>
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <div class="callout {{ message.tags }}">
+                    <p>{{ message }}</p>
+                </div>
+                {% endfor %}
+            </ul>
+            {% endif %}
             <nav>
                 <ul class="breadcrumbs">
                     <li><a href="/">Home</a></li>
