@@ -36,6 +36,7 @@ setup(
             'pytest',
             'pytest-cov',
             'pytest-django',
+            'pytest-mock',
         ],
     },
     packages=find_packages(exclude=['tests', 'tests.*']),
