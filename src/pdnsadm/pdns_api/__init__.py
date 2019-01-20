@@ -17,6 +17,12 @@ class pdns():
     def get_zones(self):
         return self._server.zones
 
+    def create_zone(self, name, kind, nameservers):
+        if kind not in ('Native', 'Master', 'Slave'):
+            raise Exception(f'kind must be Native, Master or Slave; not {kind}.')
+
+        self._server.create_zone(name, kind, nameservers)
+
     def get_records(self, zone):
         zone = self._server.get_zone(zone)
         axfr = zone._get(zone.url + '/export')['zone'].strip()
