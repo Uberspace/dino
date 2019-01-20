@@ -1,8 +1,8 @@
 from django import forms
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
 from django.core.validators import RegexValidator, URLValidator
+from django.shortcuts import reverse
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
@@ -73,7 +73,10 @@ class ZoneCreateForm(forms.Form):
 class ZoneCreateView(LoginRequiredMixin, FormView):
     template_name = "zoneeditor/zone_create.html"
     form_class = ZoneCreateForm
-    success_url = reverse_lazy('zoneeditor:zone_list')
+
+    def get_success_url(self):
+        name = self.form.cleaned_data['name']
+        return reverse('zoneeditor:zone_detail', kwargs={'zone': name})
 
     def form_valid(self, form):
         try:
@@ -82,6 +85,7 @@ class ZoneCreateView(LoginRequiredMixin, FormView):
             form.add_error(None, f'PowerDNS error: {e.message}')
             return super().form_invalid(form)
         else:
+            self.form = form  # give get_success_url access
             return super().form_valid(form)
 
 
