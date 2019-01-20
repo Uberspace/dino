@@ -2,11 +2,12 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.validators import RegexValidator, URLValidator
+from django.http import Http404
 from django.shortcuts import reverse
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
-from pdnsadm.pdns_api import PDNSError, pdns
+from pdnsadm.pdns_api import PDNSError, PDNSNotFoundException, pdns
 
 
 class PDNSDataView():
@@ -104,4 +105,7 @@ class ZoneRecordsView(PDNSDataView, LoginRequiredMixin, TemplateView):
         return self.kwargs['zone'].rstrip('.') + '.'
 
     def get_objects(self):
-        return pdns().get_records(self.zone_name)
+        try:
+            return pdns().get_records(self.zone_name)
+        except PDNSNotFoundException:
+            raise Http404()

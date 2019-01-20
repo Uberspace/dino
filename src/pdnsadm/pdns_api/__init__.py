@@ -3,6 +3,10 @@ from django.conf import settings
 from powerdns.exceptions import *
 
 
+class PDNSNotFoundException(LookupError):
+    pass
+
+
 class pdns():
     def __init__(self):
         api_client = powerdns.PDNSApiClient(
@@ -26,6 +30,8 @@ class pdns():
 
     def get_records(self, zone):
         zone = self._server.get_zone(zone)
+        if zone is None:
+            raise PDNSNotFoundException()
         axfr = zone._get(zone.url + '/export')['zone'].strip()
         lines = (r.split('\t') for r in axfr.split('\n'))
         return [
