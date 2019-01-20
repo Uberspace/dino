@@ -102,7 +102,7 @@ class ZoneRecordsView(PDNSDataView, LoginRequiredMixin, TemplateView):
 
     @property
     def zone_name(self):
-        return self.kwargs['zone'].rstrip('.') + '.'
+        return self.kwargs['zone']
 
     def get_objects(self):
         try:
