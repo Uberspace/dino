@@ -3,10 +3,11 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.validators import RegexValidator, URLValidator
 from django.http import Http404
-from django.shortcuts import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
+from pdnsadm.common.views import DeleteConfirmView
 from pdnsadm.pdns_api import PDNSError, PDNSNotFoundException, pdns
 
 
@@ -109,3 +110,11 @@ class ZoneRecordsView(PDNSDataView, LoginRequiredMixin, TemplateView):
             return pdns().get_records(self.zone_name)
         except PDNSNotFoundException:
             raise Http404()
+
+
+class ZoneDeleteView(DeleteConfirmView):
+    pk_name = 'zone'
+    redirect_url = reverse_lazy('zoneeditor:zone_list')
+
+    def delete_entity(self, pk):
+        pdns().delete_zone(pk)

@@ -28,6 +28,9 @@ class pdns():
 
         self._server.create_zone(name, kind, nameservers)
 
+    def delete_zone(self, name):
+        self._server.delete_zone(name)
+
     def get_records(self, zone):
         zone = self._server.get_zone(zone)
         if zone is None:
