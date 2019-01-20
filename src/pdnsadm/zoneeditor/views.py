@@ -6,7 +6,7 @@ from django.core.validators import RegexValidator, URLValidator
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
-from pdnsadm.pdns_api import pdns
+from pdnsadm.pdns_api import PDNSError, pdns
 
 
 class PDNSDataView():
@@ -76,8 +76,13 @@ class ZoneCreateView(LoginRequiredMixin, FormView):
     success_url = reverse_lazy('zoneeditor:zone_list')
 
     def form_valid(self, form):
-        form.create_zone()
-        return super().form_valid(form)
+        try:
+            form.create_zone()
+        except PDNSError as e:
+            form.add_error(None, f'PowerDNS error: {e.message}')
+            return super().form_invalid(form)
+        else:
+            return super().form_valid(form)
 
 
 class ZoneRecordsView(PDNSDataView, LoginRequiredMixin, TemplateView):

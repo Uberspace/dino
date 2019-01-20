@@ -1,5 +1,6 @@
 import powerdns
 from django.conf import settings
+from powerdns.exceptions import *
 
 
 class pdns():
