@@ -2,11 +2,6 @@ import pytest
 
 from ...views import ZoneCreateForm
 
-
-@pytest.fixture
-def mock_create_zone(mocker):
-    return mocker.patch('pdnsadm.pdns_api.pdns.create_zone')
-
 def test_zonecreateform(mock_create_zone):
     form = ZoneCreateForm(data={'name': 'example.com.'})
     assert form.is_valid()

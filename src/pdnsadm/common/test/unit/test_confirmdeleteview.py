@@ -20,14 +20,6 @@ def get_view():
         return c
     return inner
 
-@pytest.fixture
-def mock_delete_entity(mocker):
-    return mocker.patch('pdnsadm.common.views.DeleteConfirmView.delete_entity')
-
-@pytest.fixture
-def mock_messages_success(mocker):
-    return mocker.patch('django.contrib.messages.success')
-
 def test_deleteconfirmview_missing_pk():
     with pytest.raises(Exception) as excinfo:
         T.as_view()(RequestFactory().get('/'))
