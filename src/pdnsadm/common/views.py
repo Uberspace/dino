@@ -24,7 +24,13 @@ class DeleteConfirmView(TemplateView):
 
     @property
     def identifier(self):
-        return self.kwargs[self.pk_name]
+        try:
+            return self.kwargs[self.pk_name]
+        except LookupError as ex:
+            found_args = ','.join(self.kwargs.keys())
+            if not found_args:
+                found_args = 'none'
+            raise Exception(f'expected request to have a kwarg "{self.pk_name}", but found {found_args}.') from ex
 
     @property
     def confirmed(self):
