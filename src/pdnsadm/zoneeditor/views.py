@@ -62,12 +62,19 @@ class ZoneCreateForm(forms.Form):
             name = name + '.'
         return name
 
+    def _post_clean(self):
+        if not self.errors:
+            self.create_zone()
+
     def create_zone(self):
-        pdns().create_zone(
-            name=self.cleaned_data['name'],
-            kind=settings.ZONE_DEFAULT_KIND,
-            nameservers=settings.ZONE_DEFAULT_NAMESERVERS,
-        )
+        try:
+            pdns().create_zone(
+                name=self.cleaned_data['name'],
+                kind=settings.ZONE_DEFAULT_KIND,
+                nameservers=settings.ZONE_DEFAULT_NAMESERVERS,
+            )
+        except PDNSError as e:
+            self.add_error(None, f'PowerDNS error: {e.message}')
 
 
 class ZoneCreateView(LoginRequiredMixin, FormView):
@@ -79,14 +86,8 @@ class ZoneCreateView(LoginRequiredMixin, FormView):
         return reverse('zoneeditor:zone_detail', kwargs={'zone': name})
 
     def form_valid(self, form):
-        try:
-            form.create_zone()
-        except PDNSError as e:
-            form.add_error(None, f'PowerDNS error: {e.message}')
-            return super().form_invalid(form)
-        else:
-            self.form = form  # give get_success_url access
-            return super().form_valid(form)
+        self.form = form  # give get_success_url access
+        return super().form_valid(form)
 
 
 class ZoneRecordsView(PDNSDataView, LoginRequiredMixin, TemplateView):
