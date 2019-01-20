@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic.base import TemplateView
@@ -53,7 +54,7 @@ class ZoneCreateForm(forms.Form):
     def create_zone(self):
         pdns().create_zone(
             name=self.cleaned_data['name'],
-            kind='Native',
+            kind=settings.ZONE_DEFAULT_KIND,
             nameservers=[],
         )
 
