@@ -164,3 +164,4 @@ ENABLE_SIGNUP = False
 # maybe 'Native', 'Master' or 'Slave'
 # see https://doc.powerdns.com/authoritative/http-api/zone.html#zone
 ZONE_DEFAULT_KIND = 'Native'
+ZONE_DEFAULT_NAMESERVERS = []

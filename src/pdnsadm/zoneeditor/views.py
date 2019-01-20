@@ -55,7 +55,7 @@ class ZoneCreateForm(forms.Form):
         pdns().create_zone(
             name=self.cleaned_data['name'],
             kind=settings.ZONE_DEFAULT_KIND,
-            nameservers=[],
+            nameservers=settings.ZONE_DEFAULT_NAMESERVERS,
         )
 
 
