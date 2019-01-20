@@ -112,7 +112,6 @@ AUTHENTICATION_BACKENDS = (
 SITE_ID = 1
 ACCOUNT_ADAPTER = 'pdnsadm.common.allauth.NoNewUsersAccountAdapter'
 LOGIN_REDIRECT_URL = '/'
-ENABLE_SIGNUP = False
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
@@ -159,3 +158,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Custom Settings
+ENABLE_SIGNUP = False
