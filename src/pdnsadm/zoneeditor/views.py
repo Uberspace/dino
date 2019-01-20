@@ -56,6 +56,12 @@ class ZoneNameValidator(RegexValidator):
 class ZoneCreateForm(forms.Form):
     name = forms.CharField(validators=(ZoneNameValidator(),))
 
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if not name.endswith('.'):
+            name = name + '.'
+        return name
+
     def create_zone(self):
         pdns().create_zone(
             name=self.cleaned_data['name'],
