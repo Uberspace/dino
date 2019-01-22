@@ -92,10 +92,7 @@ class ZoneCreateView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class ZoneRecordsView(PDNSDataView, LoginRequiredMixin, TemplateView):
-    template_name = "zoneeditor/zone_records.html"
-    filter_properties = ['name']
-
+class ZoneDetailMixin():
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['zone_name'] = self.zone_name
@@ -104,6 +101,11 @@ class ZoneRecordsView(PDNSDataView, LoginRequiredMixin, TemplateView):
     @property
     def zone_name(self):
         return self.kwargs['zone']
+
+
+class ZoneRecordsView(PDNSDataView, ZoneDetailMixin, LoginRequiredMixin, TemplateView):
+    template_name = "zoneeditor/zone_records.html"
+    filter_properties = ['name']
 
     def get_objects(self):
         try:
@@ -159,21 +161,12 @@ class RecordCreateForm(forms.Form):
             self.add_error(None, f'PowerDNS error: {e.message}')
 
 
-class RecordCreateView(LoginRequiredMixin, FormView):
+class RecordCreateView(ZoneDetailMixin, LoginRequiredMixin, FormView):
     template_name = "zoneeditor/record_create.html"
     form_class = RecordCreateForm
 
-    @property
-    def zone_name(self):
-        return self.kwargs['zone']
-
     def get_success_url(self):
         return reverse('zoneeditor:zone_detail', kwargs={'zone': self.zone_name})
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['zone_name'] = self.zone_name
-        return context
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
