@@ -26,6 +26,13 @@ def test_recordlistview(client_admin, mock_pdns_get_records):
     assert 'mail.example.org' in content
 
 @pytest.mark.django_db()
+def test_recordlistview_404(client_admin, mocker):
+    from pdnsadm.pdns_api import PDNSNotFoundException
+    mocker.patch('pdnsadm.pdns_api.pdns.get_records', side_effect=PDNSNotFoundException)
+    response = client_admin.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com'}))
+    assert response.status_code == 404
+
+@pytest.mark.django_db()
 def test_recordlistview_unauthenicated(client):
     url = reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com'})
     response = client.get(url)
