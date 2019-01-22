@@ -6,7 +6,7 @@
 docker-compose up --build
 ```
 
-visit http://localhost:8080 :)
+visit http://localhost:8000 :)
 
 ## Configuration
 
