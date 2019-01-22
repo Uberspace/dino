@@ -115,7 +115,6 @@ class ZoneRecordsView(PDNSDataView, ZoneDetailMixin, LoginRequiredMixin, Templat
 
 
 class ZoneDeleteView(DeleteConfirmView, LoginRequiredMixin):
-    pk_name = 'zone'
     redirect_url = reverse_lazy('zoneeditor:zone_list')
 
     def delete_entity(self, pk):

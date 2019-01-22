@@ -5,17 +5,20 @@ from django.views.generic.base import TemplateView
 
 class DeleteConfirmView(TemplateView):
     template_name = "zoneeditor/delete_confirm.html"
-    """ name of the URL argument to use as the primary key """
-    pk_name = 'pk'
     """ URL to redirect to after deletion or cancellation, see also get_redirect_url() """
     redirect_url = None
 
-    def post(self, *args, **kwargs):
-        if self.confirmed:
-            self.delete_entity(self.identifier)
-            messages.success(self.request, self.get_success_message())
+    def post(self, request, *args, **kwargs):
+        self.request = request
 
-        return HttpResponseRedirect(self.get_redirect_url())
+        if self.confirmed is None:
+            return self.get(self.request, *args, **kwargs)  # render template
+        else:
+            if self.confirmed:
+                self.delete_entity(self.identifier)
+                messages.success(self.request, self.get_success_message())
+
+            return HttpResponseRedirect(self.get_redirect_url())
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -25,16 +28,19 @@ class DeleteConfirmView(TemplateView):
     @property
     def identifier(self):
         try:
-            return self.kwargs[self.pk_name]
+            return self.request.POST['identifier']
         except LookupError as ex:
-            found_args = ','.join(self.kwargs.keys())
+            found_args = ','.join(self.request.POST.keys())
             if not found_args:
                 found_args = 'none'
-            raise Exception(f'expected request to have a kwarg "{self.pk_name}", but found {found_args}.') from ex
+            raise Exception(f'expected request to have POST field "identifier", but found {found_args}.') from ex
 
     @property
     def confirmed(self):
-        return self.request.POST.get('confirm') == 'true'
+        try:
+            return self.request.POST['confirm'] == 'true'
+        except LookupError:
+            return None
 
     def get_success_message(self):
         return f'{self.identifier} has been deleted.'

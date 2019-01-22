@@ -23,7 +23,11 @@
                 <a href="{% url 'zoneeditor:zone_detail' zone=zone.name %}">{{ zone.name }}</a>
             </td>
             <td>
-                <a href="{% url 'zoneeditor:zone_delete' zone=zone.name %}" class="button tiny alert">delete</a>
+                <form action="{% url 'zoneeditor:zone_delete' zone=zone.name %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="identifier" value="{{ zone.name }}">
+                    <button type="submit" class="button tiny alert">delete</button>
+                </form>
             </td>
         </tr>
         {% endfor %}
