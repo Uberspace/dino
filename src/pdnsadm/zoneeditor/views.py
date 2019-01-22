@@ -134,14 +134,14 @@ class RecordCreateForm(forms.Form):
     ttl = forms.IntegerField(min_value=1, initial=300, label='TTL')
     content = forms.CharField()
 
-    def __init__(self, zone, *args, **kwargs):
+    def __init__(self, zone_name, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.zone = zone
+        self.zone_name = zone_name
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        if not name.endswith(self.zone):
-            name = f'{name}.{self.zone}'
+        if not name.endswith(self.zone_name):
+            name = f'{name}.{self.zone_name}'
         return name
 
     def _post_clean(self):
@@ -151,7 +151,7 @@ class RecordCreateForm(forms.Form):
     def create_record(self):
         try:
             pdns().create_record(
-                zone=self.zone,
+                zone=self.zone_name,
                 name=self.cleaned_data['name'],
                 rtype=self.cleaned_data['rtype'],
                 ttl=self.cleaned_data['ttl'],
@@ -170,5 +170,5 @@ class RecordCreateView(ZoneDetailMixin, LoginRequiredMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['zone'] = self.zone_name
+        kwargs['zone_name'] = self.zone_name
         return kwargs
