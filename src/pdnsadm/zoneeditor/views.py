@@ -114,7 +114,7 @@ class ZoneRecordsView(PDNSDataView, ZoneDetailMixin, LoginRequiredMixin, Templat
             raise Http404()
 
 
-class ZoneDeleteView(DeleteConfirmView):
+class ZoneDeleteView(DeleteConfirmView, LoginRequiredMixin):
     pk_name = 'zone'
     redirect_url = reverse_lazy('zoneeditor:zone_list')
 
