@@ -7,7 +7,10 @@
 {% endblock %}
 
 {% block content %}
-<form method="GET">{{ search_form.as_p }}</form>
+<div class="grid-x grid-margin-x">
+    <form method="GET" class="cell small-12 medium-10">{{ search_form.as_p }}</form>
+    <a href="{% url 'zoneeditor:zone_record_create' zone=zone %}" class="button success cell align-self-bottom small-12 medium-2">Create Record</a>
+</div>
 <table>
     <thead>
         <tr>

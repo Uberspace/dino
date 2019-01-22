@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block breadcrumbs %}
+<li><a href="{% url 'zoneeditor:zone_list' %}">Zones</a></li>
+<li>{{ zone_name }}</li>
+<li>Records</li>
+<li>Create</li>
+{% endblock %}
+
+{% block content %}
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Create" class="button">
+</form>
+{% endblock %}

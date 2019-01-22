@@ -118,3 +118,64 @@ class ZoneDeleteView(DeleteConfirmView):
 
     def delete_entity(self, pk):
         pdns().delete_zone(pk)
+
+
+RECORD_TYPES = [(t, t) for t in [
+    'A',
+    'AAAA',
+    'CNAME',
+]]
+
+class RecordCreateForm(forms.Form):
+    name = forms.CharField()
+    rtype = forms.ChoiceField(choices=RECORD_TYPES, initial='A', label='Record Type')
+    ttl = forms.IntegerField(min_value=1, initial=300, label='TTL')
+    content = forms.CharField()
+
+    def __init__(self, zone, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.zone = zone
+
+    def clean_name(self):
+        name = self.cleaned_data['name']
+        if not name.endswith(self.zone):
+            name = f'{name}.{self.zone}'
+        return name
+
+    def _post_clean(self):
+        if not self.errors:
+            self.create_record()
+
+    def create_record(self):
+        try:
+            pdns().create_record(
+                zone=self.zone,
+                name=self.cleaned_data['name'],
+                rtype=self.cleaned_data['rtype'],
+                ttl=self.cleaned_data['ttl'],
+                content=self.cleaned_data['content'],
+            )
+        except PDNSError as e:
+            self.add_error(None, f'PowerDNS error: {e.message}')
+
+
+class RecordCreateView(LoginRequiredMixin, FormView):
+    template_name = "zoneeditor/record_create.html"
+    form_class = RecordCreateForm
+
+    @property
+    def zone_name(self):
+        return self.kwargs['zone']
+
+    def get_success_url(self):
+        return reverse('zoneeditor:zone_detail', kwargs={'zone': self.zone_name})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['zone_name'] = self.zone_name
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['zone'] = self.zone_name
+        return kwargs
