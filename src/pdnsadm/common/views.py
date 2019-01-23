@@ -16,16 +16,17 @@ class DeleteConfirmView(TemplateView):
     def post(self, request, *args, **kwargs):
         self.request = request
 
-        if self.confirmed is None:
-            return super().get(self.request, *args, **kwargs)  # render template
-        else:
-            if self.confirmed:
-                success = self._run_delete()
+        if self.confirmed:
+            success = self._run_delete()
 
-                if not success:
-                    return super().get(self.request, *args, **kwargs)
-
+            if success:
+                return HttpResponseRedirect(self.get_redirect_url())
+            else:
+                return self._show_template()  # show error message
+        elif self.confirmed is False:
             return HttpResponseRedirect(self.get_redirect_url())
+        else:
+            return self._show_template()  # no answer given yet, show yes/no
 
     def _run_delete(self):
         try:
@@ -36,6 +37,9 @@ class DeleteConfirmView(TemplateView):
         else:
             messages.success(self.request, self.get_success_message())
             return True
+
+    def _show_template(self):
+        return super().get(self.request)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
