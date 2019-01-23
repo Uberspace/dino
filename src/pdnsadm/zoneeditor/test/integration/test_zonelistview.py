@@ -1,18 +1,7 @@
-from collections import namedtuple
-
 import pytest
 from django.shortcuts import reverse
 from django.test import TestCase
 
-
-@pytest.fixture
-def mock_pdns_get_zones(mocker):
-    MockPDNSZone = namedtuple('MockPDNSZone', ['name'])
-    rval = [
-        MockPDNSZone('example.com'),
-        MockPDNSZone('example.org'),
-    ] + [MockPDNSZone(f'example{i}.org') for i in range(500)]
-    return mocker.patch('pdnsadm.pdns_api.pdns.get_zones', return_value=rval)
 
 @pytest.mark.django_db()
 def test_zonelistview(client_admin, mock_pdns_get_zones):

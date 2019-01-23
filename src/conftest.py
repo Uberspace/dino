@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 import pytest
 from django.contrib.auth import get_user_model
 from django.test import Client
@@ -31,3 +33,12 @@ def mock_messages_success(mocker):
 @pytest.fixture
 def mock_create_zone(mocker):
     return mocker.patch('pdnsadm.pdns_api.pdns.create_zone')
+
+@pytest.fixture
+def mock_pdns_get_zones(mocker):
+    MockPDNSZone = namedtuple('MockPDNSZone', ['name'])
+    rval = [
+        MockPDNSZone('example.com'),
+        MockPDNSZone('example.org'),
+    ] + [MockPDNSZone(f'example{i}.org') for i in range(500)]
+    return mocker.patch('pdnsadm.pdns_api.pdns.get_zones', return_value=rval)
