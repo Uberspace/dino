@@ -140,8 +140,12 @@ class RecordCreateForm(forms.Form):
 
     def clean_name(self):
         name = self.cleaned_data['name']
-        if not name.endswith(self.zone_name):
-            name = f'{name}.{self.zone_name}'
+
+        if not name.endswith('.'):
+            name = name + '.'
+        if not name.endswith('.' + self.zone_name):
+            name = f'{name}{self.zone_name}'
+
         return name
 
     def _post_clean(self):
