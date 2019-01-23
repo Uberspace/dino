@@ -126,6 +126,7 @@ RECORD_TYPES = [(t, t) for t in [
     'AAAA',
     'CNAME',
     'MX',
+    'ALIAS',
 ]]
 
 class RecordCreateForm(forms.Form):
