@@ -53,3 +53,12 @@ def test_deleteconfirmview_post_confirmed(mocker, mock_delete_entity, mock_messa
     mock_messages_success.assert_called_once_with(c.request, 'asd has been deleted.')
     assert response.status_code == 302
     assert response['Location'] == '/success'
+
+def test_deleteconfirmview_post_error(mocker, mock_messages_success, mock_messages_error):
+    from pdnsadm.pdns_api import PDNSError
+    delete_entity = mocker.patch('pdnsadm.common.views.DeleteConfirmView.delete_entity', side_effect=PDNSError('/', 400, 'something broke'))
+    c = T()
+    response = c.post(RequestFactory().post('/', data={'confirm': 'true', 'identifier': 'asd'}))
+    assert response.status_code != 302
+    mock_messages_success.assert_not_called()
+    mock_messages_error.assert_called_once_with(c.request, 'PowerDNS error: something broke')

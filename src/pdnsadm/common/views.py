@@ -2,6 +2,8 @@ from django.contrib import messages
 from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect
 from django.views.generic.base import TemplateView
 
+from pdnsadm.pdns_api import PDNSError
+
 
 class DeleteConfirmView(TemplateView):
     template_name = "common/delete_confirm.html"
@@ -18,10 +20,22 @@ class DeleteConfirmView(TemplateView):
             return super().get(self.request, *args, **kwargs)  # render template
         else:
             if self.confirmed:
-                self.delete_entity(self.identifier)
-                messages.success(self.request, self.get_success_message())
+                success = self._run_delete()
+
+                if not success:
+                    return super().get(self.request, *args, **kwargs)
 
             return HttpResponseRedirect(self.get_redirect_url())
+
+    def _run_delete(self):
+        try:
+            self.delete_entity(self.identifier)
+        except PDNSError as e:
+            messages.error(self.request, f'PowerDNS error: {e.message}')
+            return False
+        else:
+            messages.success(self.request, self.get_success_message())
+            return True
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

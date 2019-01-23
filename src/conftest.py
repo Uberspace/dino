@@ -31,6 +31,10 @@ def mock_messages_success(mocker):
     return mocker.patch('django.contrib.messages.success')
 
 @pytest.fixture
+def mock_messages_error(mocker):
+    return mocker.patch('django.contrib.messages.error')
+
+@pytest.fixture
 def mock_create_zone(mocker):
     return mocker.patch('pdnsadm.pdns_api.pdns.create_zone')
 
