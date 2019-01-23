@@ -42,3 +42,7 @@ def mock_pdns_get_zones(mocker):
         MockPDNSZone('example.org'),
     ] + [MockPDNSZone(f'example{i}.org') for i in range(500)]
     return mocker.patch('pdnsadm.pdns_api.pdns.get_zones', return_value=rval)
+
+@pytest.fixture
+def mock_pdns_delete_zone(mocker):
+    return mocker.patch('pdnsadm.pdns_api.pdns.delete_zone')
