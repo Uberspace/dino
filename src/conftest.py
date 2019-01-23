@@ -39,6 +39,10 @@ def mock_create_zone(mocker):
     return mocker.patch('pdnsadm.pdns_api.pdns.create_zone')
 
 @pytest.fixture
+def mock_create_record(mocker):
+    return mocker.patch('pdnsadm.pdns_api.pdns.create_record')
+
+@pytest.fixture
 def mock_pdns_get_zones(mocker):
     MockPDNSZone = namedtuple('MockPDNSZone', ['name'])
     rval = [
