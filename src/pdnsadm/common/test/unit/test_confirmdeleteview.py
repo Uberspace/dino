@@ -20,6 +20,13 @@ def test_deleteconfirmview_post_empty():
 
     assert 'expected request to have POST field' in str(excinfo)
 
+def test_deleteconfirmview_post_invalid():
+    with pytest.raises(Exception) as excinfo:
+        T.as_view()(RequestFactory().post('/', data={'someinvalidfield': 'whatisthis'}))
+
+    assert 'expected request to have POST field' in str(excinfo)
+    assert 'someinvalidfield' in str(excinfo)
+
 def test_deleteconfirmview_post_first(mocker, mock_delete_entity, mock_messages_success):
     c = T()
     response = c.post(RequestFactory().post('/', data={'identifier': 'asd'}))
