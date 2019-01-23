@@ -4,7 +4,7 @@ from django.views.generic.base import TemplateView
 
 
 class DeleteConfirmView(TemplateView):
-    template_name = "zoneeditor/delete_confirm.html"
+    template_name = "common/delete_confirm.html"
     """ URL to redirect to after deletion or cancellation, see also get_redirect_url() """
     redirect_url = None
 
