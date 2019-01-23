@@ -9,10 +9,8 @@ class T(DeleteConfirmView):
     redirect_url = '/success'
 
 def test_deleteconfirmview_get():
-    with pytest.raises(Exception) as excinfo:
-        T.as_view()(RequestFactory().get('/'))
-
-    assert 'expected request to have POST field' in str(excinfo)
+    response = T.as_view()(RequestFactory().get('/'))
+    assert response.status_code == 405
 
 def test_deleteconfirmview_post_empty():
     with pytest.raises(Exception) as excinfo:

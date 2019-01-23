@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect
 from django.views.generic.base import TemplateView
 
 
@@ -8,11 +8,14 @@ class DeleteConfirmView(TemplateView):
     """ URL to redirect to after deletion or cancellation, see also get_redirect_url() """
     redirect_url = None
 
+    def get(self, request, *args, **kwargs):
+        return HttpResponseNotAllowed(permitted_methods=['POST'])
+
     def post(self, request, *args, **kwargs):
         self.request = request
 
         if self.confirmed is None:
-            return self.get(self.request, *args, **kwargs)  # render template
+            return super().get(self.request, *args, **kwargs)  # render template
         else:
             if self.confirmed:
                 self.delete_entity(self.identifier)
