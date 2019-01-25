@@ -122,11 +122,10 @@ class ZoneDeleteView(DeleteConfirmView, LoginRequiredMixin):
 
 
 RECORD_TYPES = [(t, t) for t in [
-    'A',
-    'AAAA',
-    'CNAME',
-    'MX',
-    'ALIAS',
+    'A', 'AAAA', 'AFSDB', 'ALIAS', 'CAA', 'CERT', 'CDNSKEY','CDS',
+    'CNAME', 'DNAME', 'DS', 'HINFO', 'KEY', 'LOC', 'MX', 'NAPTR',
+    'NS', 'OPENPGPKEY', 'PTR', 'RP', 'RRSIG', 'SOA', 'SPF', 'SSHFP',
+    'SRV', 'TKEY', 'TSIG', 'TLSA', 'SMIMEA', 'TXT', 'URI',
 ]]
 
 class RecordCreateForm(forms.Form):
