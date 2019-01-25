@@ -2,6 +2,7 @@ from collections import namedtuple
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.core import signing
 from django.test import Client
 
 
@@ -54,3 +55,7 @@ def mock_pdns_get_zones(mocker):
 @pytest.fixture
 def mock_pdns_delete_zone(mocker):
     return mocker.patch('pdnsadm.pdns_api.pdns.delete_zone')
+
+@pytest.fixture
+def signed_zone_name():
+    return signing.dumps('example.com.')

@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
+{{ form.errors }}
 Do you really want to delete {{ identifier }}?
 
 <form method="POST">
     {% csrf_token %}
-    <input type="hidden" name="identifier" value="{{ identifier }}">
+    {{ form.identifier }}
     <button type="submit" class="button alert" name="confirm" value="true">yes</button>
     <button type="submit" class="button success" name="confirm" value="false">no</button>
 </form>

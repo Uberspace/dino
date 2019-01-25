@@ -1,70 +1,79 @@
+import django.forms as forms
 from django.contrib import messages
+from django.core import signing
 from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect
-from django.views.generic.base import TemplateView
+from django.views.generic.edit import FormView
 
 from pdnsadm.pdns_api import PDNSError
 
 
-class DeleteConfirmView(TemplateView):
+class SignedHiddenField(forms.CharField):
+    widget = forms.HiddenInput
+
+    def to_python(self, value):
+        return signing.loads(value)
+
+
+class DeleteConfirmForm(forms.Form):
+    identifier = SignedHiddenField()
+    confirm = forms.BooleanField(required=False)
+
+    def __init__(self, delete_entity_func, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.delete_entity = delete_entity_func
+
+    @property
+    def confirm_asked(self):
+        return 'confirm' in self.data
+
+    @property
+    def confirmed(self):
+        if not hasattr(self, 'cleaned_data'):
+            raise Exception('call form.full_clean() before using DeleteConfirmForm.confirmed')
+
+        return self.confirm_asked and self.cleaned_data['confirm']
+
+    def _post_clean(self):
+        if not self.errors and self.cleaned_data['confirm']:
+            self.run_delete_entity(self.cleaned_data['identifier'])
+
+    def run_delete_entity(self, identifier):
+        try:
+            self.delete_entity(identifier)
+        except PDNSError as e:
+            self.add_error(None, f'PowerDNS error: {e.message}')
+
+
+class DeleteConfirmView(FormView):
     template_name = "common/delete_confirm.html"
+    form_class = DeleteConfirmForm
     """ URL to redirect to after deletion or cancellation, see also get_redirect_url() """
     redirect_url = None
 
     def get(self, request, *args, **kwargs):
         return HttpResponseNotAllowed(permitted_methods=['POST'])
 
-    def post(self, request, *args, **kwargs):
-        self.request = request
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['delete_entity_func'] = self.delete_entity
+        return kwargs
 
-        if self.confirmed:
-            success = self._run_delete()
-
-            if success:
-                return HttpResponseRedirect(self.get_redirect_url())
-            else:
-                return self._show_template()  # show error message
-        elif self.confirmed is False:
-            return HttpResponseRedirect(self.get_redirect_url())
-        else:
-            return self._show_template()  # no answer given yet, show yes/no
-
-    def _run_delete(self):
-        try:
-            self.delete_entity(self.identifier)
-        except PDNSError as e:
-            messages.error(self.request, f'PowerDNS error: {e.message}')
-            return False
-        else:
-            messages.success(self.request, self.get_success_message())
-            return True
-
-    def _show_template(self):
-        return super().get(self.request)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['identifier'] = self.identifier
+    def get_context_data(self, form):
+        context = super().get_context_data()
+        context['identifier'] = form.cleaned_data['identifier']
         return context
 
-    @property
-    def identifier(self):
-        try:
-            return self.request.POST['identifier']
-        except LookupError as ex:
-            found_args = ','.join(self.request.POST.keys())
-            if not found_args:
-                found_args = 'none'
-            raise Exception(f'expected request to have POST field "identifier", but found {found_args}.') from ex
+    def form_valid(self, form):
+        if form.confirm_asked:
+            if form.confirmed:
+                identifier = form.cleaned_data['identifier']
+                messages.success(self.request, self.get_success_message(identifier))
+            return HttpResponseRedirect(self.get_redirect_url())
+        else:
+            return self.form_invalid(form)
 
-    @property
-    def confirmed(self):
-        try:
-            return self.request.POST['confirm'] == 'true'
-        except LookupError:
-            return None
-
-    def get_success_message(self):
-        return f'{self.identifier} has been deleted.'
+    def get_success_message(self, identifier):
+        return f'{identifier} has been deleted.'
 
     def get_redirect_url(self):
         if self.redirect_url:
