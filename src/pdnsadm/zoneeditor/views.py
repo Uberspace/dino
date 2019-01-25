@@ -121,16 +121,9 @@ class ZoneDeleteView(DeleteConfirmView, LoginRequiredMixin):
         pdns().delete_zone(pk)
 
 
-RECORD_TYPES = [(t, t) for t in [
-    'A', 'AAAA', 'AFSDB', 'ALIAS', 'CAA', 'CERT', 'CDNSKEY','CDS',
-    'CNAME', 'DNAME', 'DS', 'HINFO', 'KEY', 'LOC', 'MX', 'NAPTR',
-    'NS', 'OPENPGPKEY', 'PTR', 'RP', 'RRSIG', 'SOA', 'SPF', 'SSHFP',
-    'SRV', 'TKEY', 'TSIG', 'TLSA', 'SMIMEA', 'TXT', 'URI',
-]]
-
 class RecordCreateForm(forms.Form):
     name = forms.CharField()
-    rtype = forms.ChoiceField(choices=RECORD_TYPES, initial='A', label='Record Type')
+    rtype = forms.ChoiceField(choices=settings.RECORD_TYPES, initial='A', label='Record Type')
     ttl = forms.IntegerField(min_value=1, initial=300, label='TTL')
     content = forms.CharField()
 

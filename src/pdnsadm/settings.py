@@ -165,3 +165,16 @@ ENABLE_SIGNUP = False
 # see https://doc.powerdns.com/authoritative/http-api/zone.html#zone
 ZONE_DEFAULT_KIND = 'Native'
 ZONE_DEFAULT_NAMESERVERS = []
+
+if env('USE_DEFAULT_RECORD_TYPES', True, kind=bool):
+    RECORD_TYPES = [
+        'A', 'AAAA', 'AFSDB', 'ALIAS', 'CAA', 'CERT', 'CDNSKEY','CDS',
+        'CNAME', 'DNAME', 'DS', 'HINFO', 'KEY', 'LOC', 'MX', 'NAPTR',
+        'NS', 'OPENPGPKEY', 'PTR', 'RP', 'SOA', 'SPF', 'SSHFP', 'SRV',
+        'TKEY', 'TSIG', 'TLSA', 'SMIMEA', 'TXT', 'URI',
+    ]
+else:
+    RECORD_TYPES = []
+
+RECORD_TYPES = RECORD_TYPES + env('CUSTOM_RECORD_TYPES', [], kind=list)
+RECORD_TYPES = [(t, t) for t in RECORD_TYPES]

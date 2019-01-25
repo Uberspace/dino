@@ -38,3 +38,4 @@ for details.
 * `PDNS_APIKEY`: powerdns API key, see [pdns documentation](https://doc.powerdns.com/authoritative/http-api/index.html#enabling-the-api).
 * `PDNS_APIURL`
 * `DB_URL`: database configuration, as [a single URL](https://github.com/kennethreitz/dj-database-url#url-schema).
+* `CUSTOM_RECORD_TYPES`: comma seperated list of addition record types (e.g. `NSEC,NSEC3,NSEC3PARAM`)

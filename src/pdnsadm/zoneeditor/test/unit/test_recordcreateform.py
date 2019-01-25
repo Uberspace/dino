@@ -80,3 +80,7 @@ def test_recordcreateform_required(mock_create_record):
     assert 'required' in form.errors['rtype'][0]
     assert 'required' in form.errors['ttl'][0]
     assert 'required' in form.errors['content'][0]
+
+def test_recordcreateform_rtype_standard(mock_create_record):
+    form = RecordCreateForm('example.com.')
+    assert ('AAAA', 'AAAA') in form.fields['rtype'].choices
