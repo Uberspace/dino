@@ -17,7 +17,7 @@ def test_zonedeleteview_post(client_admin, mock_pdns_delete_zone, signed_zone_na
         'identifier': signed_zone_name,
         'confirm': 'true',
     })
-    TestCase().assertRedirects(response, '/zones')
+    TestCase().assertRedirects(response, '/zones', fetch_redirect_response=False)
     mock_pdns_delete_zone.assert_called_once_with('example.com.')
 
 
