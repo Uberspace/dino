@@ -160,11 +160,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Custom Settings
-ENABLE_SIGNUP = False
-# maybe 'Native', 'Master' or 'Slave'
+ENABLE_SIGNUP = env('ENABLE_SIGNUP', False, kind=bool)
+# may be 'Native', 'Master' or 'Slave'
 # see https://doc.powerdns.com/authoritative/http-api/zone.html#zone
-ZONE_DEFAULT_KIND = 'Native'
-ZONE_DEFAULT_NAMESERVERS = []
+ZONE_DEFAULT_KIND = env('ZONE_DEFAULT_KIND', 'Native', kind=bool)
+ZONE_DEFAULT_NAMESERVERS = env('ZONE_DEFAULT_NAMESERVERS', [], kind=list)
 
 if env('USE_DEFAULT_RECORD_TYPES', True, kind=bool):
     RECORD_TYPES = [

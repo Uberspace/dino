@@ -39,3 +39,6 @@ for details.
 * `PDNS_APIURL`
 * `DB_URL`: database configuration, as [a single URL](https://github.com/kennethreitz/dj-database-url#url-schema).
 * `CUSTOM_RECORD_TYPES`: comma seperated list of addition record types (e.g. `NSEC,NSEC3,NSEC3PARAM`)
+* `ENABLE_SIGNUP`: set to `True` to enable public registration
+* `ZONE_DEFAULT_KIND`: the [powerdns zone kind](https://doc.powerdns.com/authoritative/http-api/zone.html#zone), may be `Native`, `Master` or `Slave`
+* `ZONE_DEFAULT_NAMESERVERS`: comma seperated list of nameservers to use for new zones
