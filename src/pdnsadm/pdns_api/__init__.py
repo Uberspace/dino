@@ -38,7 +38,7 @@ class pdns():
         axfr = zone._get(zone.url + '/export')['zone'].strip()
         lines = (r.split('\t') for r in axfr.split('\n'))
         return (
-            {'name': r[0], 'ttl': r[1], 'rtype': r[2], 'content': r[3]}
+            {'name': r[0], 'ttl': int(r[1]), 'rtype': r[2], 'content': r[3]}
             for r in lines
         )
 
