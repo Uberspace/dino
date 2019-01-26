@@ -11,4 +11,5 @@ urlpatterns = [
     path('zones/<zone>', RedirectView.as_view(pattern_name='zoneeditor:zone_records', permanent=False), name="zone_detail"),
     path('zones/<zone>/records', views.ZoneRecordsView.as_view(), name="zone_records"),
     path('zones/<zone>/records/create', views.RecordCreateView.as_view(), name="zone_record_create"),
+    path('zones/<zone>/records/delete', views.RecordDeleteView.as_view(), name="zone_record_delete"),
 ]

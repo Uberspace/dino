@@ -54,12 +54,26 @@ class pdns():
                     (r['rtype'] == rtype or rtype is None)
             ]
 
-    def create_record(self, zone, name, rtype, ttl, content):
-        contents = [r['content'] for r in self.get_records(zone, name, rtype)]
-        contents.append(content)
+    def _update_records(self, zone, name, rtype, ttl, contents):
+        assert isinstance(contents, list)
         rrset = powerdns.RRSet(name, rtype, contents, ttl)
         zone = self._server.get_zone(zone)
         zone.create_records([rrset])
+
+    def create_record(self, zone, name, rtype, ttl, content):
+        contents = [r['content'] for r in self.get_records(zone, name, rtype)]
+        contents.append(content)
+        self._update_records(zone, name, rtype, ttl, contents)
+
+    def delete_record(self, zone, name, rtype, content):
+        old_records = list(self.get_records(zone, name, rtype))
+
+        if not old_records:
+            raise PDNSNotFoundException()  # record is already gone
+
+        ttl = old_records[0]['ttl']
+        contents = [r['content'] for r in old_records if r['content'] != content]
+        self._update_records(zone, name, rtype, ttl, contents)
 
 
 __all__ = [

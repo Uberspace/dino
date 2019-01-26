@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load deleteconfirm %}
 
 {% block breadcrumbs %}
 <li><a href="{% url 'zoneeditor:zone_list' %}">Zones</a></li>
@@ -18,6 +19,7 @@
             <th width="200">Name</th>
             <th width="200">Content</th>
             <th width="200">TTL</th>
+            <th width="100"></th>
         </tr>
     </thead>
     <tbody>
@@ -27,6 +29,13 @@
             <td>{{ rr.name }}</td>
             <td>{{ rr.content }}</td>
             <td>{{ rr.ttl }}</td>
+            <td>
+                <form action="{% url 'zoneeditor:zone_record_delete' zone=zone_name %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="identifier" value="{{ rr|sign }}">
+                    <button type="submit" class="button tiny alert">delete</button>
+                </form>
+            </td>
         </tr>
         {% endfor %}
     </tbody>

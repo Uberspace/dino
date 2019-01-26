@@ -169,3 +169,14 @@ class RecordCreateView(ZoneDetailMixin, LoginRequiredMixin, FormView):
         kwargs = super().get_form_kwargs()
         kwargs['zone_name'] = self.zone_name
         return kwargs
+
+
+class RecordDeleteView(DeleteConfirmView, LoginRequiredMixin):
+    def get_display_identifier(self, rr):
+        return f"{rr['rtype']} {rr['name']} {rr['content']}"
+
+    def delete_entity(self, rr):
+        pdns().delete_record(rr['zone'], rr['name'], rr['rtype'], rr['content'])
+
+    def get_redirect_url(self, rr):
+        return reverse('zoneeditor:zone_records', kwargs={'zone': rr['zone']})
