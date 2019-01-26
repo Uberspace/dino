@@ -60,7 +60,7 @@ class DeleteConfirmView(FormView):
 
     def get_context_data(self, form):
         context = super().get_context_data()
-        context['identifier'] = form.cleaned_data['identifier']
+        context['identifier'] = self.get_display_identifier(form.cleaned_data['identifier'])
         return context
 
     def form_valid(self, form):
@@ -80,6 +80,9 @@ class DeleteConfirmView(FormView):
             return self.redirect_url
         else:
             raise NotImplementedError()
+
+    def get_display_identifier(self, identifier):
+        return identifier
 
     def delete_entity(self, pk):
         raise NotImplementedError()
