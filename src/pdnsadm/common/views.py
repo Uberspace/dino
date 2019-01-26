@@ -65,17 +65,17 @@ class DeleteConfirmView(FormView):
 
     def form_valid(self, form):
         if form.confirm_asked:
+            identifier = form.cleaned_data['identifier']
             if form.confirmed:
-                identifier = form.cleaned_data['identifier']
                 messages.success(self.request, self.get_success_message(identifier))
-            return HttpResponseRedirect(self.get_redirect_url())
+            return HttpResponseRedirect(self.get_redirect_url(identifier))
         else:
             return self.form_invalid(form)
 
     def get_success_message(self, identifier):
         return f'{identifier} has been deleted.'
 
-    def get_redirect_url(self):
+    def get_redirect_url(self, identifier):
         if self.redirect_url:
             return self.redirect_url
         else:
