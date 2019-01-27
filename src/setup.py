@@ -13,7 +13,7 @@ setup(
         'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Framework :: Django',
-        'Framework :: Django :: 2.1',
+        'Framework :: Django :: 2.2',
         'Intended Audience :: System Administrators',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.7',
@@ -21,7 +21,7 @@ setup(
     ],
     keywords='dns powerdns pdns admin administration',
     install_requires=[
-        'Django==2.1.*',
+        'Django==2.2a1',
         'dj-database-url==0.5.*',
         'requests',  # should be installed with python-powerdns ... ?
         'python-powerdns@https://github.com/vente-privee/python-powerdns/archive/1c61c574399e3e486a6e0b9d1e3d0521b2fa00a0.zip',
