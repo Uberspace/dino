@@ -20,6 +20,14 @@ def test_zonedeleteview_post(client_admin, mock_pdns_delete_zone, signed_zone_na
     TestCase().assertRedirects(response, '/zones', fetch_redirect_response=False)
     mock_pdns_delete_zone.assert_called_once_with('example.com.')
 
+@pytest.mark.django_db()
+def test_zonedeleteview_post_no_confirm(client_admin, mock_pdns_delete_zone, signed_zone_name):
+    response = client_admin.post(reverse('zoneeditor:zone_delete'), data={
+        'identifier': signed_zone_name,
+        'confirm': 'false',
+    })
+    TestCase().assertRedirects(response, '/zones', fetch_redirect_response=False)
+    mock_pdns_delete_zone.assert_not_called()
 
 @pytest.mark.django_db()
 def test_zonedeleteview_post_empty_confirm(client_admin, mock_pdns_delete_zone, signed_zone_name):
@@ -27,6 +35,7 @@ def test_zonedeleteview_post_empty_confirm(client_admin, mock_pdns_delete_zone, 
         'identifier': signed_zone_name,
     })
     assert 'example.com' in response.content.decode()
+    mock_pdns_delete_zone.assert_not_called()
 
 @pytest.mark.django_db()
 def test_zonedeleteview_post_unknown_zone(client_admin, mocker, signed_zone_name):
