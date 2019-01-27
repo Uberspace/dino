@@ -62,6 +62,8 @@ INSTALLED_APPS = [
     # 1st party
     'pdnsadm.common',
     'pdnsadm.zoneeditor',
+    'pdnsadm.synczones',
+    'pdnsadm.tenants',
 
     # 3rd party
     'allauth',
