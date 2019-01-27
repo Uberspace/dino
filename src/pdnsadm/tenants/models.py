@@ -11,8 +11,8 @@ class Membership(models.Model):
 
 
 class Tenant(models.Model):
-    users = models.ManyToManyField(get_user_model(), through='Membership')
-    zones = models.ManyToManyField('synczones.Zone', blank=True)
+    users = models.ManyToManyField(get_user_model(), through='Membership', related_name='tenants')
+    zones = models.ManyToManyField('synczones.Zone', blank=True, related_name='tenants')
     name = models.CharField(max_length=100)
 
     def __str__(self):
