@@ -1,14 +1,16 @@
 from django import forms
 from django.conf import settings
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.validators import RegexValidator, URLValidator
 from django.http import Http404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 
+from rules.contrib.views import PermissionRequiredMixin
+
 from pdnsadm.common.views import DeleteConfirmView
 from pdnsadm.pdns_api import PDNSError, PDNSNotFoundException, pdns
+from pdnsadm.synczones.models import Zone
 
 
 class PDNSDataView():
@@ -43,15 +45,17 @@ class PDNSDataView():
             return self.get_objects()
 
 
-class ZoneListView(PDNSDataView, LoginRequiredMixin, TemplateView):
+class ZoneListView(PDNSDataView, PermissionRequiredMixin, TemplateView):
+    permission_required = 'tenants.list_zones'
     template_name = "zoneeditor/zone_list.html"
     filter_properties = ['name']
 
     def get_objects(self):
-        zones = pdns().get_zones()
         # TODO: doing this every time the list is loaded is a bad idea
-        from pdnsadm.synczones.models import Zone
-        Zone.import_from_powerdns(zones)
+        Zone.import_from_powerdns(pdns().get_zones())
+        zones = Zone.objects.all()
+        if not self.request.user.is_superuser:
+            zones = zones.filter(tenants__users=self.request.user)
         return zones
 
 
@@ -83,7 +87,8 @@ class ZoneCreateForm(forms.Form):
             self.add_error(None, f'PowerDNS error: {e.message}')
 
 
-class ZoneCreateView(LoginRequiredMixin, FormView):
+class ZoneCreateView(PermissionRequiredMixin, FormView):
+    permission_required = 'tenants.create_zone'
     template_name = "zoneeditor/zone_create.html"
     form_class = ZoneCreateForm
 
@@ -96,18 +101,22 @@ class ZoneCreateView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
 
-class ZoneDetailMixin():
+class ZoneDetailMixin(PermissionRequiredMixin):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['zone_name'] = self.zone_name
         return context
+
+    def get_permission_object(self):
+        return self.zone_name
 
     @property
     def zone_name(self):
         return self.kwargs['zone']
 
 
-class ZoneRecordsView(PDNSDataView, ZoneDetailMixin, LoginRequiredMixin, TemplateView):
+class ZoneRecordsView(PDNSDataView, ZoneDetailMixin, TemplateView):
+    permission_required = 'tenants.view_zone'
     template_name = "zoneeditor/zone_records.html"
     filter_properties = ['name']
 
@@ -118,7 +127,8 @@ class ZoneRecordsView(PDNSDataView, ZoneDetailMixin, LoginRequiredMixin, Templat
             raise Http404()
 
 
-class ZoneDeleteView(DeleteConfirmView, LoginRequiredMixin):
+class ZoneDeleteView(PermissionRequiredMixin, DeleteConfirmView):
+    permission_required = 'tenants.delete_zone'
     redirect_url = reverse_lazy('zoneeditor:zone_list')
 
     def delete_entity(self, pk):
@@ -162,7 +172,8 @@ class RecordCreateForm(forms.Form):
             self.add_error(None, f'PowerDNS error: {e.message}')
 
 
-class RecordCreateView(ZoneDetailMixin, LoginRequiredMixin, FormView):
+class RecordCreateView(ZoneDetailMixin, FormView):
+    permission_required = 'tenants.create_record'
     template_name = "zoneeditor/record_create.html"
     form_class = RecordCreateForm
 
@@ -175,7 +186,9 @@ class RecordCreateView(ZoneDetailMixin, LoginRequiredMixin, FormView):
         return kwargs
 
 
-class RecordDeleteView(DeleteConfirmView, LoginRequiredMixin):
+class RecordDeleteView(ZoneDetailMixin, DeleteConfirmView):
+    permission_required = 'tenants.delete_record'
+
     def get_display_identifier(self, rr):
         return f"{rr['rtype']} {rr['name']} {rr['content']}"
 

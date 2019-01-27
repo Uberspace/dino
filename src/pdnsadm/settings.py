@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'rules',
 ]
 
 if DEBUG:
@@ -110,6 +111,7 @@ WSGI_APPLICATION = 'pdnsadm.wsgi.application'
 # https://django-allauth.readthedocs.io/en/latest/
 
 AUTHENTICATION_BACKENDS = (
+    'rules.permissions.ObjectPermissionBackend',
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 )

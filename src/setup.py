@@ -26,6 +26,7 @@ setup(
         'requests',  # should be installed with python-powerdns ... ?
         'python-powerdns@https://github.com/vente-privee/python-powerdns/archive/1c61c574399e3e486a6e0b9d1e3d0521b2fa00a0.zip',
         'django-allauth==0.38.*',
+        'rules==2.0.*',
     ],
     extras_require={
         'dev': [

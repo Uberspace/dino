@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load deleteconfirm %}
+{% load permhelpers %}
 
 {% block breadcrumbs %}
 <li><a href="{% url 'zoneeditor:zone_list' %}">Zones</a></li>
@@ -8,7 +9,13 @@
 {% block content %}
 <div class="grid-x grid-margin-x">
     <form method="GET" class="cell small-12 medium-10">{{ search_form.as_p }}</form>
-    <a href="{% url 'zoneeditor:zone_create' %}" class="button success cell align-self-bottom small-12 medium-2">Create Zone</a>
+    <a
+        href="{% url 'zoneeditor:zone_create' %}"
+        class="button success cell align-self-bottom small-12 medium-2"
+        {% btn_perm 'tenants.create_zone' request.user %}
+    >
+        Create Zone
+    </a>
 </div>
 <table>
     <thead>
@@ -27,7 +34,7 @@
                 <form action="{% url 'zoneeditor:zone_delete' %}" method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="identifier" value="{{ zone.name|sign }}">
-                    <button type="submit" class="button tiny alert">delete</button>
+                    <button type="submit" class="button tiny alert" {% btn_perm 'tenants.delete_zone' request.user %}>delete</button>
                 </form>
             </td>
         </tr>
