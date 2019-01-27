@@ -70,7 +70,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    'rules',
+    'rules.apps.AutodiscoverRulesConfig',
 ]
 
 if DEBUG:
