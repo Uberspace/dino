@@ -76,6 +76,8 @@ class pdns():
 
         if not old_records:
             raise PDNSNotFoundException()  # record is already gone
+        if not any(r['content'] == content for r in old_records):
+            raise PDNSNotFoundException()  # record is already gone
 
         ttl = old_records[0]['ttl']
         contents = [r['content'] for r in old_records if r['content'] != content]
