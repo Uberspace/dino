@@ -68,30 +68,30 @@ def test_pdns_get_all_records(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
     r = pdns.get_all_records('example.com')
     r = list(r)
     assert r == [
-        {'name': 'www.example.com', 'ttl': 300, 'rtype': 'AAAA', 'content': '1.2.3.4'},
-        {'name': 'www.example.org', 'ttl': 600, 'rtype': 'A', 'content': '4.3.2.1'},
+        {'zone': 'example.com.', 'name': 'www.example.com', 'ttl': 300, 'rtype': 'AAAA', 'content': '1.2.3.4'},
+        {'zone': 'example.com.', 'name': 'www.example.org', 'ttl': 600, 'rtype': 'A', 'content': '4.3.2.1'},
     ]
 
 def test_pdns_get_records(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
     r = pdns.get_records('example.com')
     r = list(r)
     assert r == [
-        {'name': 'www.example.com', 'ttl': 300, 'rtype': 'AAAA', 'content': '1.2.3.4'},
-        {'name': 'www.example.org', 'ttl': 600, 'rtype': 'A', 'content': '4.3.2.1'},
+        {'zone': 'example.com.', 'name': 'www.example.com', 'ttl': 300, 'rtype': 'AAAA', 'content': '1.2.3.4'},
+        {'zone': 'example.com.', 'name': 'www.example.org', 'ttl': 600, 'rtype': 'A', 'content': '4.3.2.1'},
     ]
 
 def test_pdns_get_records_name(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
     r = pdns.get_records('example.com', name='www.example.com')
     r = list(r)
     assert r == [
-        {'name': 'www.example.com', 'ttl': 300, 'rtype': 'AAAA', 'content': '1.2.3.4'},
+        {'zone': 'example.com.', 'name': 'www.example.com', 'ttl': 300, 'rtype': 'AAAA', 'content': '1.2.3.4'},
     ]
 
 def test_pdns_get_records_rtype(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
     r = pdns.get_records('example.com', rtype='A')
     r = list(r)
     assert r == [
-        {'name': 'www.example.org', 'ttl': 600, 'rtype': 'A', 'content': '4.3.2.1'},
+        {'zone': 'example.com.', 'name': 'www.example.org', 'ttl': 600, 'rtype': 'A', 'content': '4.3.2.1'},
     ]
 
 @pytest.fixture
