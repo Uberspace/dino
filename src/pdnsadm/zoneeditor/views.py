@@ -48,7 +48,11 @@ class ZoneListView(PDNSDataView, LoginRequiredMixin, TemplateView):
     filter_properties = ['name']
 
     def get_objects(self):
-        return pdns().get_zones()
+        zones = pdns().get_zones()
+        # TODO: doing this every time the list is loaded is a bad idea
+        from pdnsadm.synczones.models import Zone
+        Zone.import_from_powerdns(zones)
+        return zones
 
 
 class ZoneNameValidator(RegexValidator):

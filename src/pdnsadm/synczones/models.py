@@ -6,3 +6,10 @@ class Zone(models.Model):
 
     def __str__(self):
         return f'Zone {self.name}'
+
+    @staticmethod
+    def import_from_powerdns(zones):
+        Zone.objects.bulk_create(
+            (Zone(name=zone.name) for zone in zones),
+            ignore_conflicts=True,
+        )
