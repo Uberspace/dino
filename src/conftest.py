@@ -24,6 +24,45 @@ def client_admin(client, user_admin):
   return client
 
 @pytest.fixture
+def tenant(db_zone):
+  from pdnsadm.tenants.models import Tenant
+  tenant = Tenant.objects.create(name="some tenant")
+  tenant.zones.add(db_zone)
+  return tenant
+
+@pytest.fixture
+def user_tenant(tenant):
+  user = get_user_model().objects.create(
+    username='tenanteduser',
+  )
+  tenant.users.add(user)
+  return user
+
+@pytest.fixture
+def client_user_tenant(client, user_tenant):
+  client.force_login(user_tenant)
+  return client
+
+@pytest.fixture
+def user_no_tenant():
+  User = get_user_model()
+  return User.objects.create(
+    username='user',
+  )
+
+@pytest.fixture
+def client_user_no_tenant(client, user_no_tenant):
+  client.force_login(user_no_tenant)
+  return client
+
+@pytest.fixture
+def db_zone():
+  from pdnsadm.synczones.models import Zone
+  return Zone.objects.create(
+    name='example.com',
+  )
+
+@pytest.fixture
 def mock_delete_entity(mocker):
     return mocker.patch('pdnsadm.common.views.DeleteConfirmView.delete_entity')
 
