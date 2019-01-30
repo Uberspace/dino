@@ -26,3 +26,21 @@ def test_zonelistview_unauthenicated(client):
     url = reverse('zoneeditor:zone_list')
     response = client.get(url)
     TestCase().assertRedirects(response, f'/accounts/login/?next={url}')
+
+@pytest.mark.django_db()
+def test_zonelistview_user_tenant(client_user_tenant, mock_pdns_get_zones):
+    response = client_user_tenant.get(reverse('zoneeditor:zone_list'))
+    content = response.content.decode()
+    assert response.status_code == 200
+    assert 'example.com' in content
+    assert 'example.org' not in content
+    assert 'example16.org' not in content
+
+@pytest.mark.django_db()
+def test_zonelistview_user_no_tenant(client_user_no_tenant, mock_pdns_get_zones):
+    response = client_user_no_tenant.get(reverse('zoneeditor:zone_list'))
+    content = response.content.decode()
+    assert response.status_code == 200
+    assert 'example.com' not in content
+    assert 'example.org' not in content
+    assert 'example16.org' not in content
