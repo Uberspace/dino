@@ -11,6 +11,12 @@ def test_zonecreateview_get(client_admin, mock_create_zone):
     assert response.status_code == 200
 
 @pytest.mark.django_db()
+def test_zonecreateview_get_unauthenicated(client):
+    url = reverse('zoneeditor:zone_create')
+    response = client.get(url)
+    TestCase().assertRedirects(response, f'/accounts/login/?next={url}')
+
+@pytest.mark.django_db()
 def test_zonecreateview_post(client_admin, mock_create_zone):
     response = client_admin.post(reverse('zoneeditor:zone_create'), data={
         'name': 'example.com'
@@ -29,5 +35,5 @@ def test_zonecreateview_post_empty(client_admin, mock_create_zone):
 @pytest.mark.django_db()
 def test_zonecreateview_post_unauthenicated(client):
     url = reverse('zoneeditor:zone_create')
-    response = client.get(url)
+    response = client.post(url)
     TestCase().assertRedirects(response, f'/accounts/login/?next={url}')

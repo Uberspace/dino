@@ -12,6 +12,12 @@ def test_zonedeleteview_get(client_admin, mock_pdns_delete_zone):
     mock_pdns_delete_zone.assert_not_called()
 
 @pytest.mark.django_db()
+def test_zonedeleteview_get_unauthenicated(client):
+    url = reverse('zoneeditor:zone_delete')
+    response = client.get(url)
+    TestCase().assertRedirects(response, f'/accounts/login/?next={url}')
+
+@pytest.mark.django_db()
 def test_zonedeleteview_post(client_admin, mock_pdns_delete_zone, signed_zone_name):
     response = client_admin.post(reverse('zoneeditor:zone_delete'), data={
         'identifier': signed_zone_name,
@@ -19,6 +25,12 @@ def test_zonedeleteview_post(client_admin, mock_pdns_delete_zone, signed_zone_na
     })
     TestCase().assertRedirects(response, '/zones', fetch_redirect_response=False)
     mock_pdns_delete_zone.assert_called_once_with('example.com.')
+
+@pytest.mark.django_db()
+def test_zonedeleteview_post_unauthenicated(client):
+    url = reverse('zoneeditor:zone_delete')
+    response = client.post(url)
+    TestCase().assertRedirects(response, f'/accounts/login/?next={url}')
 
 @pytest.mark.django_db()
 def test_zonedeleteview_post_no_confirm(client_admin, mock_pdns_delete_zone, signed_zone_name):
