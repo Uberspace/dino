@@ -37,3 +37,18 @@ def test_recordlistview_unauthenicated(client):
     url = reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com'})
     response = client.get(url)
     TestCase().assertRedirects(response, f'/accounts/login/?next={url}')
+
+@pytest.mark.django_db()
+def test_recordlistview_user_tenant(client_user_tenant, mock_pdns_get_zones, mock_pdns_get_records):
+    response = client_user_tenant.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com'}))
+    content = response.content.decode()
+    assert response.status_code == 200
+    assert 'mail.example.com' in content
+    assert 'example.com' in content
+    assert 'mail.example.org' in content
+
+@pytest.mark.django_db()
+def test_recordlistview_user_no_tenant(client_user_no_tenant, db_zone, mock_pdns_get_zones, mock_pdns_get_records):
+    response = client_user_no_tenant.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com'}))
+    content = response.content.decode()
+    assert response.status_code == 403
