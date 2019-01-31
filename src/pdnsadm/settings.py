@@ -166,6 +166,28 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
+# Logging
+# https://docs.djangoproject.com/en/2.1/topics/logging/
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'rules': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+
 # Custom Settings
 ENABLE_SIGNUP = env('ENABLE_SIGNUP', False, kind=bool)
 # may be 'Native', 'Master' or 'Slave'
