@@ -7,7 +7,7 @@ from django.test import Client
 
 
 @pytest.fixture
-def client():
+def base_client():
   return Client()
 
 @pytest.fixture
@@ -19,9 +19,9 @@ def user_admin():
   )
 
 @pytest.fixture
-def client_admin(client, user_admin):
-  client.force_login(user_admin)
-  return client
+def client_admin(base_client, user_admin):
+  base_client.force_login(user_admin)
+  return base_client
 
 @pytest.fixture
 def tenant(db_zone):
@@ -40,9 +40,9 @@ def user_tenant_admin(tenant):
   return user
 
 @pytest.fixture
-def client_user_tenant_admin(client, user_tenant_admin):
-  client.force_login(user_tenant_admin)
-  return client
+def client_user_tenant_admin(base_client, user_tenant_admin):
+  base_client.force_login(user_tenant_admin)
+  return base_client
 
 @pytest.fixture
 def user_no_tenant():
@@ -52,9 +52,9 @@ def user_no_tenant():
   )
 
 @pytest.fixture
-def client_user_no_tenant(client, user_no_tenant):
-  client.force_login(user_no_tenant)
-  return client
+def client_user_no_tenant(base_client, user_no_tenant):
+  base_client.force_login(user_no_tenant)
+  return base_client
 
 @pytest.fixture
 def db_zone():
