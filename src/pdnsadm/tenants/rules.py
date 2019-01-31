@@ -4,10 +4,6 @@ import rules
 
 
 @rules.predicate
-def is_tenant_member(user, tenant):
-    return tenant.users.filter(pk=user.pk).exists()
-
-@rules.predicate
 def is_zone_tenant_member(user, zone):
     if isinstance(zone, str):
         zone = Zone.objects.get(pk=zone)
