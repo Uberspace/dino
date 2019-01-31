@@ -17,8 +17,6 @@ services:
       - 8081:8081
   django:
     build: .
-    volumes:
-      - ./src:/app
     ports:
       - 8000:8000
     environment:
