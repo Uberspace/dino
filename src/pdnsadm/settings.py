@@ -76,8 +76,12 @@ INSTALLED_APPS = [
     'rules.apps.AutodiscoverRulesConfig',
 ]
 
-if DEBUG:
-    INSTALLED_APPS += ['django_extensions']
+try:
+    if DEBUG:
+        import django_extensions  # noqa
+        INSTALLED_APPS += ['django_extensions']
+except ImportError:
+    print("DEBUG enabled, but django_extensions not installed. skipping app.")
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
