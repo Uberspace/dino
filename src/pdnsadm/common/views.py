@@ -94,6 +94,7 @@ class DeleteConfirmView(FormView):
                 # message to show when the
                 #
                 # optional, default: '... has been deleted.'
+                #           using get_display_identifier()
 
     Register your view under some URL (e.g. `/resource/delete`). Then, place a
     delete button somewhere like so:
@@ -134,6 +135,7 @@ class DeleteConfirmView(FormView):
             return self.form_invalid(form)
 
     def get_success_message(self, identifier):
+        identifier = self.get_display_identifier(identifier)
         return f'{identifier} has been deleted.'
 
     def get_redirect_url(self, identifier):
