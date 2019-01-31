@@ -31,7 +31,6 @@ setup(
         'dev': [
             'beautifulsoup4',
             'isort',
-            'lxml',
             'pylama',
             'pytest',
             'pytest-cov',
