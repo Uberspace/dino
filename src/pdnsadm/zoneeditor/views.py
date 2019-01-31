@@ -129,6 +129,7 @@ class ZoneRecordsView(PDNSDataView, ZoneDetailMixin, TemplateView):
             raise Http404()
 
 
+# TODO: delete from DB
 class ZoneDeleteView(PermissionRequiredMixin, DeleteConfirmView):
     permission_required = 'tenants.delete_zone'
     redirect_url = reverse_lazy('zoneeditor:zone_list')
