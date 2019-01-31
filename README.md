@@ -42,3 +42,9 @@ for details.
 * `ENABLE_SIGNUP`: set to `True` to enable public registration
 * `ZONE_DEFAULT_KIND`: the [powerdns zone kind](https://doc.powerdns.com/authoritative/http-api/zone.html#zone), may be `Native`, `Master` or `Slave`
 * `ZONE_DEFAULT_NAMESERVERS`: comma seperated list of nameservers to use for new zones
+
+## Acknowledgements
+
+Some meta configuration like `setup.py` and `setup.cfg` has been lifted from the
+awesome conference management system [pretalx](https://github.com/pretalx/pretalx)
+(MIT). Thanks!
