@@ -9,13 +9,13 @@ def test_zonecreateform(mock_create_zone):
     mock_create_zone.assert_called_once_with(name='example.com.', kind='Native', nameservers=[])
 
 def test_zonecreateform_name_add_dot(mock_create_zone):
-    form = ZoneCreateForm(data={'name': 'example.com'})
+    form = ZoneCreateForm(data={'name': 'example.com'})  # no trailing dot
     assert form.is_valid()
     mock_create_zone.assert_called_once_with(name='example.com.', kind='Native', nameservers=[])
 
 def test_zonecreateform_settings(mock_create_zone):
     with override_settings(ZONE_DEFAULT_KIND='Master', ZONE_DEFAULT_NAMESERVERS=['ns1.example.org']):
-        form = ZoneCreateForm(data={'name': 'example.com'})
+        form = ZoneCreateForm(data={'name': 'example.com.'})
         assert form.is_valid()
     mock_create_zone.assert_called_once_with(name='example.com.', kind='Master', nameservers=['ns1.example.org'])
 

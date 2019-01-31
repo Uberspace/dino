@@ -46,7 +46,7 @@ def test_zonedeleteview_post_empty_confirm(client_admin, mock_pdns_delete_zone, 
     response = client_admin.post(reverse('zoneeditor:zone_delete'), data={
         'identifier': signed_example_com,
     })
-    assert 'example.com' in response.content.decode()
+    assert 'example.com.' in response.content.decode()
     mock_pdns_delete_zone.assert_not_called()
 
 @pytest.mark.django_db()

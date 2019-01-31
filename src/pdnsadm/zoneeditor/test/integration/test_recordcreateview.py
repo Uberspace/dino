@@ -24,7 +24,7 @@ def test_recordcreateview_post(client_admin, mock_create_record):
         'name': 'mail.anexample.com.example.com.',
         'rtype': 'MX',
         'ttl': 300,
-        'content': '0 example.org',
+        'content': '0 example.org.',
     })
     TestCase().assertRedirects(response, '/zones/example.com.', fetch_redirect_response=False)
     mock_create_record.assert_called_once_with(
@@ -32,7 +32,7 @@ def test_recordcreateview_post(client_admin, mock_create_record):
         name='mail.anexample.com.example.com.',
         rtype='MX',
         ttl=300,
-        content='0 example.org',
+        content='0 example.org.',
     )
 
 @pytest.mark.django_db()

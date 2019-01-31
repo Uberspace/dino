@@ -59,7 +59,7 @@ def client_user_no_tenant(client, user_no_tenant):
 def db_zone():
   from pdnsadm.synczones.models import Zone
   return Zone.objects.create(
-    name='example.com',
+    name='example.com.',
   )
 
 @pytest.fixture
@@ -86,8 +86,8 @@ def mock_create_record(mocker):
 def mock_pdns_get_zones(mocker):
     MockPDNSZone = namedtuple('MockPDNSZone', ['name'])
     rval = [
-        MockPDNSZone('example.com'),
-        MockPDNSZone('example.org'),
+        MockPDNSZone('example.com.'),
+        MockPDNSZone('example.org.'),
     ] + [MockPDNSZone(f'example{i}.org') for i in range(500)]
     return mocker.patch('pdnsadm.pdns_api.pdns.get_zones', return_value=rval)
 

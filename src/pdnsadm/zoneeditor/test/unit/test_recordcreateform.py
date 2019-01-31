@@ -9,7 +9,7 @@ def create_record_data():
         'name': 'mail.example.com.',
         'rtype': 'MX',
         'ttl': '300',
-        'content': '0 example.org',
+        'content': '0 example.org.',
     }
 
 def test_recordcreateform(mock_create_record, create_record_data):
@@ -21,7 +21,7 @@ def test_recordcreateform(mock_create_record, create_record_data):
         name='mail.example.com.',
         rtype='MX',
         ttl=300,
-        content='0 example.org',
+        content='0 example.org.',
     )
 
 def test_recordcreateform_name_add_zone(mock_create_record, create_record_data):
@@ -33,11 +33,11 @@ def test_recordcreateform_name_add_zone(mock_create_record, create_record_data):
         name='mail.example.com.',
         rtype='MX',
         ttl=300,
-        content='0 example.org',
+        content='0 example.org.',
     )
 
 def test_recordcreateform_name_add_dot(mock_create_record, create_record_data):
-    create_record_data.update(name='mail.example.com')
+    create_record_data.update(name='mail.example.com.')
     form = RecordCreateForm('example.com.', data=create_record_data)
     assert form.is_valid()
     mock_create_record.assert_called_once_with(
@@ -45,11 +45,11 @@ def test_recordcreateform_name_add_dot(mock_create_record, create_record_data):
         name='mail.example.com.',
         rtype='MX',
         ttl=300,
-        content='0 example.org',
+        content='0 example.org.',
     )
 
 def test_recordcreateform_name_lookalike(mock_create_record, create_record_data):
-    create_record_data.update(name='mail.anexample.com')
+    create_record_data.update(name='mail.anexample.com.')
     form = RecordCreateForm('example.com.', data=create_record_data)
     assert form.is_valid()
     mock_create_record.assert_called_once_with(
@@ -57,7 +57,7 @@ def test_recordcreateform_name_lookalike(mock_create_record, create_record_data)
         name='mail.anexample.com.example.com.',
         rtype='MX',
         ttl=300,
-        content='0 example.org',
+        content='0 example.org.',
     )
 
 def test_recordcreateform_invalid_no_creation(mock_create_record):

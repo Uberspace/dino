@@ -59,5 +59,5 @@ def test_recorddeleteview_post_empty_confirm(client_admin, mock_pdns_delete_reco
     data={
         'identifier': signed_record_data,
     })
-    assert 'example.com' in response.content.decode()
+    assert 'example.com.' in response.content.decode()
     mock_pdns_delete_record.assert_not_called()

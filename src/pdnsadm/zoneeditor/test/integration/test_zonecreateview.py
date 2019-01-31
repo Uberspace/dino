@@ -19,7 +19,7 @@ def test_zonecreateview_get_unauthenicated(client):
 @pytest.mark.django_db()
 def test_zonecreateview_post(client_admin, mock_create_zone):
     response = client_admin.post(reverse('zoneeditor:zone_create'), data={
-        'name': 'example.com'
+        'name': 'example.com.'
     })
     TestCase().assertRedirects(response, '/zones/example.com.', target_status_code=302)
     mock_create_zone.assert_called_with(kind='Native', name='example.com.', nameservers=[])
