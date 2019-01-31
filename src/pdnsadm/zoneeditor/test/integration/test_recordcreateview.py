@@ -24,7 +24,6 @@ def test_recordcreateview_get_unauthenicated(client):
 @pytest.mark.django_db()
 def test_recordcreateview_post_granted(client, mock_create_record):
     response = client.post(reverse('zoneeditor:zone_record_create', kwargs={'zone': 'example.com.'}), data={
-        'zone': 'example.com.',
         'name': 'mail.anexample.com.example.com.',
         'rtype': 'MX',
         'ttl': 300,
@@ -46,7 +45,6 @@ def test_recordcreateview_post_granted(client, mock_create_record):
 @pytest.mark.django_db()
 def test_recordcreateview_post_denied(client, mock_create_record, zone_name):
     response = client.post(reverse('zoneeditor:zone_record_create', kwargs={'zone': zone_name}), data={
-        'zone': zone_name,
         'name': f'mail.{zone_name}',
         'rtype': 'MX',
         'ttl': 300,
