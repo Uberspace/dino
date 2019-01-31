@@ -1,6 +1,7 @@
 import pytest
 from django.shortcuts import reverse
 from django.test import TestCase
+from pdnsadm.synczones.models import Zone
 
 
 @pytest.mark.django_db()
@@ -12,6 +13,13 @@ def test_zonelistview(client_admin, mock_pdns_get_zones):
     assert 'example.org.' in content
     assert 'example16.org' in content
     assert 'example400.org' not in content
+
+@pytest.mark.django_db()
+def test_zonelistview_sync(client_admin, mock_pdns_get_zones):
+    assert Zone.objects.all().count() == 0
+    response = client_admin.get(reverse('zoneeditor:zone_list'))
+    assert Zone.objects.all().count() > 2
+    assert Zone.objects.filter(name='example.com.').exists()
 
 @pytest.mark.django_db()
 def test_zonelistview_filter(client_admin, mock_pdns_get_zones):
