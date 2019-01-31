@@ -7,7 +7,7 @@ from django.test import TestCase
 
 
 @pytest.fixture
-def signed_record_data():
+def signed_record_data_example_com():
     return signing.dumps({
         'zone': 'example.com.',
         'name': 'www.example.com.',
@@ -28,10 +28,10 @@ def test_recorddeleteview_get_unauthenicated(client):
     TestCase().assertRedirects(response, f'/accounts/login/?next={url}')
 
 @pytest.mark.django_db()
-def test_recorddeleteview_post(client_admin, mock_pdns_delete_record, signed_record_data):
+def test_recorddeleteview_post(client_admin, mock_pdns_delete_record, signed_record_data_example_com):
     response = client_admin.post(reverse('zoneeditor:zone_record_delete', kwargs={'zone': 'example.com.'}),
     data={
-        'identifier': signed_record_data,
+        'identifier': signed_record_data_example_com,
         'confirm': 'true',
     })
     TestCase().assertRedirects(response, '/zones/example.com./records', fetch_redirect_response=False)
@@ -44,20 +44,20 @@ def test_recorddeleteview_post_unauthenicated(client):
     TestCase().assertRedirects(response, f'/accounts/login/?next={url}')
 
 @pytest.mark.django_db()
-def test_recorddeleteview_post_no_confirm(client_admin, mock_pdns_delete_record, signed_record_data):
+def test_recorddeleteview_post_no_confirm(client_admin, mock_pdns_delete_record, signed_record_data_example_com):
     response = client_admin.post(reverse('zoneeditor:zone_record_delete', kwargs={'zone': 'example.com.'}),
     data={
-        'identifier': signed_record_data,
+        'identifier': signed_record_data_example_com,
         'confirm': 'false',
     })
     TestCase().assertRedirects(response, '/zones/example.com./records', fetch_redirect_response=False)
     mock_pdns_delete_record.assert_not_called()
 
 @pytest.mark.django_db()
-def test_recorddeleteview_post_empty_confirm(client_admin, mock_pdns_delete_record, signed_record_data):
+def test_recorddeleteview_post_empty_confirm(client_admin, mock_pdns_delete_record, signed_record_data_example_com):
     response = client_admin.post(reverse('zoneeditor:zone_record_delete', kwargs={'zone': 'example.com.'}),
     data={
-        'identifier': signed_record_data,
+        'identifier': signed_record_data_example_com,
     })
     assert 'example.com.' in response.content.decode()
     mock_pdns_delete_record.assert_not_called()
