@@ -1,12 +1,11 @@
 from django import forms
 from django.conf import settings
+from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.core.validators import RegexValidator, URLValidator
 from django.http import Http404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from django.core.exceptions import PermissionDenied, SuspiciousOperation
-
 from rules.contrib.views import PermissionRequiredMixin
 
 from pdnsadm.common.views import DeleteConfirmView

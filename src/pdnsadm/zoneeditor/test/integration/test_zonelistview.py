@@ -1,6 +1,7 @@
 import pytest
 from django.shortcuts import reverse
 from django.test import TestCase
+
 from pdnsadm.synczones.models import Zone
 
 

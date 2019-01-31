@@ -1,5 +1,6 @@
-import pytest
 import powerdns
+import pytest
+
 from ... import PDNSNotFoundException
 
 

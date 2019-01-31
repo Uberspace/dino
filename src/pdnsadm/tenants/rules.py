@@ -1,6 +1,7 @@
+import rules
+
 from pdnsadm.synczones.models import Zone
 from pdnsadm.tenants.models import Membership, PermissionLevels
-import rules
 
 
 @rules.predicate

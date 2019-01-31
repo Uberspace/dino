@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Tenant, Membership
+from .models import Membership, Tenant
 
 
 class MembershipInline(admin.TabularInline):
