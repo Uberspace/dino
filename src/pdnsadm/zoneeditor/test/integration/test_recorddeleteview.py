@@ -36,15 +36,34 @@ def test_recorddeleteview_get_unauthenicated(client):
     response = client.get(url)
     TestCase().assertRedirects(response, f'/accounts/login/?next={url}')
 
+@pytest.mark.parametrize('client,record_data', [
+    (pytest.lazy_fixture('client_admin'), pytest.lazy_fixture('signed_record_data_example_com')),
+    (pytest.lazy_fixture('client_user_tenant_admin'), pytest.lazy_fixture('signed_record_data_example_com')),
+    (pytest.lazy_fixture('client_user_tenant_user'), pytest.lazy_fixture('signed_record_data_example_com')),
+])
 @pytest.mark.django_db()
-def test_recorddeleteview_post(client_admin, mock_pdns_delete_record, signed_record_data_example_com):
-    response = client_admin.post(reverse('zoneeditor:zone_record_delete', kwargs={'zone': 'example.com.'}),
+def test_recorddeleteview_granted(client, mock_pdns_delete_record, record_data):
+    response = client.post(reverse('zoneeditor:zone_record_delete', kwargs={'zone': 'example.com.'}),
     data={
-        'identifier': signed_record_data_example_com,
+        'identifier': record_data,
         'confirm': 'true',
     })
     TestCase().assertRedirects(response, '/zones/example.com./records', fetch_redirect_response=False)
     mock_pdns_delete_record.assert_called_once_with('example.com.', 'www.example.com.', 'A', '1.1.1.1')
+
+@pytest.mark.parametrize('client,record_data', [
+    (pytest.lazy_fixture('client_user_tenant_admin'), pytest.lazy_fixture('signed_record_data_example_org')),
+    (pytest.lazy_fixture('client_user_tenant_user'), pytest.lazy_fixture('signed_record_data_example_org')),
+])
+@pytest.mark.django_db()
+def test_recorddeleteview_denied(client, mock_pdns_delete_record, record_data):
+    response = client.post(reverse('zoneeditor:zone_record_delete', kwargs={'zone': 'example.org.'}),
+    data={
+        'identifier': record_data,
+        'confirm': 'true',
+    })
+    assert response.status_code == 403
+    mock_pdns_delete_record.assert_not_called()
 
 @pytest.mark.django_db()
 def test_recorddeleteview_name_missmatch(client_user_tenant_admin, mock_pdns_delete_record, signed_record_data_example_org):
