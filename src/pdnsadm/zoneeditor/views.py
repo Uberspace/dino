@@ -88,6 +88,7 @@ class ZoneCreateForm(forms.Form):
             self.add_error(None, f'PowerDNS error: {e.message}')
 
 
+# TODO: add to tenant
 class ZoneCreateView(PermissionRequiredMixin, FormView):
     permission_required = 'tenants.create_zone'
     template_name = "zoneeditor/zone_create.html"
