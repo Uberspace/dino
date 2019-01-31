@@ -34,7 +34,7 @@
                 <form action="{% url 'zoneeditor:zone_delete' %}" method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="identifier" value="{{ zone.name|sign }}">
-                    <button type="submit" class="button tiny alert" {% btn_perm 'tenants.delete_zone' request.user %}>delete</button>
+                    <button type="submit" class="button tiny alert" {% btn_perm 'tenants.delete_zone' request.user zone %}>delete</button>
                 </form>
             </td>
         </tr>

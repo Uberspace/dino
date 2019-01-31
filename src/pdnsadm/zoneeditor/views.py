@@ -5,6 +5,7 @@ from django.http import Http404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+from django.core.exceptions import PermissionDenied
 
 from rules.contrib.views import PermissionRequiredMixin
 
@@ -132,6 +133,9 @@ class ZoneDeleteView(PermissionRequiredMixin, DeleteConfirmView):
     redirect_url = reverse_lazy('zoneeditor:zone_list')
 
     def delete_entity(self, pk):
+        if not self.request.user.has_perm(self.permission_required, pk):
+            raise PermissionDenied()
+
         pdns().delete_zone(pk)
 
 

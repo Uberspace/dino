@@ -45,6 +45,20 @@ def client_user_tenant_admin(base_client, user_tenant_admin):
   return base_client
 
 @pytest.fixture
+def user_tenant_user(tenant):
+  from pdnsadm.tenants.models import PermissionLevels
+  user = get_user_model().objects.create(
+    username='tenanteduser',
+  )
+  tenant.users.add(user, through_defaults={'level': PermissionLevels.USER})
+  return user
+
+@pytest.fixture
+def client_user_tenant_user(base_client, user_tenant_user):
+  base_client.force_login(user_tenant_user)
+  return base_client
+
+@pytest.fixture
 def user_no_tenant():
   User = get_user_model()
   return User.objects.create(
@@ -59,6 +73,9 @@ def client_user_no_tenant(base_client, user_no_tenant):
 @pytest.fixture
 def db_zone():
   from pdnsadm.synczones.models import Zone
+  Zone.objects.create(
+    name='example.org.',
+  )
   return Zone.objects.create(
     name='example.com.',
   )
@@ -103,3 +120,7 @@ def mock_pdns_delete_record(mocker):
 @pytest.fixture
 def signed_example_com():
     return signing.dumps('example.com.')
+
+@pytest.fixture
+def signed_example_org():
+    return signing.dumps('example.org.')

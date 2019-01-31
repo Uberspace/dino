@@ -17,14 +17,32 @@ def test_zonedeleteview_get_unauthenicated(client):
     response = client.get(url)
     TestCase().assertRedirects(response, f'/accounts/login/?next={url}')
 
+@pytest.mark.parametrize('client,zone_data', [
+    (pytest.lazy_fixture('client_admin'), pytest.lazy_fixture('signed_example_com')),
+    (pytest.lazy_fixture('client_user_tenant_admin'), pytest.lazy_fixture('signed_example_com')),
+])
 @pytest.mark.django_db()
-def test_zonedeleteview_post(client_admin, mock_pdns_delete_zone, signed_example_com):
-    response = client_admin.post(reverse('zoneeditor:zone_delete'), data={
-        'identifier': signed_example_com,
+def test_zonedeleteview_post_granted(client, mock_pdns_delete_zone, zone_data):
+    response = client.post(reverse('zoneeditor:zone_delete'), data={
+        'identifier': zone_data,
         'confirm': 'true',
     })
     TestCase().assertRedirects(response, '/zones', fetch_redirect_response=False)
     mock_pdns_delete_zone.assert_called_once_with('example.com.')
+
+@pytest.mark.parametrize('client,zone_data', [
+    (pytest.lazy_fixture('client_user_tenant_admin'), pytest.lazy_fixture('signed_example_org')),
+    (pytest.lazy_fixture('client_user_tenant_user'), pytest.lazy_fixture('signed_example_org')),
+    (pytest.lazy_fixture('client_user_tenant_user'), pytest.lazy_fixture('signed_example_com')),
+])
+@pytest.mark.django_db()
+def test_zonedeleteview_post_denied(client, mock_pdns_delete_zone, zone_data):
+    response = client.post(reverse('zoneeditor:zone_delete'), data={
+        'identifier': zone_data,
+        'confirm': 'true',
+    })
+    assert response.status_code == 403
+    mock_pdns_delete_zone.assert_not_called()
 
 @pytest.mark.django_db()
 def test_zonedeleteview_post_unauthenicated(client):
