@@ -1,5 +1,5 @@
 from pdnsadm.synczones.models import Zone
-from pdnsadm.tenants.models import Tenant, Membership, PermissionLevels
+from pdnsadm.tenants.models import Membership, PermissionLevels
 import rules
 
 
@@ -9,6 +9,7 @@ def is_zone_tenant_member(user, zone):
         zone = Zone.objects.get(pk=zone)
 
     return zone.tenants.filter(users=user).exists()
+
 
 @rules.predicate
 def is_zone_tenant_admin(user, zone):
@@ -23,13 +24,16 @@ def is_zone_tenant_admin(user, zone):
         tenant__in=zone.tenants.all(),
     ).exists()
 
+
 @rules.predicate
 def is_any_tenant_admin(user):
     return Membership.objects.filter(user=user, level=PermissionLevels.ADMIN).exists()
 
+
 is_zone_tenant_member = rules.is_authenticated & is_zone_tenant_member
 is_zone_tenant_admin = rules.is_authenticated & is_zone_tenant_admin
 is_any_tenant_admin = rules.is_authenticated & is_any_tenant_admin
+
 
 @rules.predicate
 def is_admin(user):

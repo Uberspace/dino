@@ -1,7 +1,7 @@
 import django.forms as forms
 from django.contrib import messages
 from django.core import signing
-from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect
+from django.http import HttpResponseNotAllowed, HttpResponseRedirect
 from django.views.generic.edit import FormView
 
 from pdnsadm.pdns_api import PDNSError

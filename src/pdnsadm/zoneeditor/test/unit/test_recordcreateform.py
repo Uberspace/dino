@@ -1,7 +1,7 @@
 import pytest
-from django.test.utils import override_settings
 
 from ...views import RecordCreateForm
+
 
 @pytest.fixture
 def create_record_data():
@@ -11,6 +11,7 @@ def create_record_data():
         'ttl': '300',
         'content': '0 example.org.',
     }
+
 
 def test_recordcreateform(mock_create_record, create_record_data):
     form = RecordCreateForm('example.com.', data=create_record_data)
@@ -24,6 +25,7 @@ def test_recordcreateform(mock_create_record, create_record_data):
         content='0 example.org.',
     )
 
+
 def test_recordcreateform_name_add_zone(mock_create_record, create_record_data):
     create_record_data.update(name='mail')
     form = RecordCreateForm('example.com.', data=create_record_data)
@@ -35,6 +37,7 @@ def test_recordcreateform_name_add_zone(mock_create_record, create_record_data):
         ttl=300,
         content='0 example.org.',
     )
+
 
 def test_recordcreateform_name_add_dot(mock_create_record, create_record_data):
     create_record_data.update(name='mail.example.com.')
@@ -48,6 +51,7 @@ def test_recordcreateform_name_add_dot(mock_create_record, create_record_data):
         content='0 example.org.',
     )
 
+
 def test_recordcreateform_name_lookalike(mock_create_record, create_record_data):
     create_record_data.update(name='mail.anexample.com.')
     form = RecordCreateForm('example.com.', data=create_record_data)
@@ -60,10 +64,12 @@ def test_recordcreateform_name_lookalike(mock_create_record, create_record_data)
         content='0 example.org.',
     )
 
+
 def test_recordcreateform_invalid_no_creation(mock_create_record):
     form = RecordCreateForm('example.com.', {'name': 'blargh--'})
     form.full_clean()
     mock_create_record.assert_not_called()
+
 
 def test_recordcreateform_api_error(mocker, create_record_data):
     from pdnsadm.pdns_api import PDNSError
@@ -73,6 +79,7 @@ def test_recordcreateform_api_error(mocker, create_record_data):
     assert 'broken' in form.errors['__all__'][0]
     m.assert_called_once()
 
+
 def test_recordcreateform_required(mock_create_record):
     form = RecordCreateForm('example.com.', {})
     assert not form.is_valid()
@@ -80,6 +87,7 @@ def test_recordcreateform_required(mock_create_record):
     assert 'required' in form.errors['rtype'][0]
     assert 'required' in form.errors['ttl'][0]
     assert 'required' in form.errors['content'][0]
+
 
 def test_recordcreateform_rtype_standard(mock_create_record):
     form = RecordCreateForm('example.com.')

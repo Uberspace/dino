@@ -1,5 +1,3 @@
-from collections import namedtuple
-
 import pytest
 from django.core import signing
 from django.shortcuts import reverse
@@ -15,6 +13,7 @@ def signed_record_data_example_com():
         'content': '1.1.1.1',
     })
 
+
 @pytest.fixture
 def signed_record_data_example_org():
     return signing.dumps({
@@ -24,17 +23,20 @@ def signed_record_data_example_org():
         'content': '1.1.1.1',
     })
 
+
 @pytest.mark.django_db()
 def test_recorddeleteview_get(client_admin, mock_pdns_delete_record):
     response = client_admin.get(reverse('zoneeditor:zone_record_delete', kwargs={'zone': 'example.com.'}))
     assert response.status_code == 405
     mock_pdns_delete_record.assert_not_called()
 
+
 @pytest.mark.django_db()
 def test_recorddeleteview_get_unauthenicated(client):
     url = reverse('zoneeditor:zone_record_delete', kwargs={'zone': 'example.com.'})
     response = client.get(url)
     TestCase().assertRedirects(response, f'/accounts/login/?next={url}')
+
 
 @pytest.mark.parametrize('client,record_data', [
     (pytest.lazy_fixture('client_admin'), pytest.lazy_fixture('signed_record_data_example_com')),
@@ -51,6 +53,7 @@ def test_recorddeleteview_granted(client, mock_pdns_delete_record, record_data):
     TestCase().assertRedirects(response, '/zones/example.com./records', fetch_redirect_response=False)
     mock_pdns_delete_record.assert_called_once_with('example.com.', 'www.example.com.', 'A', '1.1.1.1')
 
+
 @pytest.mark.parametrize('client,record_data', [
     (pytest.lazy_fixture('client_user_tenant_admin'), pytest.lazy_fixture('signed_record_data_example_org')),
     (pytest.lazy_fixture('client_user_tenant_user'), pytest.lazy_fixture('signed_record_data_example_org')),
@@ -65,6 +68,7 @@ def test_recorddeleteview_denied(client, mock_pdns_delete_record, record_data):
     assert response.status_code == 403
     mock_pdns_delete_record.assert_not_called()
 
+
 @pytest.mark.django_db()
 def test_recorddeleteview_name_missmatch(client_user_tenant_admin, mock_pdns_delete_record, signed_record_data_example_org):
     response = client_user_tenant_admin.post(reverse('zoneeditor:zone_record_delete', kwargs={'zone': 'example.com.'}),
@@ -75,11 +79,13 @@ def test_recorddeleteview_name_missmatch(client_user_tenant_admin, mock_pdns_del
     assert response.status_code == 400
     mock_pdns_delete_record.assert_not_called()
 
+
 @pytest.mark.django_db()
 def test_recorddeleteview_post_unauthenicated(client):
     url = reverse('zoneeditor:zone_record_delete', kwargs={'zone': 'example.com.'})
     response = client.post(url)
     TestCase().assertRedirects(response, f'/accounts/login/?next={url}')
+
 
 @pytest.mark.django_db()
 def test_recorddeleteview_post_no_confirm(client_admin, mock_pdns_delete_record, signed_record_data_example_com):
@@ -90,6 +96,7 @@ def test_recorddeleteview_post_no_confirm(client_admin, mock_pdns_delete_record,
     })
     TestCase().assertRedirects(response, '/zones/example.com./records', fetch_redirect_response=False)
     mock_pdns_delete_record.assert_not_called()
+
 
 @pytest.mark.django_db()
 def test_recorddeleteview_post_empty_confirm(client_admin, mock_pdns_delete_record, signed_record_data_example_com):

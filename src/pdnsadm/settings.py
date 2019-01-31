@@ -203,7 +203,7 @@ ZONE_DEFAULT_NAMESERVERS = env('ZONE_DEFAULT_NAMESERVERS', [], kind=list)
 
 if env('USE_DEFAULT_RECORD_TYPES', True, kind=bool):
     RECORD_TYPES = [
-        'A', 'AAAA', 'AFSDB', 'ALIAS', 'CAA', 'CERT', 'CDNSKEY','CDS',
+        'A', 'AAAA', 'AFSDB', 'ALIAS', 'CAA', 'CERT', 'CDNSKEY', 'CDS',
         'CNAME', 'DNAME', 'DS', 'KEY', 'LOC', 'MX', 'NAPTR',
         'NS', 'OPENPGPKEY', 'PTR', 'RP', 'SOA', 'SSHFP', 'SRV',
         'TKEY', 'TSIG', 'TLSA', 'SMIMEA', 'TXT', 'URI',

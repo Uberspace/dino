@@ -12,6 +12,7 @@ class T(PDNSDataView, TemplateView):
         super().__init__(*args, **kwargs)
         self.request = RequestFactory().get(self._request)
 
+
 def test_pdnsdataview():
     class C(T):
         def get_objects(self):
@@ -24,6 +25,7 @@ def test_pdnsdataview():
     assert data['count_shown'] == 19
     assert data['objects'][0] == 0
     assert data['objects'][-1] == 18
+
 
 def test_pdnsdataview_limit_objects():
     class C(T):
@@ -38,6 +40,7 @@ def test_pdnsdataview_limit_objects():
     assert data['objects'][0] == 0
     assert data['objects'][-1] == 19
 
+
 def test_pdnsdataview_max_objects():
     class C(T):
         max_objects = 5
@@ -48,6 +51,7 @@ def test_pdnsdataview_max_objects():
     data = C().get_context_data()
 
     assert len(data['objects']) == 5
+
 
 def test_pdnsdataview_search():
     class C(T):
@@ -78,7 +82,7 @@ def test_pdnsdataview_search_object():
 
         def get_objects(self):
             return [
-                type('Record', (object,), {'name':'something.domain.com', 'content': 'aaa'})()
+                type('Record', (object,), {'name': 'something.domain.com', 'content': 'aaa'})()
             ]
 
     c = C()
@@ -91,6 +95,7 @@ def test_pdnsdataview_search_object():
     c.filter_properties = ['content']
     data = c.get_context_data()
     assert len(data['objects']) == 0
+
 
 def test_pdnsdataview_search_echo():
     class C(T):

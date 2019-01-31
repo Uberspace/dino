@@ -1,6 +1,6 @@
 import powerdns
 from django.conf import settings
-from powerdns.exceptions import *
+from powerdns.exceptions import PDNSError  # noqa
 
 
 class PDNSNotFoundException(LookupError):

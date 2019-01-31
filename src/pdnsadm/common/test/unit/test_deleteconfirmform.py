@@ -19,9 +19,10 @@ def test_deleteconfirmform_missing_clean(form_data):
     f = DeleteConfirmForm(None, data=form_data)
 
     with pytest.raises(Exception) as excinfo:
-       f.confirmed
+        f.confirmed
 
     assert 'full_clean' in str(excinfo)
+
 
 def test_deleteconfirmform_confirm_data_empty(form_data, delete_entity):
     f = DeleteConfirmForm(delete_entity, data=form_data)
@@ -30,6 +31,7 @@ def test_deleteconfirmform_confirm_data_empty(form_data, delete_entity):
     assert not f.confirmed
     delete_entity.assert_not_called()
 
+
 def test_deleteconfirmform_confirm_data_no(form_data, delete_entity):
     form_data['confirm'] = 'false'
     f = DeleteConfirmForm(delete_entity, data=form_data)
@@ -37,6 +39,7 @@ def test_deleteconfirmform_confirm_data_no(form_data, delete_entity):
     assert f.confirm_asked
     assert not f.confirmed
     delete_entity.assert_not_called()
+
 
 def test_deleteconfirmform_confirm_data_yes(form_data, delete_entity):
     form_data['confirm'] = 'true'

@@ -1,5 +1,3 @@
-from collections import namedtuple
-
 import pytest
 from django.shortcuts import reverse
 from django.test import TestCase
@@ -16,6 +14,7 @@ def mock_pdns_get_records(mocker):
     ]
     return mocker.patch('pdnsadm.pdns_api.pdns.get_records', return_value=rval)
 
+
 @pytest.mark.parametrize('client', [
     (pytest.lazy_fixture('client_admin')),
     (pytest.lazy_fixture('client_user_tenant_admin')),
@@ -30,6 +29,7 @@ def test_recordlistview(client, mock_pdns_get_records):
     assert 'example.com.' in content
     assert 'mail.example.org.' in content
 
+
 @pytest.mark.parametrize('client', [
     (pytest.lazy_fixture('client_user_tenant_admin')),
     (pytest.lazy_fixture('client_user_tenant_user')),
@@ -39,6 +39,7 @@ def test_recordlistview_denied(client, mock_pdns_get_records):
     response = client.post(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.org.'}))
     assert response.status_code == 403
 
+
 @pytest.mark.django_db()
 def test_recordlistview_404(client_admin, mocker):
     from pdnsadm.pdns_api import PDNSNotFoundException
@@ -46,11 +47,13 @@ def test_recordlistview_404(client_admin, mocker):
     response = client_admin.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'}))
     assert response.status_code == 404
 
+
 @pytest.mark.django_db()
 def test_recordlistview_unauthenicated(client):
     url = reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'})
     response = client.get(url)
     TestCase().assertRedirects(response, f'/accounts/login/?next={url}')
+
 
 @pytest.mark.django_db()
 def test_recordlistview_user_tenant_admin(client_user_tenant_admin, mock_pdns_get_zones, mock_pdns_get_records):
@@ -61,8 +64,9 @@ def test_recordlistview_user_tenant_admin(client_user_tenant_admin, mock_pdns_ge
     assert 'example.com.' in content
     assert 'mail.example.org.' in content
 
+
 @pytest.mark.django_db()
 def test_recordlistview_user_no_tenant(client_user_no_tenant, db_zone, mock_pdns_get_zones, mock_pdns_get_records):
     response = client_user_no_tenant.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'}))
-    content = response.content.decode()
+    response.content.decode()
     assert response.status_code == 403

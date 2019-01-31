@@ -2,10 +2,12 @@ import pytest
 import powerdns
 from ... import PDNSNotFoundException
 
+
 @pytest.fixture
 def pdns():
     from ... import pdns
     return pdns()
+
 
 @pytest.fixture
 def client(mocker):
@@ -22,28 +24,34 @@ def client(mocker):
     mocker.patch('powerdns.interface.PDNSEndpoint.servers', new_callable=mocker.PropertyMock, return_value=[server])
     return client, server
 
+
 # putting the mocks directly into the test functions doesn't mock them
 @pytest.fixture
 def mock_lib_pdns_create_zone(mocker, client):
     return mocker.patch('powerdns.interface.PDNSServer.create_zone')
+
 
 @pytest.mark.parametrize('kind', ['Native', 'Master', 'Slave'])
 def test_pdns_create_zone(pdns, kind, mock_lib_pdns_create_zone):
     pdns.create_zone('example.com.', 'Native', [])
     mock_lib_pdns_create_zone.assert_called_once_with('example.com.', 'Native', [])
 
+
 def test_pdns_create_zone_kind(pdns):
     with pytest.raises(Exception) as excinfo:
         pdns.create_zone('example.com.', 'Blargh', [])
     assert 'Native' in str(excinfo)
 
+
 @pytest.fixture
 def mock_lib_pdns_delete_zone(mocker, client):
     return mocker.patch('powerdns.interface.PDNSServer.delete_zone')
 
+
 def test_pdns_delete_zone(pdns, mock_lib_pdns_delete_zone):
     pdns.delete_zone('example.com.')
     mock_lib_pdns_delete_zone.assert_called_once_with('example.com.')
+
 
 @pytest.fixture
 def mock_lib_pdns_get_zone(mocker, client):
@@ -53,6 +61,7 @@ def mock_lib_pdns_get_zone(mocker, client):
             'url': '',
         })
     )
+
 
 @pytest.fixture
 def mock_lib_pdns_axfr(mocker):
@@ -66,6 +75,7 @@ mail.example.com.\t600\tA\t4.3.2.1
         }
     )
 
+
 def test_pdns_get_all_records(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
     r = pdns.get_all_records('example.com.')
     r = list(r)
@@ -74,6 +84,7 @@ def test_pdns_get_all_records(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
         {'zone': 'example.com.', 'name': 'www.example.com.', 'ttl': 300, 'rtype': 'AAAA', 'content': '4.3.2.1'},
         {'zone': 'example.com.', 'name': 'mail.example.com.', 'ttl': 600, 'rtype': 'A', 'content': '4.3.2.1'},
     ]
+
 
 def test_pdns_get_records(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
     r = pdns.get_records('example.com.')
@@ -84,6 +95,7 @@ def test_pdns_get_records(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
         {'zone': 'example.com.', 'name': 'mail.example.com.', 'ttl': 600, 'rtype': 'A', 'content': '4.3.2.1'},
     ]
 
+
 def test_pdns_get_records_name(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
     r = pdns.get_records('example.com.', name='www.example.com.')
     r = list(r)
@@ -92,6 +104,7 @@ def test_pdns_get_records_name(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone)
         {'zone': 'example.com.', 'name': 'www.example.com.', 'ttl': 300, 'rtype': 'AAAA', 'content': '4.3.2.1'},
     ]
 
+
 def test_pdns_get_records_rtype(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
     r = pdns.get_records('example.com.', rtype='A')
     r = list(r)
@@ -99,9 +112,11 @@ def test_pdns_get_records_rtype(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone
         {'zone': 'example.com.', 'name': 'mail.example.com.', 'ttl': 600, 'rtype': 'A', 'content': '4.3.2.1'},
     ]
 
+
 @pytest.fixture
 def mock_create_records(mocker):
     return mocker.patch('powerdns.interface.PDNSZone.create_records')
+
 
 def test_pdns_create_record(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone, mock_create_records):
     pdns.create_record('example.com.', 'www.example.com.', 'AAAA', 400, '0 example.org.')
@@ -117,6 +132,7 @@ def test_pdns_create_record(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone, mo
         {'content': '0 example.org.', 'disabled': False},
     ]
 
+
 def test_pdns_delete_record(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone, mock_create_records):
     pdns.delete_record('example.com.', 'www.example.com.', 'AAAA', '1.2.3.4')
     mock_create_records.assert_called_once()
@@ -128,6 +144,7 @@ def test_pdns_delete_record(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone, mo
     assert rrsets[0][0]['records'] == [
         {'content': '4.3.2.1', 'disabled': False},
     ]
+
 
 @pytest.mark.parametrize('args', [
     ['example.com.', 'www.example.com.', 'AAAA', '5.5.5.5'],

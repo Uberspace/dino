@@ -8,10 +8,10 @@ def test_nonewusersaccountadapter():
     adapter = NoNewUsersAccountAdapter()
     request = RequestFactory().get('/')
 
-    assert adapter.is_open_for_signup(request) == False
+    assert adapter.is_open_for_signup(request) is False
 
     with override_settings(ENABLE_SIGNUP=False):
-        assert adapter.is_open_for_signup(request) == False
+        assert adapter.is_open_for_signup(request) is False
 
     with override_settings(ENABLE_SIGNUP=True):
-        assert adapter.is_open_for_signup(request) == True
+        assert adapter.is_open_for_signup(request) is True

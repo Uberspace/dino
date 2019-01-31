@@ -5,6 +5,7 @@ from ...models import Zone
 def test_zone_str():
     assert 'example.com.' in str(Zone(name='example.com.'))
 
+
 @pytest.mark.django_db()
 def test_zone_import_from_powerdns(MockPDNSZone):
     Zone().import_from_powerdns((
