@@ -4,9 +4,9 @@ from ...views import DeleteConfirmForm
 
 
 @pytest.fixture
-def form_data(signed_zone_name):
+def form_data(signed_example_com):
     return {
-        'identifier': signed_zone_name,
+        'identifier': signed_example_com,
     }
 
 

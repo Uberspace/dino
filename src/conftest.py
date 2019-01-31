@@ -100,5 +100,5 @@ def mock_pdns_delete_record(mocker):
     return mocker.patch('pdnsadm.pdns_api.pdns.delete_record')
 
 @pytest.fixture
-def signed_zone_name():
+def signed_example_com():
     return signing.dumps('example.com.')
