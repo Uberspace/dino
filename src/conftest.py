@@ -31,16 +31,17 @@ def tenant(db_zone):
   return tenant
 
 @pytest.fixture
-def user_tenant(tenant):
+def user_tenant_admin(tenant):
+  from pdnsadm.tenants.models import PermissionLevels
   user = get_user_model().objects.create(
     username='tenanteduser',
   )
-  tenant.users.add(user)
+  tenant.users.add(user, through_defaults={'level': PermissionLevels.ADMIN})
   return user
 
 @pytest.fixture
-def client_user_tenant(client, user_tenant):
-  client.force_login(user_tenant)
+def client_user_tenant_admin(client, user_tenant_admin):
+  client.force_login(user_tenant_admin)
   return client
 
 @pytest.fixture
