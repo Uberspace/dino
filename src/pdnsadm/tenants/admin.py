@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import Tenant, Membership
 
 
-class MembershipInline(admin.StackedInline):
+class MembershipInline(admin.TabularInline):
     model = Membership
     raw_id_fields = ('user',)
     extra = 1
