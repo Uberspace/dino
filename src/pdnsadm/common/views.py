@@ -45,6 +45,67 @@ class DeleteConfirmForm(forms.Form):
 
 
 class DeleteConfirmView(FormView):
+    """
+    Delete something, but ask the user for confirmation first. It has able to
+    pass arbitrary data from the "delete"-button, through confirmation to the
+    actual delete function. The data is protected by djangos signing feature.
+
+    Flow:
+      1. User clicks delete <button> on unrelated page
+      2. <form> sends to request to your DeleteConfirmForm derivative
+         passes along a signed primary key in POST[identifier].
+      3. DeleteConfirmForm check for the presence of POST[confirm]
+        3a. DeleteConfirmForm asks user for confirmation
+        3b. user confirms
+      4. DeleteConfirmForm calls your `delete_entity()`
+      5. DeleteConfirmForm redirects to `redirect_url`
+
+    To use this class, first create a view inheriting from this one:
+
+        class RecordDeleteView(DeleteConfirmView):
+            redirect_url = None  # see get_redirect_url()
+
+            def delete_entity(self, identifier):
+                # actually delete the object identified by `identifier`
+                # at this point the View has made sure that this deletion has
+                # been requested using POST and that the user as confirmed the
+                # deletion.
+                #
+                # This method can also be used for last-minute permission
+                # checks. Raise a django.core.exceptions.PermissionDenied().
+                #
+                # required.
+
+            def get_redirect_url(self, rr):
+                # URL to redirect to after successful deletion or cancelation.
+                # if the deletion failed, the confirmation form is shown again,
+                # along with an error message.
+                # Alternatively a static URL can be provided in redirect_url.
+                #
+                # required.
+
+            def get_display_identifier(self, identifier):
+                # return a human-readable representation of `identifier`
+                # used to ask the user for confirmation.
+                #
+                # optional, default: the identifier itself.
+
+            def get_success_message(self, identifier):
+                # message to show when the
+                #
+                # optional, default: '... has been deleted.'
+
+    Register your view under some URL (e.g. `/resource/delete`). Then, place a
+    delete button somewhere like so:
+
+        {% load deleteconfirm %}
+        <form action="/resource/delete" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="identifier" value="{{ obj.pk|sign }}">
+            <button type="submit" class="button tiny alert">{% trans 'delete' %}</button>
+        </form>
+    """
+
     template_name = "common/delete_confirm.html"
     form_class = DeleteConfirmForm
     """ URL to redirect to after deletion or cancellation, see also get_redirect_url() """
