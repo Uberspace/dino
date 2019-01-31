@@ -16,14 +16,28 @@ def mock_pdns_get_records(mocker):
     ]
     return mocker.patch('pdnsadm.pdns_api.pdns.get_records', return_value=rval)
 
+@pytest.mark.parametrize('client', [
+    (pytest.lazy_fixture('client_admin')),
+    (pytest.lazy_fixture('client_user_tenant_admin')),
+    (pytest.lazy_fixture('client_user_tenant_user')),
+])
 @pytest.mark.django_db()
-def test_recordlistview(client_admin, mock_pdns_get_records):
-    response = client_admin.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'}))
+def test_recordlistview(client, mock_pdns_get_records):
+    response = client.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'}))
     content = response.content.decode()
     assert response.status_code == 200
     assert 'mail.example.com.' in content
     assert 'example.com.' in content
     assert 'mail.example.org.' in content
+
+@pytest.mark.parametrize('client', [
+    (pytest.lazy_fixture('client_user_tenant_admin')),
+    (pytest.lazy_fixture('client_user_tenant_user')),
+])
+@pytest.mark.django_db()
+def test_recordlistview_denied(client, mock_pdns_get_records):
+    response = client.post(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.org.'}))
+    assert response.status_code == 403
 
 @pytest.mark.django_db()
 def test_recordlistview_404(client_admin, mocker):
