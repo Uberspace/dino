@@ -5,7 +5,7 @@ from django.http import Http404
 from django.urls import reverse, reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, SuspiciousOperation
 
 from rules.contrib.views import PermissionRequiredMixin
 
@@ -197,6 +197,12 @@ class RecordDeleteView(ZoneDetailMixin, DeleteConfirmView):
         return f"{rr['rtype']} {rr['name']} {rr['content']}"
 
     def delete_entity(self, rr):
+        # permission check is done based on kwarg, so make sure we use the same for deletion.
+        # even without this check the delete would eventually fail because the client tries
+        # to delete "www.example.com." out of zone "example.org.", which only makes sense
+        # for every special constellations (e.g. "customer.com.internal.proxy").
+        if rr['zone'] != self.kwargs['zone']:
+            raise SuspiciousOperation('zone name in kwargs does not match zone name in payload.')
         pdns().delete_record(rr['zone'], rr['name'], rr['rtype'], rr['content'])
 
     def get_redirect_url(self, rr):
