@@ -32,7 +32,7 @@ setup(
             'beautifulsoup4',
             'isort',
             'pylama',
-            'pytest',
+            'pytest!=4.2.0,>=3.6',  # pytest-django version requirement
             'pytest-cov',
             'pytest-django',
             'pytest-mock',
