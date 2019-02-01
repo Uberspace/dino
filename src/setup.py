@@ -36,7 +36,7 @@ setup(
             'pytest-cov',
             'pytest-django',
             'pytest-mock',
-            'pytest-lazy-fixture==0.5.*'
+            'pytest-lazy-fixture==0.5.*',
             'ipython',
             'django-extensions',
         ],
