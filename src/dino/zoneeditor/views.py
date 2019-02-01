@@ -8,9 +8,9 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from rules.contrib.views import PermissionRequiredMixin
 
-from pdnsadm.common.views import DeleteConfirmView
-from pdnsadm.pdns_api import PDNSError, PDNSNotFoundException, pdns
-from pdnsadm.synczones.models import Zone
+from dino.common.views import DeleteConfirmView
+from dino.pdns_api import PDNSError, PDNSNotFoundException, pdns
+from dino.synczones.models import Zone
 
 
 class PDNSDataView():

@@ -42,8 +42,8 @@ def test_deleteconfirmview_post_confirmed(mocker, mock_delete_entity, mock_messa
 
 
 def test_deleteconfirmview_post_error(mocker, mock_messages_success, mock_messages_error, signed_example_com):
-    from pdnsadm.pdns_api import PDNSError
-    delete_entity = mocker.patch('pdnsadm.common.views.DeleteConfirmView.delete_entity', side_effect=PDNSError('/', 400, 'something broke'))
+    from dino.pdns_api import PDNSError
+    delete_entity = mocker.patch('dino.common.views.DeleteConfirmView.delete_entity', side_effect=PDNSError('/', 400, 'something broke'))
     c = T()
     c.request = RequestFactory().post('/', data={'confirm': 'true', 'identifier': signed_example_com})
     response = c.post(c.request)

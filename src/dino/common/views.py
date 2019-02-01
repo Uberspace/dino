@@ -4,7 +4,7 @@ from django.core import signing
 from django.http import HttpResponseNotAllowed, HttpResponseRedirect
 from django.views.generic.edit import FormView
 
-from pdnsadm.pdns_api import PDNSError
+from dino.pdns_api import PDNSError
 
 
 class SignedHiddenField(forms.CharField):

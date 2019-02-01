@@ -2,7 +2,7 @@ import pytest
 from django.shortcuts import reverse
 from django.test import TestCase
 
-from pdnsadm.synczones.models import Zone
+from dino.synczones.models import Zone
 
 
 @pytest.mark.django_db()

@@ -12,7 +12,7 @@ def mock_pdns_get_records(mocker):
             ('example.com.', 300, 'MX', '0 mail.example.org.'),
         ]
     ]
-    return mocker.patch('pdnsadm.pdns_api.pdns.get_records', return_value=rval)
+    return mocker.patch('dino.pdns_api.pdns.get_records', return_value=rval)
 
 
 @pytest.mark.parametrize('client', [
@@ -42,8 +42,8 @@ def test_recordlistview_denied(client, mock_pdns_get_records):
 
 @pytest.mark.django_db()
 def test_recordlistview_404(client_admin, mocker):
-    from pdnsadm.pdns_api import PDNSNotFoundException
-    mocker.patch('pdnsadm.pdns_api.pdns.get_records', side_effect=PDNSNotFoundException)
+    from dino.pdns_api import PDNSNotFoundException
+    mocker.patch('dino.pdns_api.pdns.get_records', side_effect=PDNSNotFoundException)
     response = client_admin.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'}))
     assert response.status_code == 404
 

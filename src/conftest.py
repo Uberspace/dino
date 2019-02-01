@@ -28,7 +28,7 @@ def client_admin(base_client, user_admin):
 
 @pytest.fixture
 def tenant(db_zone):
-    from pdnsadm.tenants.models import Tenant
+    from dino.tenants.models import Tenant
     tenant = Tenant.objects.create(name="some tenant")
     tenant.zones.add(db_zone)
     return tenant
@@ -36,7 +36,7 @@ def tenant(db_zone):
 
 @pytest.fixture
 def user_tenant_admin(tenant):
-    from pdnsadm.tenants.models import PermissionLevels
+    from dino.tenants.models import PermissionLevels
     user = get_user_model().objects.create(
       username='tenanteduser',
     )
@@ -52,7 +52,7 @@ def client_user_tenant_admin(base_client, user_tenant_admin):
 
 @pytest.fixture
 def user_tenant_user(tenant):
-    from pdnsadm.tenants.models import PermissionLevels
+    from dino.tenants.models import PermissionLevels
     user = get_user_model().objects.create(
       username='tenanteduser',
     )
@@ -82,7 +82,7 @@ def client_user_no_tenant(base_client, user_no_tenant):
 
 @pytest.fixture
 def db_zone():
-    from pdnsadm.synczones.models import Zone
+    from dino.synczones.models import Zone
     Zone.objects.create(
       name='example.org.',
     )
@@ -93,7 +93,7 @@ def db_zone():
 
 @pytest.fixture
 def mock_delete_entity(mocker):
-    return mocker.patch('pdnsadm.common.views.DeleteConfirmView.delete_entity')
+    return mocker.patch('dino.common.views.DeleteConfirmView.delete_entity')
 
 
 @pytest.fixture
@@ -108,12 +108,12 @@ def mock_messages_error(mocker):
 
 @pytest.fixture
 def mock_create_zone(mocker):
-    return mocker.patch('pdnsadm.pdns_api.pdns.create_zone')
+    return mocker.patch('dino.pdns_api.pdns.create_zone')
 
 
 @pytest.fixture
 def mock_create_record(mocker):
-    return mocker.patch('pdnsadm.pdns_api.pdns.create_record')
+    return mocker.patch('dino.pdns_api.pdns.create_record')
 
 
 @pytest.fixture
@@ -127,17 +127,17 @@ def mock_pdns_get_zones(mocker, MockPDNSZone):
         MockPDNSZone('example.com.'),
         MockPDNSZone('example.org.'),
     ] + [MockPDNSZone(f'example{i}.org') for i in range(500)]
-    return mocker.patch('pdnsadm.pdns_api.pdns.get_zones', return_value=rval)
+    return mocker.patch('dino.pdns_api.pdns.get_zones', return_value=rval)
 
 
 @pytest.fixture
 def mock_pdns_delete_zone(mocker):
-    return mocker.patch('pdnsadm.pdns_api.pdns.delete_zone')
+    return mocker.patch('dino.pdns_api.pdns.delete_zone')
 
 
 @pytest.fixture
 def mock_pdns_delete_record(mocker):
-    return mocker.patch('pdnsadm.pdns_api.pdns.delete_record')
+    return mocker.patch('dino.pdns_api.pdns.delete_record')
 
 
 @pytest.fixture

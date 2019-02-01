@@ -74,8 +74,8 @@ def test_zonedeleteview_post_empty_confirm(client_admin, mock_pdns_delete_zone, 
 
 @pytest.mark.django_db()
 def test_zonedeleteview_post_unknown_zone(client_admin, mocker, signed_example_com):
-    from pdnsadm.pdns_api import PDNSError
-    mocker.patch('pdnsadm.pdns_api.pdns.delete_zone', side_effect=PDNSError('/', 422, 'Could not find domain'))
+    from dino.pdns_api import PDNSError
+    mocker.patch('dino.pdns_api.pdns.delete_zone', side_effect=PDNSError('/', 422, 'Could not find domain'))
     response = client_admin.post(reverse('zoneeditor:zone_delete'), data={
         'identifier': signed_example_com,
         'confirm': 'true',

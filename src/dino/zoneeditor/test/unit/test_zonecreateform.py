@@ -29,8 +29,8 @@ def test_zonecreateform_invalid_no_creation(mock_create_zone):
 
 
 def test_zonecreateform_api_error(mocker):
-    from pdnsadm.pdns_api import PDNSError
-    m = mocker.patch('pdnsadm.pdns_api.pdns.create_zone', side_effect=PDNSError('/', 400, 'broken'))
+    from dino.pdns_api import PDNSError
+    m = mocker.patch('dino.pdns_api.pdns.create_zone', side_effect=PDNSError('/', 400, 'broken'))
     form = ZoneCreateForm({'name': 'domain.com.'})
     form.full_clean()
     assert 'broken' in form.errors['__all__'][0]

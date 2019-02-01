@@ -72,8 +72,8 @@ def test_recordcreateform_invalid_no_creation(mock_create_record):
 
 
 def test_recordcreateform_api_error(mocker, create_record_data):
-    from pdnsadm.pdns_api import PDNSError
-    m = mocker.patch('pdnsadm.pdns_api.pdns.create_record', side_effect=PDNSError('/', 400, 'broken'))
+    from dino.pdns_api import PDNSError
+    m = mocker.patch('dino.pdns_api.pdns.create_record', side_effect=PDNSError('/', 400, 'broken'))
     form = RecordCreateForm('example.com.', create_record_data)
     form.full_clean()
     assert 'broken' in form.errors['__all__'][0]

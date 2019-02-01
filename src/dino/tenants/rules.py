@@ -1,7 +1,7 @@
 import rules
 
-from pdnsadm.synczones.models import Zone
-from pdnsadm.tenants.models import Membership, PermissionLevels
+from dino.synczones.models import Zone
+from dino.tenants.models import Membership, PermissionLevels
 
 
 @rules.predicate

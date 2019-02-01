@@ -1,7 +1,7 @@
 from django.urls import path
 from django.views.generic.base import RedirectView
 
-import pdnsadm.zoneeditor.views as views
+import dino.zoneeditor.views as views
 
 app_name = 'zoneeditor'
 urlpatterns = [

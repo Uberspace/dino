@@ -1,7 +1,7 @@
 from setuptools import find_packages, setup
 
 setup(
-    name='pdnsadm',
+    name='dino',
     version='0.1',
     python_requires='>=3.7',
     description='Admin interface for PowerDNS.',

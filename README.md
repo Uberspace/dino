@@ -1,4 +1,4 @@
-# pdnsadm
+# dino
 
 ## Setup
 
@@ -12,17 +12,17 @@ or run django outside docker for easier debugging:
 
 ```
 docker-compose up --build --scale django=0
-export PDNSADM_DEBUG=True
-export PDNSADM_SECRET_KEY=secret
-export PDNSADM_PDNS_APIURL=http://localhost:8081/api/v1
-export PDNSADM_PDNS_APIKEY=pdnsapikey
+export DINO_DEBUG=True
+export DINO_SECRET_KEY=secret
+export DINO_PDNS_APIURL=http://localhost:8081/api/v1
+export DINO_PDNS_APIKEY=pdnsapikey
 cd src
 ./manage.py runserver
 ```
 
 ## Configuration
 
-All config-options are prefixed with `PDNSADM_`.
+All config-options are prefixed with `DINO_`.
 
 ### Django Settings
 
