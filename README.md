@@ -1,4 +1,5 @@
 # dino
+[![Build Status](https://travis-ci.com/Uberspace/dino.svg?branch=master)](https://travis-ci.com/Uberspace/dino)
 
 ## Setup
 
