@@ -29,16 +29,17 @@ setup(
     ],
     extras_require={
         'dev': [
-            'beautifulsoup4',
             'isort',
             'pylama',
+            'ipython',
+            'django-extensions',
+        ],
+        'test': [
             'pytest!=4.2.0,>=3.6',  # pytest-django version requirement
             'pytest-cov',
             'pytest-django',
             'pytest-mock',
             'pytest-lazy-fixture==0.5.*',
-            'ipython',
-            'django-extensions',
         ],
     },
     packages=find_packages(exclude=['tests', 'tests.*']),
