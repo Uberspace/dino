@@ -1,0 +1,18 @@
+language: python
+
+sudo: required
+dist: xenial
+
+matrix:
+  include:
+    - python: "3.6"
+      env: TOXENV=lint
+    - python: "3.6"
+      env: TOXENV=test-py36
+    - python: "3.7"
+      env: TOXENV=test-py37
+
+install: pip -q install tox
+before_script: cd src
+script: tox
+
