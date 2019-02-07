@@ -3,7 +3,13 @@ from collections import namedtuple
 import pytest
 from django.contrib.auth import get_user_model
 from django.core import signing
+from django.core.management import call_command
 from django.test import Client
+
+
+@pytest.fixture(scope="session", autouse=True)
+def collect_static(request):
+    call_command('collectstatic', '--noinput', '--clear')
 
 
 @pytest.fixture
