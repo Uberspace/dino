@@ -14,5 +14,6 @@ matrix:
 
 install: pip -q install tox
 before_script: cd src
-script: tox
-
+script:
+  - tox
+  - codecov
