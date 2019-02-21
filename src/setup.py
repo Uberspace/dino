@@ -43,6 +43,7 @@ setup(
         ],
         'doc': [
             'sphinx',
+            'sphinx_rtd_theme',
         ],
     },
     packages=find_packages(exclude=['tests', 'tests.*']),
