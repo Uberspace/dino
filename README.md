@@ -1,6 +1,7 @@
 # dino
 [![Build Status](https://travis-ci.com/Uberspace/dino.svg?branch=master)](https://travis-ci.com/Uberspace/dino)
 [![Coverage](https://codecov.io/gh/Uberspace/dino/branch/master/graph/badge.svg)](https://codecov.io/gh/Uberspace/dino)
+[![Documentation](https://readthedocs.org/projects/dino/badge/?version=latest)](https://dino.readthedocs.io/en/latest/?badge=latest)
 
 ## Setup
 
