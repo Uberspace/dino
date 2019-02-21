@@ -41,6 +41,9 @@ setup(
             'pytest-mock',
             'pytest-lazy-fixture==0.5.*',
         ],
+        'doc': [
+            'sphinx',
+        ],
     },
     packages=find_packages(exclude=['tests', 'tests.*']),
     include_package_data=True,
