@@ -12,7 +12,7 @@ matrix:
     - python: "3.7"
       env: TOXENV=test-py37
 
-install: pip -q install tox
+install: pip -q install tox codecov
 before_script: cd src
 script:
   - tox
