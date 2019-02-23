@@ -10,44 +10,25 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
-import distutils.util
 import os
+import sys
 
 import dj_database_url
-from django.core.exceptions import ImproperlyConfigured
+from .config import Config
 
-
-def env(name, default='__unset', kind=str):
-    env_name = f'DINO_{name.upper()}'
-
-    try:
-        value = os.environ[env_name]
-    except LookupError:
-        if default != '__unset':
-            return default
-        else:
-            raise ImproperlyConfigured(f'Environment variable ${env_name} is not set.')
-
-    if kind == str:
-        return value
-    elif kind == list:
-        return value.split(',')
-    elif kind == bool:
-        return distutils.util.strtobool(value)
-    else:
-        raise Exception(f'Invalid variable type {kind} for {name}/{env_name}.')
+cfg = Config('DINO')
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 DEFAULT_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_DIR = env('BASE_DIR', DEFAULT_BASE_DIR)
+BASE_DIR = cfg.get('BASE_DIR', DEFAULT_BASE_DIR)
 
-SECRET_KEY = env('SECRET_KEY')
-TIMEZONE = env('TIMEZONE')
-DEBUG = env('DEBUG', False, bool)
-ALLOWED_HOSTS = env('ALLOWED_HOSTS', [], list)
-PDNS_APIURL = env('PDNS_APIURL')
-PDNS_APIKEY = env('PDNS_APIKEY')
+SECRET_KEY = cfg.get('SECRET_KEY')
+TIMEZONE = cfg.get('TIMEZONE')
+DEBUG = cfg.get('DEBUG', False, bool)
+ALLOWED_HOSTS = cfg.get('ALLOWED_HOSTS', [], list)
+PDNS_APIURL = cfg.get('PDNS_APIURL')
+PDNS_APIKEY = cfg.get('PDNS_APIKEY')
 
 # Application definition
 
@@ -135,7 +116,7 @@ LOGIN_REDIRECT_URL = '/'
 
 default_db_url = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
 DATABASES = {
-    'default': dj_database_url.config(default=env('DB_URL', default_db_url), conn_max_age=600),
+    'default': dj_database_url.config(default=cfg.get('DB_URL', default_db_url), conn_max_age=600),
 }
 
 # Password validation
@@ -203,13 +184,13 @@ LOGGING = {
 
 
 # Custom Settings
-ENABLE_SIGNUP = env('ENABLE_SIGNUP', False, kind=bool)
+ENABLE_SIGNUP = cfg.get('ENABLE_SIGNUP', False, cast=bool)
 # may be 'Native', 'Master' or 'Slave'
 # see https://doc.powerdns.com/authoritative/http-api/zone.html#zone
-ZONE_DEFAULT_KIND = env('ZONE_DEFAULT_KIND', 'Native', kind=bool)
-ZONE_DEFAULT_NAMESERVERS = env('ZONE_DEFAULT_NAMESERVERS', [], kind=list)
+ZONE_DEFAULT_KIND = cfg.get('ZONE_DEFAULT_KIND', 'Native', cast=bool)
+ZONE_DEFAULT_NAMESERVERS = cfg.get('ZONE_DEFAULT_NAMESERVERS', [], cast=list)
 
-if env('USE_DEFAULT_RECORD_TYPES', True, kind=bool):
+if cfg.get('USE_DEFAULT_RECORD_TYPES', True, cast=bool):
     RECORD_TYPES = [
         'A', 'AAAA', 'AFSDB', 'ALIAS', 'CAA', 'CERT', 'CDNSKEY', 'CDS',
         'CNAME', 'DNAME', 'DS', 'KEY', 'LOC', 'MX', 'NAPTR',
@@ -219,5 +200,8 @@ if env('USE_DEFAULT_RECORD_TYPES', True, kind=bool):
 else:
     RECORD_TYPES = []
 
-RECORD_TYPES = RECORD_TYPES + env('CUSTOM_RECORD_TYPES', [], kind=list)
+RECORD_TYPES = RECORD_TYPES + cfg.get('CUSTOM_RECORD_TYPES', [], cast=list)
 RECORD_TYPES = [(t, t) for t in RECORD_TYPES]
+
+if not cfg.check_errors():
+    sys.exit(1)
