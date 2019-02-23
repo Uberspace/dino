@@ -43,6 +43,7 @@ DEFAULT_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = env('BASE_DIR', DEFAULT_BASE_DIR)
 
 SECRET_KEY = env('SECRET_KEY')
+TIMEZONE = env('TIMEZONE')
 DEBUG = env('DEBUG', False, bool)
 ALLOWED_HOSTS = env('ALLOWED_HOSTS', [], list)
 PDNS_APIURL = env('PDNS_APIURL')
