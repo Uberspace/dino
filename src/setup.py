@@ -44,6 +44,7 @@ setup(
         'doc': [
             'sphinx',
             'sphinx_rtd_theme',
+            'sphinx-autobuild',
         ],
     },
     packages=find_packages(exclude=['tests', 'tests.*']),
