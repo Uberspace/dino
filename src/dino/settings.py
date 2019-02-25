@@ -16,7 +16,14 @@ import sys
 import dj_database_url
 from .config import Config
 
-cfg = Config('DINO')
+cfg = Config(
+    'DINO',
+    env_files=[
+        '/etc/dino.cfg',
+        os.path.expanduser('~/.dino.cfg'),
+        os.path.abspath('./dino.cfg'),
+    ]
+)
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
