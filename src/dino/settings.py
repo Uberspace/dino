@@ -34,7 +34,6 @@ DEFAULT_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = cfg.get('BASE_DIR', DEFAULT_BASE_DIR)
 
 SECRET_KEY = cfg.get('SECRET_KEY')
-TIMEZONE = cfg.get('TIMEZONE', 'UTC')
 DEBUG = cfg.get('DEBUG', False, bool)
 ALLOWED_HOSTS = cfg.get('ALLOWED_HOSTS', [], list)
 PDNS_APIURL = cfg.get('PDNS_APIURL')
@@ -153,7 +152,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = cfg.get('TIMEZONE', 'UTC')
 
 USE_I18N = True
 
