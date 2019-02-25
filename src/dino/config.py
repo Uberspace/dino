@@ -55,7 +55,7 @@ class Config():
         env_key = self._env_key(key)
 
         with contextlib.suppress(KeyError):
-            value = self._cast(self._config_file[key], cast)
+            value = self._cast(self._config_file[env_key], cast)
         with contextlib.suppress(KeyError):
             value = self._cast(os.environ[env_key], cast)
 
