@@ -142,4 +142,7 @@ dmypy.json
 # Vagrant
 .vagrant
 
+# development config files
+dino.cfg
+
 # End of https://www.gitignore.io/api/django,visualstudiocode
