@@ -19,7 +19,7 @@ setup(
     ],
     keywords='dns powerdns pdns admin administration',
     install_requires=[
-        'Django==2.2a1',
+        'Django==2.2b1',
         'dj-database-url==0.5.*',
         'requests',  # should be installed with python-powerdns ... ?
         'python-powerdns@https://github.com/vente-privee/python-powerdns/archive/1c61c574399e3e486a6e0b9d1e3d0521b2fa00a0.zip',
