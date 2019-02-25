@@ -16,14 +16,17 @@ import sys
 import dj_database_url
 from .config import Config
 
-cfg = Config(
-    'DINO',
-    env_files=[
-        '/etc/dino.cfg',
-        os.path.expanduser('~/.dino.cfg'),
-        os.path.abspath('./dino.cfg'),
-    ]
-)
+env_files = [
+    '/etc/dino.cfg',
+    os.path.expanduser('~/.dino.cfg'),
+]
+
+try:
+    env_files.append(os.path.abspath('./dino.cfg'))
+except OSError:  # cwd not accessible
+    pass
+
+cfg = Config('DINO', env_files=env_files)
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
