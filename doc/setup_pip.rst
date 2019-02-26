@@ -39,7 +39,7 @@ Python 3.6
 ^^^^^^^^^^
 
 Python 3.6 or newer is required. Ubuntu already comes with python 3.6, so we're
-good here. To complete the our python setup, install the package manager pip,
+good here. To complete the python setup, install the package manager pip,
 which is needed later.
 
 .. code-block:: console
@@ -64,7 +64,7 @@ which is needed later.
 uWSGI
 ^^^^^
 
-uWSGI actually runs dino will later provide it via HTTP on port 8080. It is
+uWSGI actually runs dino and will later provide it via HTTP on port 8080. It is
 installed globally using pythons dependency manager ``pip``:
 
 .. code-block:: console
@@ -88,7 +88,7 @@ To make sure dino can only access what it needs to access, create a new user.
 .. code-block:: console
 
   root@ubuntu-bionic:~# adduser --disabled-password --disabled-login \
-    --system --home /var/dino www-dino
+    --system --home /opt/dino www-dino
 
 Dino
 ----
