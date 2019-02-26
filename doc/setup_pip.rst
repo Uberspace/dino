@@ -61,6 +61,24 @@ which is needed later.
   **CentOS** users can get python 3.6 from the `IUS Project <https://ius.io>`_;
   install ``python36u`` as well as ``python36u-pip``.
 
+Other dependencies
+^^^^^^^^^^^^^^^^^^
+
+We also need some further dependencies to install uWSGI via pip in the next step.
+
+.. code-block:: console
+
+  root@ubuntu-bionic:~# apt install -y python3-setuptools build-essential
+  Reading package lists... Done
+  Building dependency tree       
+  Reading state information... Done
+  The following additional packages will be installed:
+  (...)
+  root@ubuntu-bionic:~# pip3 install wheel
+  Collecting wheel
+    Downloading https://files.py..
+  (...)
+
 uWSGI
 ^^^^^
 
