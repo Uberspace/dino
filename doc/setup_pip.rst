@@ -139,7 +139,7 @@ Service
 ^^^^^^^
 
 To start dino automatically when your server boots up, create a new systemd
-unit in ``/etc/systemd/system/dino.ini`` and add the following content.
+unit in ``/etc/systemd/system/dino.service`` and add the following content.
 
 .. warning::
   The path to uwsgi (``/usr/local/bin/uwsgi``) may vary on other distributions.
