@@ -133,7 +133,7 @@ Create ``/etc/dino.cfg`` with the following content, adapt as needed.
   DINO_ALLOWED_HOSTS=
   # a place for dino to drop static files and other internal data; must be
   # writeable by dino and not publicly acccessible
-  DINO_BASE_DIR=/var/dino
+  DINO_BASE_DIR=/opt/dino
 
 Service
 ^^^^^^^
