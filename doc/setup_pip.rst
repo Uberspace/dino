@@ -182,6 +182,17 @@ By default, a SQLite database is used.
 
   root@ubuntu-bionic:~# sudo -Hu www-dino python3 -m dino migrate
 
+Assemble static files
+"""""""""""""""""""""
+
+Collect all CSS and JavaScript files and drop them in ``/opt/dino/public/static``.
+Dino serves these files by itself. It is not necessary to point you webserver
+to that directory.
+
+.. code-block:: console
+
+  root@ubuntu-bionic:~# sudo -Hu www-dino python3 -m dino collectstatic
+
 Create an admin user
 """"""""""""""""""""
 
