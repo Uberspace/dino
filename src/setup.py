@@ -1,4 +1,26 @@
+from distutils.command.build import build
+
 from setuptools import find_packages, setup
+
+
+class CustomBuild(build):
+    # lifted from pretalx (Apache 2.0), thanks!
+    # https://github.com/pretalx/pretalx/blob/master/src/setup.py
+
+    def run(self):
+        import os
+
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dino.test_settings")
+
+        import django
+
+        django.setup()
+
+        from django.core import management
+
+        management.call_command('collectstatic', verbosity=1, interactive=False)
+        build.run(self)
+
 
 setup(
     name='dino',
@@ -49,4 +71,5 @@ setup(
     },
     packages=find_packages(exclude=['tests', 'tests.*']),
     include_package_data=True,
+    cmdclass={'build': CustomBuild},
 )

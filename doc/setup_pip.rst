@@ -131,8 +131,8 @@ Create ``/etc/dino.cfg`` with the following content, adapt as needed.
   DINO_PDNS_APIKEY=
   # comma-separated list of hostnames dino should be reachable under
   DINO_ALLOWED_HOSTS=
-  # a place for dino to drop static files and other internal data; must be
-  # writeable by dino and not publicly acccessible
+  # a place for dino to drop internal data; must be writeable by dino and
+  # not publicly acccessible
   DINO_BASE_DIR=/opt/dino
   # the database to use, defaults to SQLite within BASE_DIR. Specify any URL
   # listed here: https://github.com/kennethreitz/dj-database-url#url-schema
@@ -184,17 +184,6 @@ By default, a SQLite database is used.
 .. code-block:: console
 
   root@ubuntu-bionic:~# sudo -Hu www-dino python3 -m dino migrate
-
-Assemble static files
-"""""""""""""""""""""
-
-Collect all CSS and JavaScript files and drop them in ``/opt/dino/public/static``.
-Dino serves these files by itself. It is not necessary to point you webserver
-to that directory.
-
-.. code-block:: console
-
-  root@ubuntu-bionic:~# sudo -Hu www-dino python3 -m dino collectstatic
 
 Create an admin user
 """"""""""""""""""""
