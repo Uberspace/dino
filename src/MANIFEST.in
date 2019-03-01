@@ -1,4 +1,5 @@
 recursive-include dino/common/templates *
 recursive-include dino/zoneeditor/templates *
+recursive-include dino/static.dist *
 global-exclude *.py[co]
 global-exclude __pycache__

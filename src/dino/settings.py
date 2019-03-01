@@ -165,7 +165,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'public/static')
+# put static files inside module so they can be shipped using setuptools/pip
+STATIC_ROOT = os.path.join(DEFAULT_BASE_DIR, 'dino/static.dist')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
