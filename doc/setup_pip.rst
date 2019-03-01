@@ -134,6 +134,9 @@ Create ``/etc/dino.cfg`` with the following content, adapt as needed.
   # a place for dino to drop static files and other internal data; must be
   # writeable by dino and not publicly acccessible
   DINO_BASE_DIR=/opt/dino
+  # the database to use, defaults to SQLite within BASE_DIR. Specify any URL
+  # listed here: https://github.com/kennethreitz/dj-database-url#url-schema
+  #DINO_DB_URL=
 
 Service
 ^^^^^^^
