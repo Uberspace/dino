@@ -168,8 +168,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'public/static')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'public/media')
-
 
 # Logging
 # https://docs.djangoproject.com/en/2.1/topics/logging/
