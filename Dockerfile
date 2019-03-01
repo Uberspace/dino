@@ -1,10 +1,11 @@
 FROM python:3.7
 
-COPY src /app
+EXPOSE 8080
 WORKDIR /app
 
-RUN pip install -e .
+# TODO: do this last
+COPY src .
+RUN pip install -e . uwsgi
 
-EXPOSE 8001
-
-CMD python manage.py runserver 0.0.0.0:8000
+USER 1000
+CMD uwsgi --http-socket :8080 --master --workers 8 --module dino.wsgi

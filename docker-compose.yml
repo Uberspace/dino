@@ -18,12 +18,15 @@ services:
   django:
     build: .
     ports:
-      - 8000:8000
+      - 8080:8080
+    # development only
+    entrypoint: python manage.py runserver 0.0.0.0:8080
     environment:
       DINO_SECRET_KEY: 'secret'
-      DINO_DEBUG: 'true'
+      DINO_DEBUG: 'True'
       DINO_PDNS_APIURL: 'http://pdns:8081/api/v1'
       DINO_PDNS_APIKEY: 'pdnsapikey'
+      DINO_ALLOWED_HOSTS: '*'
 
 volumes:
   db-data:
