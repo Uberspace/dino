@@ -1,6 +1,7 @@
 import contextlib
 import distutils.util
 import os
+import sys
 
 
 class Config():
@@ -72,6 +73,7 @@ class Config():
             print(
                 'Dino cannot be started because of missing configuration values.\n'
                 'Please correct the errors below:\n' +
-                '\n'.join(f'  {e}' for e in self._errors)
+                '\n'.join(f'  {e}' for e in self._errors),
+                file=sys.stderr,
             )
             return False
