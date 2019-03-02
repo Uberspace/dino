@@ -5,6 +5,7 @@ import dino.zoneeditor.views as views
 
 app_name = 'zoneeditor'
 urlpatterns = [
+    path('', RedirectView.as_view(pattern_name='zoneeditor:zone_list', permanent=False), name="index"),
     path('zones', views.ZoneListView.as_view(), name="zone_list"),
     path('zones/create', views.ZoneCreateView.as_view(), name="zone_create"),
     path('zones/delete', views.ZoneDeleteView.as_view(), name="zone_delete"),
