@@ -1,3 +1,5 @@
+import os
+import sys
 from collections import namedtuple
 
 import pytest
@@ -9,7 +11,13 @@ from django.test import Client
 
 @pytest.fixture(scope="session", autouse=True)
 def collect_static(request):
-    call_command('collectstatic', '--noinput', '--clear')
+    oldstdout = sys.stdout
+
+    try:
+        sys.stdout = open(os.devnull, 'w')
+        call_command('collectstatic', '--noinput', '--clear')
+    finally:
+        sys.stdout = oldstdout
 
 
 @pytest.fixture
