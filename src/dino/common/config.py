@@ -66,10 +66,14 @@ class Config():
         if cast not in self.CAST_NAMES:
             raise Exception(f'Invalid cast {cast}.')
 
-        with contextlib.suppress(KeyError):
-            value = self._cast(self._config_file[env_key], cast)
-        with contextlib.suppress(KeyError):
-            value = self._cast(os.environ[env_key], cast)
+        try:
+            with contextlib.suppress(KeyError):
+                value = self._cast(self._config_file[env_key], cast)
+            with contextlib.suppress(KeyError):
+                value = self._cast(os.environ[env_key], cast)
+        except ValueError as exc:
+            self.add_error(f'Configuration value {key}/${env_key} was invalid: {exc}.')
+            return None
 
         if value is None:
             self.add_error(f'Configuration value {key}/${env_key} is required and not set.')

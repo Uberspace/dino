@@ -64,6 +64,15 @@ def test_config_env_bool(monkeypatch, value, out):
     assert c.check_errors()
 
 
+def test_config_env_bool_invalid(monkeypatch, capsys):
+    c = Config('DINO')
+    monkeypatch.setenv('DINO_BLA', 'foo')
+    assert c.get('BLA', cast=bool) is None
+    assert not c.check_errors()
+    captured = capsys.readouterr()
+    assert '$DINO_BLA' in captured.err
+
+
 def test_config_invalid_cast():
     c = Config('DINO')
     with pytest.raises(Exception) as excinfo:
