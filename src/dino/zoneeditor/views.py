@@ -138,6 +138,7 @@ class ZoneDeleteView(PermissionRequiredMixin, DeleteConfirmView):
             raise PermissionDenied()
 
         pdns().delete_zone(pk)
+        Zone.objects.filter(name=pk).delete()
 
 
 class RecordCreateForm(forms.Form):

@@ -1,6 +1,7 @@
 import pytest
 from django.shortcuts import reverse
 from django.test import TestCase
+from dino.synczones.models import Zone
 
 
 @pytest.mark.django_db()
@@ -22,13 +23,15 @@ def test_zonedeleteview_get_unauthenicated(client):
     (pytest.lazy_fixture('client_user_tenant_admin'), pytest.lazy_fixture('signed_example_com')),
 ])
 @pytest.mark.django_db()
-def test_zonedeleteview_post_granted(client, mock_pdns_delete_zone, zone_data):
+def test_zonedeleteview_post_granted(client, mock_pdns_delete_zone, zone_data, db_zone):
+    assert Zone.objects.filter(name='example.com.').exists()
     response = client.post(reverse('zoneeditor:zone_delete'), data={
         'identifier': zone_data,
         'confirm': 'true',
     })
     TestCase().assertRedirects(response, '/zones', fetch_redirect_response=False)
     mock_pdns_delete_zone.assert_called_once_with('example.com.')
+    assert not Zone.objects.filter(name='example.com.').exists()
 
 
 @pytest.mark.parametrize('client,zone_data', [
