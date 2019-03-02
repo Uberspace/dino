@@ -5,6 +5,13 @@ import sys
 
 
 class Config():
+    CASTS = {
+        str: lambda v: v,
+        list: lambda v: v.split(','),
+        bool: distutils.util.strtobool,
+    }
+    CAST_NAMES = CASTS.keys()
+
     def __init__(self, prefix, env_files=None):
         self._prefix = prefix
         self._errors = []
@@ -50,18 +57,14 @@ class Config():
         self._errors.append(msg)
 
     def _cast(self, value, cast):
-        if cast == str:
-            return value
-        elif cast == list:
-            return value.split(',')
-        elif cast == bool:
-            return distutils.util.strtobool(value)
-        else:
-            raise Exception(f'Invalid cast {cast}.')
+        return self.CASTS[cast](value)
 
     def get(self, key, default=None, cast=str):
         value = default
         env_key = self._env_key(key)
+
+        if cast not in self.CAST_NAMES:
+            raise Exception(f'Invalid cast {cast}.')
 
         with contextlib.suppress(KeyError):
             value = self._cast(self._config_file[env_key], cast)

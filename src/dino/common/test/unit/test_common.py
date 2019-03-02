@@ -64,6 +64,13 @@ def test_config_env_bool(monkeypatch, value, out):
     assert c.check_errors()
 
 
+def test_config_invalid_cast():
+    c = Config('DINO')
+    with pytest.raises(Exception) as excinfo:
+        c.get('BLA', cast=tuple)
+    assert 'Invalid cast' in str(excinfo)
+
+
 def test_config_missing_value(capsys):
     c = Config('DINO')
     assert c.get('BLA') is None
