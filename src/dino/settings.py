@@ -14,7 +14,7 @@ import os
 import sys
 
 import dj_database_url
-from .config import Config
+from dino.common.config import Config
 
 env_files = [
     '/etc/dino.cfg',
