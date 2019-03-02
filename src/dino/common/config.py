@@ -9,31 +9,39 @@ class Config():
         self._prefix = prefix
         self._errors = []
 
-        self._config_file = {}
         if env_files:
-            self._load_env_files(env_files)
+            self._config_file = self._load_env_files(env_files)
+        else:
+            self._config_file = {}
+
+    def _load_env_file(self, env_file):
+        """
+        read all lines in a key=value format, return kv-pairs
+        skipping #comments and lines w/o key=value
+        """
+        with open(env_file) as f:
+            for l in f.readlines():
+                if l.lstrip()[0] == '#':
+                    continue
+
+                k, sep, v = l.partition('=')
+
+                if sep != '=':
+                    continue
+
+                yield (k.strip(), v.strip())
 
     def _load_env_files(self, env_files):
         """ load given .env files, latter ones overriding options in former ones. """
-        with contextlib.ExitStack() as stack:
-            env_files = [
-                stack.enter_context(open(f, 'r'))
-                for f in env_files
-                if os.path.isfile(f)
-            ]
+        config = {}
 
-            for f in env_files:
-                # read all lines, skipping #comments and lines w/o key=value
-                for l in f.readlines():
-                    if l.lstrip()[0] == '#':
-                        continue
+        for env_file in env_files:
+            if not os.path.isfile(env_file):
+                continue
 
-                    k, sep, v = l.partition('=')
+            config.update(dict(self._load_env_file(env_file)))
 
-                    if sep != '=':
-                        continue
-
-                    self._config_file[k.strip()] = v.strip()
+        return config
 
     def _env_key(self, key):
         return f'{self._prefix.upper()}_{key.upper()}'
