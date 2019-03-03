@@ -3,12 +3,6 @@
 {% load rules %}
 {% load permhelpers %}
 
-{% block breadcrumbs %}
-<li><a href="{% url 'zoneeditor:zone_list' %}">Zones</a></li>
-<li>{{ zone_name }}</li>
-<li>Records</li>
-{% endblock %}
-
 {% block content %}
 <div class="grid-x grid-margin-x">
     <form method="GET" class="cell small-12 medium-10">{{ search_form.as_p }}</form>

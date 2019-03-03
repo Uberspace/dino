@@ -1,12 +1,5 @@
 {% extends 'base.html' %}
 
-{% block breadcrumbs %}
-<li><a href="{% url 'zoneeditor:zone_list' %}">Zones</a></li>
-<li>{{ zone_name }}</li>
-<li><a href="{% url 'zoneeditor:zone_detail' zone=zone_name %}">Records</a></li>
-<li>Create</li>
-{% endblock %}
-
 {% block content %}
 <form method="POST">
     {% csrf_token %}
