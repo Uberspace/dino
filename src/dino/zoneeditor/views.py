@@ -13,6 +13,7 @@ from dino.common.fields import SignedHiddenField
 from dino.common.views import DeleteConfirmView
 from dino.pdns_api import PDNSError, PDNSNotFoundException, pdns
 from dino.synczones.models import Zone
+from dino.tenants.models import PermissionLevels, Tenant
 
 
 class PDNSDataView():
@@ -67,12 +68,33 @@ class ZoneNameValidator(RegexValidator):
 
 class ZoneCreateForm(forms.Form):
     name = forms.CharField(validators=(ZoneNameValidator(),))
+    tenants = forms.ModelMultipleChoiceField(queryset=Tenant.objects.none(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+        if self.user:
+            if self.user.has_perm('is_admin'):
+                self.fields['tenants'].queryset = Tenant.objects.all()
+            else:
+                # tenants.create_zone
+                self.fields['tenants'].queryset = self.user.tenants.filter(membership__level=PermissionLevels.ADMIN)
+
+        if self.fields['tenants'].queryset.count() == 0:
+            self.fields['tenants'].widget = forms.HiddenInput()
 
     def clean_name(self):
         name = self.cleaned_data['name']
         if not name.endswith('.'):
             name = name + '.'
         return name
+
+    def clean_tenants(self):
+        if self.user and not self.user.has_perm('is_admin') and self.cleaned_data['tenants'].count() == 0:
+            raise forms.ValidationError('Please choose a tenant, as you will otherwise not be able to access the new zone after creation.')
+
+        return self.cleaned_data['tenants']
 
     def _post_clean(self):
         if not self.errors:
@@ -85,6 +107,10 @@ class ZoneCreateForm(forms.Form):
                 kind=settings.ZONE_DEFAULT_KIND,
                 nameservers=settings.ZONE_DEFAULT_NAMESERVERS,
             )
+
+            zone = Zone.objects.create(name=self.cleaned_data['name'])
+            for tenant in self.cleaned_data['tenants']:
+                tenant.zones.add(zone)
         except PDNSError as e:
             self.add_error(None, f'PowerDNS error: {e.message}')
 
@@ -101,6 +127,11 @@ class ZoneCreateView(PermissionRequiredMixin, FormView):
     def form_valid(self, form):
         self.form = form  # give get_success_url access
         return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 
 class ZoneDetailMixin(PermissionRequiredMixin):

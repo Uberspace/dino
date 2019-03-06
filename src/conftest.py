@@ -49,6 +49,13 @@ def tenant(db_zone):
 
 
 @pytest.fixture
+def other_tenant():
+    from dino.tenants.models import Tenant
+    tenant = Tenant.objects.create(name="some other tenant")
+    return tenant
+
+
+@pytest.fixture
 def user_tenant_admin(tenant):
     from dino.tenants.models import PermissionLevels
     user = get_user_model().objects.create(

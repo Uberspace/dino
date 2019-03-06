@@ -41,6 +41,7 @@ def is_admin(user):
     return user.is_superuser
 
 
+rules.add_perm('is_admin', is_admin)
 rules.add_perm('tenants.list_zones', rules.is_authenticated)
 rules.add_perm('tenants.view_zone', is_admin | is_zone_tenant_member)
 rules.add_perm('tenants.delete_zone', is_admin | is_zone_tenant_admin)
