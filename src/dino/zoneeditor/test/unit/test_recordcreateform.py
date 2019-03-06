@@ -3,18 +3,8 @@ import pytest
 from ...views import RecordCreateForm
 
 
-@pytest.fixture
-def create_record_data():
-    return {
-        'name': 'mail.example.com.',
-        'rtype': 'MX',
-        'ttl': '300',
-        'content': '0 example.org.',
-    }
-
-
-def test_recordcreateform(mock_create_record, create_record_data):
-    form = RecordCreateForm('example.com.', data=create_record_data)
+def test_recordcreateform(mock_create_record, record_data):
+    form = RecordCreateForm('example.com.', data=record_data)
     assert not form.errors
     assert form.is_valid()
     mock_create_record.assert_called_once_with(
@@ -26,9 +16,9 @@ def test_recordcreateform(mock_create_record, create_record_data):
     )
 
 
-def test_recordcreateform_name_add_zone(mock_create_record, create_record_data):
-    create_record_data.update(name='mail')
-    form = RecordCreateForm('example.com.', data=create_record_data)
+def test_recordcreateform_name_add_zone(mock_create_record, record_data):
+    record_data.update(name='mail')
+    form = RecordCreateForm('example.com.', data=record_data)
     assert form.is_valid()
     mock_create_record.assert_called_once_with(
         zone='example.com.',
@@ -39,9 +29,9 @@ def test_recordcreateform_name_add_zone(mock_create_record, create_record_data):
     )
 
 
-def test_recordcreateform_name_add_dot(mock_create_record, create_record_data):
-    create_record_data.update(name='mail.example.com.')
-    form = RecordCreateForm('example.com.', data=create_record_data)
+def test_recordcreateform_name_add_dot(mock_create_record, record_data):
+    record_data.update(name='mail.example.com.')
+    form = RecordCreateForm('example.com.', data=record_data)
     assert form.is_valid()
     mock_create_record.assert_called_once_with(
         zone='example.com.',
@@ -58,9 +48,9 @@ def test_recordcreateform_name_add_dot(mock_create_record, create_record_data):
     'example.com',   # no dot
     'example.com.',  # dot
 ])
-def test_recordcreateform_name_apex(mock_create_record, create_record_data, name):
-    create_record_data.update(name=name)
-    form = RecordCreateForm('example.com.', data=create_record_data)
+def test_recordcreateform_name_apex(mock_create_record, record_data, name):
+    record_data.update(name=name)
+    form = RecordCreateForm('example.com.', data=record_data)
     assert form.is_valid()
     mock_create_record.assert_called_once_with(
         zone='example.com.',
@@ -71,9 +61,9 @@ def test_recordcreateform_name_apex(mock_create_record, create_record_data, name
     )
 
 
-def test_recordcreateform_name_lookalike(mock_create_record, create_record_data):
-    create_record_data.update(name='mail.anexample.com.')
-    form = RecordCreateForm('example.com.', data=create_record_data)
+def test_recordcreateform_name_lookalike(mock_create_record, record_data):
+    record_data.update(name='mail.anexample.com.')
+    form = RecordCreateForm('example.com.', data=record_data)
     assert form.is_valid()
     mock_create_record.assert_called_once_with(
         zone='example.com.',
@@ -90,8 +80,8 @@ def test_recordcreateform_invalid_no_creation(mock_create_record):
     mock_create_record.assert_not_called()
 
 
-def test_recordcreateform_api_error(broken_create_record, create_record_data):
-    form = RecordCreateForm('example.com.', create_record_data)
+def test_recordcreateform_api_error(broken_create_record, record_data):
+    form = RecordCreateForm('example.com.', record_data)
     form.full_clean()
     assert 'broken' in form.errors['__all__'][0]
     broken_create_record.assert_called_once()

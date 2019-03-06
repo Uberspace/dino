@@ -176,3 +176,13 @@ def signed_example_com():
 @pytest.fixture
 def signed_example_org():
     return signing.dumps('example.org.')
+
+
+@pytest.fixture
+def record_data():
+    return {
+        'name': 'mail.example.com.',
+        'rtype': 'MX',
+        'ttl': 300,
+        'content': '0 example.org.',
+    }
