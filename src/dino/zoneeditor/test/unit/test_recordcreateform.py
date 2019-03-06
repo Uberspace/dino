@@ -52,6 +52,25 @@ def test_recordcreateform_name_add_dot(mock_create_record, create_record_data):
     )
 
 
+@pytest.mark.parametrize('name', [
+    '@',
+    '',
+    'example.com',   # no dot
+    'example.com.',  # dot
+])
+def test_recordcreateform_name_apex(mock_create_record, create_record_data, name):
+    create_record_data.update(name=name)
+    form = RecordCreateForm('example.com.', data=create_record_data)
+    assert form.is_valid()
+    mock_create_record.assert_called_once_with(
+        zone='example.com.',
+        name='example.com.',
+        rtype='MX',
+        ttl=300,
+        content='0 example.org.',
+    )
+
+
 def test_recordcreateform_name_lookalike(mock_create_record, create_record_data):
     create_record_data.update(name='mail.anexample.com.')
     form = RecordCreateForm('example.com.', data=create_record_data)
@@ -83,7 +102,6 @@ def test_recordcreateform_api_error(mocker, create_record_data):
 def test_recordcreateform_required(mock_create_record):
     form = RecordCreateForm('example.com.', {})
     assert not form.is_valid()
-    assert 'required' in form.errors['name'][0]
     assert 'required' in form.errors['rtype'][0]
     assert 'required' in form.errors['ttl'][0]
     assert 'required' in form.errors['content'][0]

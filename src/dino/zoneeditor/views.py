@@ -173,7 +173,7 @@ class ZoneDeleteView(PermissionRequiredMixin, DeleteConfirmView):
 
 
 class RecordForm(forms.Form):
-    name = forms.CharField()
+    name = forms.CharField(required=False)
     rtype = forms.ChoiceField(choices=settings.RECORD_TYPES, initial='A', label='Record Type')
     ttl = forms.IntegerField(min_value=1, initial=300, label='TTL')
     content = forms.CharField()
@@ -185,10 +185,14 @@ class RecordForm(forms.Form):
     def clean_name(self):
         name = self.cleaned_data['name']
 
-        if not name.endswith('.'):
-            name = name + '.'
-        if not name.endswith('.' + self.zone_name):
-            name = f'{name}{self.zone_name}'
+        if not name or name == '@' or name.strip('.') == self.zone_name.strip('.'):
+            # apex/root record
+            name = self.zone_name
+        else:
+            if not name.endswith('.'):
+                name = name + '.'
+            if not name.endswith('.' + self.zone_name):
+                name = f'{name}{self.zone_name}'
 
         return name
 
