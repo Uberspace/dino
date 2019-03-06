@@ -1,5 +1,6 @@
 import pytest
 
+from ...fields import SignedHiddenField
 from ...views import DeleteConfirmForm
 
 
@@ -48,3 +49,13 @@ def test_deleteconfirmform_confirm_data_yes(form_data, delete_entity):
     assert f.confirm_asked
     assert f.confirmed
     delete_entity.assert_called_once_with('example.com.')
+
+
+def test_signedhiddenfield_data(signed_example_com):
+    f = SignedHiddenField()
+    assert f.to_python(signed_example_com) == 'example.com.'
+
+
+def test_signedhiddenfield_no_data(signed_example_com):
+    f = SignedHiddenField()
+    assert f.to_python(None) is None
