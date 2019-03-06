@@ -3,7 +3,7 @@ from django.conf import settings
 from django.core import signing
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.core.validators import RegexValidator, URLValidator
-from django.http import Http404
+from django.http import Http404, HttpResponseNotAllowed
 from django.urls import reverse, reverse_lazy
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
@@ -287,6 +287,9 @@ class RecordEditView(ZoneDetailMixin, FormView):
     permission_required = 'tenants.edit_record'
     template_name = "zoneeditor/record_edit.html"
     form_class = RecordEditForm
+
+    def get(self, *args, **kwargs):
+        return HttpResponseNotAllowed(permitted_methods=['POST'])
 
     def get_success_url(self):
         return reverse('zoneeditor:zone_detail', kwargs={'zone': self.zone_name})
