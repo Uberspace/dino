@@ -157,6 +157,17 @@ if TRUST_PROXY:
     USE_X_FORWARDED_HOST = True
 
 
+# HTTPS
+
+HTTPS_ONLY = cfg.get('HTTPS_ONLY', False, cast=bool)
+
+if HTTPS_ONLY:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 60*60*24*30  # 30 days
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
