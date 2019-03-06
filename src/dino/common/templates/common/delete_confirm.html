@@ -7,7 +7,7 @@ Do you really want to delete {{ identifier }}?
 <form method="POST">
     {% csrf_token %}
     {{ form.identifier }}
-    <button type="submit" class="button alert" name="confirm" value="true">yes</button>
+    <button type="submit" class="button alert" name="confirm" value="true" autofocus>yes</button>
     <button type="submit" class="button success" name="confirm" value="false">no</button>
 </form>
 {% endblock %}
