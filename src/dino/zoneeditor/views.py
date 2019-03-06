@@ -89,7 +89,6 @@ class ZoneCreateForm(forms.Form):
             self.add_error(None, f'PowerDNS error: {e.message}')
 
 
-# TODO: add to tenant
 class ZoneCreateView(PermissionRequiredMixin, FormView):
     permission_required = 'tenants.create_zone'
     template_name = "zoneeditor/zone_create.html"
@@ -130,7 +129,6 @@ class ZoneRecordsView(PDNSDataView, ZoneDetailMixin, TemplateView):
             raise Http404()
 
 
-# TODO: delete from DB
 class ZoneDeleteView(PermissionRequiredMixin, DeleteConfirmView):
     permission_required = 'tenants.delete_zone'
     redirect_url = reverse_lazy('zoneeditor:zone_list')
