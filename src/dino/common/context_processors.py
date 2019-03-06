@@ -51,38 +51,47 @@ def get_parent_urls(path):
     return urls
 
 
-def breadcrumbs(request):
-    urls = get_parent_urls(request.path)
-    kwargs = resolve(request.path).kwargs
+def get_breadcrumb(url, kwargs, prefix):
+    crumb = url[len(prefix):].strip('/')
+    url = '/' + url
 
-    breadcrumbs = []
+    for k, v in kwargs.items():
+        url = url.replace(f'<{k}>', v)
+        crumb = crumb.replace(f'<{k}>', v)
+
+    if '/' in crumb:
+        # URL parts are not seperated => ['profile', 'edit/image']
+        # split them and only link the last one
+        crumbs = crumb.split('/')
+
+        for c in crumbs[:-1]:
+            yield {
+                'crumb': c,
+                'url': None,
+            }
+
+        yield {
+            'crumb': crumbs[-1],
+            'url': url,
+        }
+    else:
+        # URL parts are seperated => ['profile', 'edit', 'image']
+        yield {
+            'crumb': crumb,
+            'url': url,
+        }
+
+
+def get_breadcrumbs(path):
+    urls = get_parent_urls(path)
+    kwargs = resolve(path).kwargs
+
     prefix = ''
 
     for url in urls:
-        crumb = url[len(prefix):].strip('/')
+        yield from get_breadcrumb(url, kwargs, prefix)
         prefix = url
 
-        url = '/' + url
 
-        for k, v in kwargs.items():
-            url = url.replace(f'<{k}>', v)
-            crumb = crumb.replace(f'<{k}>', v)
-
-        if '/' in crumb:
-            # URL parts are not seperated => ['profile', 'edit/image']
-            # split them, link the last one
-            for c in crumb.split('/'):
-                breadcrumbs.append({
-                    'crumb': c,
-                    'url': None,
-                })
-
-            breadcrumbs[-1]['url'] = url
-        else:
-            # URL parts are seperated => ['profile', 'edit', 'image']
-            breadcrumbs.append({
-                'crumb': crumb,
-                'url': url,
-            })
-
-    return {'breadcrumbs': breadcrumbs}
+def breadcrumbs(request):
+    return {'breadcrumbs': list(get_breadcrumbs(request.path))}
