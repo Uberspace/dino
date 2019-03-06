@@ -145,6 +145,16 @@ def broken_create_record(mocker):
 
 
 @pytest.fixture
+def mock_delete_record(mocker):
+    return mocker.patch('dino.pdns_api.pdns.delete_record')
+
+
+@pytest.fixture
+def broken_delete_record(mocker):
+    return mocker.patch('dino.pdns_api.pdns.delete_record', side_effect=PDNSError('/', 400, 'broken'))
+
+
+@pytest.fixture
 def MockPDNSZone():
     return namedtuple('MockPDNSZone', ['name'])
 
@@ -186,3 +196,8 @@ def record_data():
         'ttl': 300,
         'content': '0 example.org.',
     }
+
+
+@pytest.fixture
+def signed_record_data(record_data):
+    return signing.dumps(record_data)

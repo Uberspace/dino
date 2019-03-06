@@ -297,7 +297,7 @@ class RecordEditView(ZoneDetailMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['zone_name'] = self.zone_name
-        if kwargs['data'].keys() == {'csrfmiddlewaretoken', 'identifier'}:
+        if kwargs['data'].keys() - {'csrfmiddlewaretoken'} == {'identifier'}:
             # initial submit from record list: fill fields with old record data
             # and make django belive that there never was a submit, to skip
             # and actual record editing validation.
