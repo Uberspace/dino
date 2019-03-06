@@ -32,6 +32,11 @@
             <td>{{ rr.content }}</td>
             <td>{{ rr.ttl }}</td>
             <td>
+                <form action="{% url 'zoneeditor:zone_record_edit' zone=zone_name %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="identifier" value="{{ rr|sign }}">
+                    <button type="submit" class="button tiny warning" {% btn_perm 'tenants.edit_record' request.user zone_name %}>edit</button>
+                </form>
                 <form action="{% url 'zoneeditor:zone_record_delete' zone=zone_name %}" method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="identifier" value="{{ rr|sign }}">

@@ -1,5 +1,6 @@
 from django import forms
 from django.conf import settings
+from django.core import signing
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.core.validators import RegexValidator, URLValidator
 from django.http import Http404
@@ -8,6 +9,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from rules.contrib.views import PermissionRequiredMixin
 
+from dino.common.fields import SignedHiddenField
 from dino.common.views import DeleteConfirmView
 from dino.pdns_api import PDNSError, PDNSNotFoundException, pdns
 from dino.synczones.models import Zone
@@ -141,7 +143,7 @@ class ZoneDeleteView(PermissionRequiredMixin, DeleteConfirmView):
         Zone.objects.filter(name=pk).delete()
 
 
-class RecordCreateForm(forms.Form):
+class RecordForm(forms.Form):
     name = forms.CharField()
     rtype = forms.ChoiceField(choices=settings.RECORD_TYPES, initial='A', label='Record Type')
     ttl = forms.IntegerField(min_value=1, initial=300, label='TTL')
@@ -161,6 +163,8 @@ class RecordCreateForm(forms.Form):
 
         return name
 
+
+class RecordCreateForm(RecordForm, forms.Form):
     def _post_clean(self):
         if not self.errors:
             self.create_record()
@@ -178,6 +182,60 @@ class RecordCreateForm(forms.Form):
             self.add_error(None, f'PowerDNS error: {e.message}')
 
 
+class RecordEditForm(RecordForm, forms.Form):
+    identifier = SignedHiddenField()
+
+    def _post_clean(self):
+        if not self.errors:
+            self.update_record()
+
+    @property
+    def old_record(self):
+        r = self.cleaned_data['identifier'].copy()
+        r.pop('zone', None)
+        return r
+
+    @property
+    def new_record(self):
+        return {
+            k: v for k, v in self.cleaned_data.items()
+            if k in ['name', 'rtype', 'ttl', 'content']
+        }
+
+    def _create(self, record):
+        pdns().create_record(zone=self.zone_name, **record)
+
+    def _delete(self, record):
+        record = record.copy()
+        record.pop('ttl', None)
+        pdns().delete_record(zone=self.zone_name, **record)
+
+    def update_record(self):
+        if self.new_record == self.old_record:
+            return
+
+        if self.new_record['rtype'] == self.old_record['rtype'] and \
+                self.new_record['name'] == self.old_record['name']:
+            # TODO: replace cleanely in API
+            pass
+
+        try:
+            self._create(self.new_record)
+        except PDNSError as e_new:
+            self.add_error(None, f'Could not create new record. PowerDNS error: {e_new.message}')
+            return
+
+        try:
+            self._delete(self.old_record)
+        except PDNSError as e:
+            self.add_error(None, f'Could not delete old record. PowerDNS error: {e.message}')
+
+            try:
+                self._delete(self.new_record)
+            except PDNSError as e:
+                self.add_error(None, f'Could not delete new record; it may be duplicated now. PowerDNS error: {e.message}')
+
+
 class RecordCreateView(ZoneDetailMixin, FormView):
     permission_required = 'tenants.create_record'
     template_name = "zoneeditor/record_create.html"
@@ -189,6 +247,30 @@ class RecordCreateView(ZoneDetailMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['zone_name'] = self.zone_name
+        return kwargs
+
+
+class RecordEditView(ZoneDetailMixin, FormView):
+    permission_required = 'tenants.edit_record'
+    template_name = "zoneeditor/record_edit.html"
+    form_class = RecordEditForm
+
+    def get_success_url(self):
+        return reverse('zoneeditor:zone_detail', kwargs={'zone': self.zone_name})
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['zone_name'] = self.zone_name
+        if kwargs['data'].keys() == {'csrfmiddlewaretoken', 'identifier'}:
+            # initial submit from record list: fill fields with old record data
+            # and make django belive that there never was a submit, to skip
+            # and actual record editing validation.
+            kwargs['initial'] = {
+                'identifier': kwargs['data']['identifier'],
+                **signing.loads(kwargs['data']['identifier']),
+            }
+            kwargs['data'] = None
+            kwargs['files'] = None
         return kwargs
 
 

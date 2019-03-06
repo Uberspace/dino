@@ -13,4 +13,5 @@ urlpatterns = [
     path('zones/<zone>/records', views.ZoneRecordsView.as_view(), name="zone_records"),
     path('zones/<zone>/records/create', views.RecordCreateView.as_view(), name="zone_record_create"),
     path('zones/<zone>/records/delete', views.RecordDeleteView.as_view(), name="zone_record_delete"),
+    path('zones/<zone>/records/edit', views.RecordEditView.as_view(), name="zone_record_edit"),
 ]
