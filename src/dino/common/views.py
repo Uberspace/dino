@@ -1,17 +1,11 @@
 import django.forms as forms
 from django.contrib import messages
-from django.core import signing
 from django.http import HttpResponseNotAllowed, HttpResponseRedirect
 from django.views.generic.edit import FormView
 
 from dino.pdns_api import PDNSError
 
-
-class SignedHiddenField(forms.CharField):
-    widget = forms.HiddenInput
-
-    def to_python(self, value):
-        return signing.loads(value)
+from .fields import SignedHiddenField
 
 
 class DeleteConfirmForm(forms.Form):
