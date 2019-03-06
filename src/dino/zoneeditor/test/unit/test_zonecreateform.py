@@ -49,6 +49,15 @@ def test_zonecreateform_tenant_other(mock_create_zone, user_tenant_admin, tenant
 
 
 @pytest.mark.django_db
+def test_zonecreateform_tenant_one(mock_create_zone, user_tenant_admin, tenant):
+    form = ZoneCreateForm(user=user_tenant_admin, data={'name': 'example.co.uk.', 'tenants': []})
+    assert not form.is_valid()
+    assert 'choose a tenant' in form.errors['tenants'][0]
+    mock_create_zone.assert_not_called()
+    assert not Zone.objects.filter(name='example.co.uk.').exists()
+
+
+@pytest.mark.django_db
 def test_zonecreateform_name_add_dot(mock_create_zone):
     form = ZoneCreateForm(data={'name': 'example.com'})  # no trailing dot
     assert form.is_valid()
