@@ -8,6 +8,8 @@ from django.core import signing
 from django.core.management import call_command
 from django.test import Client
 
+from dino.pdns_api import PDNSError
+
 
 @pytest.fixture(scope="session", autouse=True)
 def collect_static(request):
@@ -135,6 +137,11 @@ def mock_create_zone(mocker):
 @pytest.fixture
 def mock_create_record(mocker):
     return mocker.patch('dino.pdns_api.pdns.create_record')
+
+
+@pytest.fixture
+def broken_create_record(mocker):
+    return mocker.patch('dino.pdns_api.pdns.create_record', side_effect=PDNSError('/', 400, 'broken'))
 
 
 @pytest.fixture
