@@ -49,6 +49,7 @@ setup(
         'django-allauth==0.38.*',
         'rules==2.0.*',
         'whitenoise==4.1.*',
+        'django-csp==3.5',
     ],
     extras_require={
         'dev': [
