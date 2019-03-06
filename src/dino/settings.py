@@ -148,6 +148,15 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Proxy Handling
+
+TRUST_PROXY = cfg.get('TRUST_PROXY', False, cast=bool)
+
+if TRUST_PROXY:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    USE_X_FORWARDED_HOST = True
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
