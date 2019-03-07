@@ -134,6 +134,8 @@ Create ``/etc/dino.cfg`` with the following content, adapt as needed.
   # a place for dino to drop internal data; must be writeable by dino and
   # not publicly acccessible
   DINO_BASE_DIR=/opt/dino
+  # make use of the X-Forwarded-Host/Proto headers in nginx config
+  TRUST_PROXY=True
   # the database to use, defaults to SQLite within BASE_DIR. Specify any URL
   # listed here: https://github.com/kennethreitz/dj-database-url#url-schema
   #DINO_DB_URL=
@@ -237,8 +239,6 @@ Installation
 Configuration
 ^^^^^^^^^^^^^
 
-    proxy_set_header Host $host;
-
 First, remove the default site, if present:
 
 .. code-block:: console
@@ -257,7 +257,12 @@ Then, create our new configuration in ``/etc/nginx/sites-enabled/dino``:
     server_name _;
 
     location / {
+      proxy_http_version 1.1;
       proxy_set_header Host $host;
+      proxy_set_header X-Forwarded-Host $host;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-Port $server_port;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_pass http://localhost:8080;
     }
   }
