@@ -186,8 +186,11 @@ from dino.settings import cfg
 options = cfg.settings_rst()
 options = '.. include:: config_prefix.rst\n\n' + options
 
-with open('config.rst') as f:
-    current_options = f.read()
+try:
+    with open('config.rst') as f:
+        current_options = f.read()
+except FileNotFoundError:
+    current_options = ''
 
 if options != current_options:
     with open('config.rst', 'w') as f:
