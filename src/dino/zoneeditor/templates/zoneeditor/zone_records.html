@@ -47,5 +47,5 @@
         {% endfor %}
     </tbody>
 </table>
-<p>Showing {{ count_shown }} of {{ count_all }} records.</p>
+{% include "common/pagination.html" %}
 {% endblock %}

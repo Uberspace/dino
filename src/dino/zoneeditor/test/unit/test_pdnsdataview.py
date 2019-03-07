@@ -21,8 +21,6 @@ def test_pdnsdataview():
     data = C().get_context_data()
 
     assert len(data['objects']) == 19
-    assert data['count_all'] == 19
-    assert data['count_shown'] == 19
     assert data['objects'][0] == 0
     assert data['objects'][-1] == 18
 
@@ -35,15 +33,13 @@ def test_pdnsdataview_limit_objects():
     data = C().get_context_data()
 
     assert len(data['objects']) == 20
-    assert data['count_all'] == 500
-    assert data['count_shown'] == 20
     assert data['objects'][0] == 0
     assert data['objects'][-1] == 19
 
 
-def test_pdnsdataview_max_objects():
+def test_pdnsdataview_paginate_by():
     class C(T):
-        max_objects = 5
+        paginate_by = 5
 
         def get_objects(self):
             return range(500)
@@ -68,12 +64,27 @@ def test_pdnsdataview_search():
     c.filter_properties = ['name']
     data = c.get_context_data()
     assert len(data['objects']) == 1
-    assert data['objects'] == [{'content': '0.0.0.0', 'name': 'something.domain.com.'}]
+    assert list(data['objects']) == [{'content': '0.0.0.0', 'name': 'something.domain.com.'}]
 
     c.filter_properties = ['name', 'content']
     data = c.get_context_data()
     assert len(data['objects']) == 2
-    assert data['objects'] == [{'content': '0.0.0.0', 'name': 'something.domain.com.'}, {'content': 'something.else.domain.com.', 'name': ''}]
+    assert list(data['objects']) == [{'content': '0.0.0.0', 'name': 'something.domain.com.'}, {'content': 'something.else.domain.com.', 'name': ''}]
+
+
+def test_pdnsdataview_page():
+    class C(T):
+        _request = '/?page=2'
+
+        def get_objects(self):
+            return range(500)
+
+    c = C()
+
+    c.filter_properties = ['name']
+    data = c.get_context_data()
+    assert len(data['objects']) == 20
+    assert data['objects'][-1] == 39
 
 
 def test_pdnsdataview_search_object():

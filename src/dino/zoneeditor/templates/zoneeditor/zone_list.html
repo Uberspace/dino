@@ -37,5 +37,5 @@
         {% endfor %}
     </tbody>
 </table>
-<p>Showing {{ count_shown }} of {{ count_all }} zones.</p>
+{% include "common/pagination.html" %}
 {% endblock %}
