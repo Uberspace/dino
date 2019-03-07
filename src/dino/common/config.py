@@ -130,7 +130,7 @@ class Config():
             fields.append(('example', setting.example))
 
             if setting.django:
-                fields.append(('django docs', 'https://docs.djangoproject.com/en/2.1/ref/settings/#std:setting-{setting.key}'))
+                fields.append(('django docs', f'https://docs.djangoproject.com/en/2.1/ref/settings/#std:setting-{setting.key}'))
 
             yield (setting.env_key, OrderedDict(fields))
 
