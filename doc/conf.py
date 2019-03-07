@@ -175,6 +175,8 @@ epub_exclude_files = ['search.html']
 
 # -- Configuration Options --------------------------------------------------
 
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dino.test_settings")
 from dino.settings import cfg
 
 options = cfg.settings_rst()
