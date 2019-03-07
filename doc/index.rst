@@ -1,20 +1,15 @@
-.. dino documentation master file, created by
-   sphinx-quickstart on Thu Feb 21 17:22:25 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to dino's documentation!
 ================================
 
+Dino is a modern, open-source record and zone editor for PowerDNS.
+
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :hidden:
 
+   self
 
+.. toctree::
+   :hidden:
+   :caption: Setup:
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   setup_pip
