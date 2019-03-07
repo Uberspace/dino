@@ -129,13 +129,6 @@ class Config():
             fields.append(('default', setting.default))
             fields.append(('example', setting.example))
 
-            if setting.default is None:
-                default = ''
-                required = 'yes'
-            else:
-                default = setting.default
-                required = 'no'
-
             if setting.django:
                 fields.append(('django docs', 'https://docs.djangoproject.com/en/2.1/ref/settings/#std:setting-{setting.key}'))
 
