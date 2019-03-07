@@ -64,9 +64,13 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
     'rules.apps.AutodiscoverRulesConfig',
 ]
+
+for provider in cfg.get('LOGIN_PROVIDERS', [], list):
+    INSTALLED_APPS.append(
+        f'allauth.socialaccount.providers.{provider}',
+    )
 
 try:
     if DEBUG:
