@@ -25,17 +25,25 @@ dino
 a modern DNS record editor for PowerDNS. It uses the PowerDNS-API, has a high
 test coverage, rich documentation and comes with batteries included!
 
+Development
+-----------
+
+The following instructions are for development setups only. Refer to the
+documentation linked above on how to get a production setup up and running.
 
 Setup
------
+^^^^^
+
+Start a PowerDNS server, mysql (for PowerDNS only) and dino inside docker:
 
 .. code-block:: text
 
     docker-compose up --build
-  
-visit http://localhost:8000 :)
 
-or run django outside docker for easier debugging:
+... then visit http://localhost:8000 :)
+
+If you prefer to run django locally for easier debugging, you can skip it in the
+docker setup, like so:
 
 .. code-block:: text
 
@@ -46,6 +54,36 @@ or run django outside docker for easier debugging:
     export DINO_PDNS_APIKEY=pdnsapikey
     cd src
     ./manage.py runserver
+
+... then, again, visit http://localhost:8000 :)
+
+Tests
+^^^^^
+
+Run all tests including the linter, like they would be run in CI:
+
+.. code-block:: text
+
+    $ tox
+    GLOB sdist-make: /home/luto/uberspace/dino/src/setup.py
+    lint recreate: /home/luto/uberspace/dino/.env
+    (...)
+    lint: commands succeeded
+    test-py36: commands succeeded
+    test-py37: commands succeeded
+    congratulations :)
+
+Takes too long? Run ``tox --listenvs`` to get a list of tasks, run them
+individually using ``tox -e $ENV``:
+
+.. code-block:: text
+
+    $ tox -e lint
+    GLOB sdist-make: /home/luto/uberspace/dino/src/setup.py
+    lint recreate: /home/luto/uberspace/dino/.env
+    (...)
+    lint: commands succeeded
+    congratulations :)
 
 Acknowledgements
 ----------------
