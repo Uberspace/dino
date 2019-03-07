@@ -1,5 +1,6 @@
 from django import forms
 from django.conf import settings
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core import signing
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.core.validators import RegexValidator, URLValidator
@@ -115,7 +116,7 @@ class ZoneCreateForm(forms.Form):
             self.add_error(None, f'PowerDNS error: {e.message}')
 
 
-class ZoneCreateView(PermissionRequiredMixin, FormView):
+class ZoneCreateView(PermissionRequiredMixin, SuccessMessageMixin, FormView):
     permission_required = 'tenants.create_zone'
     template_name = "zoneeditor/zone_create.html"
     form_class = ZoneCreateForm
@@ -123,6 +124,9 @@ class ZoneCreateView(PermissionRequiredMixin, FormView):
     def get_success_url(self):
         name = self.form.cleaned_data['name']
         return reverse('zoneeditor:zone_detail', kwargs={'zone': name})
+
+    def get_success_message(self, cleaned_data):
+        return f'Zone {cleaned_data["name"]} has been created.'
 
     def form_valid(self, form):
         self.form = form  # give get_success_url access
@@ -269,7 +273,7 @@ class RecordEditForm(RecordForm, forms.Form):
                 self.add_error(None, f'Could not delete new record; it may be duplicated now. PowerDNS error: {e.message}')
 
 
-class RecordCreateView(ZoneDetailMixin, FormView):
+class RecordCreateView(ZoneDetailMixin, SuccessMessageMixin, FormView):
     permission_required = 'tenants.create_record'
     template_name = "zoneeditor/record_create.html"
     form_class = RecordCreateForm
@@ -277,13 +281,16 @@ class RecordCreateView(ZoneDetailMixin, FormView):
     def get_success_url(self):
         return reverse('zoneeditor:zone_detail', kwargs={'zone': self.zone_name})
 
+    def get_success_message(self, cleaned_data):
+        return f'Record {cleaned_data["rtype"]} {cleaned_data["name"]} has been created.'
+
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['zone_name'] = self.zone_name
         return kwargs
 
 
-class RecordEditView(ZoneDetailMixin, FormView):
+class RecordEditView(ZoneDetailMixin, SuccessMessageMixin, FormView):
     permission_required = 'tenants.edit_record'
     template_name = "zoneeditor/record_edit.html"
     form_class = RecordEditForm
@@ -293,6 +300,9 @@ class RecordEditView(ZoneDetailMixin, FormView):
 
     def get_success_url(self):
         return reverse('zoneeditor:zone_detail', kwargs={'zone': self.zone_name})
+
+    def get_success_message(self, cleaned_data):
+        return f'Record {cleaned_data["rtype"]} {cleaned_data["name"]} has been saved.'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
