@@ -47,37 +47,6 @@ or run django outside docker for easier debugging:
     cd src
     ./manage.py runserver
 
-Configuration
--------------
-
-All config-options are prefixed with :code:`DINO_`.
-
-Django Settings
-...............
-
-* :code:`SECRET_KEY`
-* :code:`DEBUG`
-* :code:`ALLOWED_HOSTS`
-
-See the `django configuration`_ for details.
-
-.. _django configuration: https://docs.djangoproject.com/en/2.1/ref/settings/
-
-Other Settings
-..............
-
-* :code:`PDNS_APIKEY`: powerdns API key, see `pdns documentation`_.
-* :code:`PDNS_APIURL`
-* :code:`DB_URL`: database configuration, as `a single URL`_.
-* :code:`CUSTOM_RECORD_TYPES`: comma seperated list of addition record types (e.g. :code:`NSEC,NSEC3,NSEC3PARAM`)
-* :code:`ENABLE_SIGNUP`: set to :code:`True` to enable public registration
-* :code:`ZONE_DEFAULT_KIND`: the `powerdns zone kind`_, may be :code:`Native`, :code:`Master` or :code:`Slave`
-* :code:`ZONE_DEFAULT_NAMESERVERS`: comma separated list of nameservers to use for new zones
-
-.. _pdns documentation: https://doc.powerdns.com/authoritative/http-api/index.html#enabling-the-api
-.. _a single URL: https://github.com/kennethreitz/dj-database-url#url-schema
-.. _powerdns zone kind: https://doc.powerdns.com/authoritative/http-api/zone.html#zone
-
 Acknowledgements
 ----------------
 
