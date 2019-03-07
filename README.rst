@@ -16,7 +16,7 @@ dino
 .. |docs| image:: https://readthedocs.org/projects/dino/badge/?version=latest
     :alt: Documentation
     :scale: 100%
-    :target: https://dino.readthedocs.io/en/latest/?badge=latest
+    :target: https://dino.readthedocs.io/
     
 .. |python| image:: https://img.shields.io/badge/python-3.6+-blue.svg
     :alt: Python 3.6+
