@@ -115,6 +115,11 @@ Dino
 
   root@ubuntu-bionic:~# sudo -Hu www-dino pip3 install --user \
     https://github.com/Uberspace/dino/archive/master.zip#subdirectory=src
+  Collecting https://github.com/Uberspace/dino/archive/master.zip#subdirectory=src
+    Downloading https://github.com/Uberspace/dino/archive/master.zip
+      / 1.3MB 295.2MB/s
+  (...)
+  Successfully installed (...) dino-0.1 (...)
 
 Basic Configuration
 ^^^^^^^^^^^^^^^^^^^
@@ -186,6 +191,15 @@ By default, a SQLite database is used.
 .. code-block:: console
 
   root@ubuntu-bionic:~# sudo -Hu www-dino python3 -m dino migrate
+  DEBUG enabled, but django_extensions not installed. skipping app.
+  Operations to perform:
+    Apply all migrations: account, admin, auth, contenttypes, sessions, sites, socialaccount, synczones, tenants
+  Running migrations:
+    Applying contenttypes.0001_initial… OK
+    Applying auth.0001_initial… OK
+    Applying account.0001_initial… OK
+    Applying account.0002_email_max_length… OK
+  (...)
 
 Create an admin user
 """"""""""""""""""""
