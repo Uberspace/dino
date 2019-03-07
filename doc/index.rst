@@ -14,8 +14,8 @@ Dino is a modern, open-source record and zone editor for PowerDNS.
 
    database
    setup_pip
-   backups
    config
+   backups
 
 .. toctree::
    :hidden:
