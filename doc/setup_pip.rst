@@ -141,9 +141,20 @@ Create ``/etc/dino.cfg`` with the following content, adapt as needed.
   DINO_BASE_DIR=/opt/dino
   # make use of the X-Forwarded-Host/Proto headers in nginx config
   TRUST_PROXY=True
-  # the database to use, defaults to SQLite within BASE_DIR. Specify any URL
-  # listed here: https://github.com/kennethreitz/dj-database-url#url-schema
-  #DINO_DB_URL=
+
+.. note::
+  By default, dino uses a SQLite database inside ``DINO_BASE_DIR``. If you'd
+  like to use a different system or database location, provide the respective
+  URL as ``DINO_DB_URL``:
+
+  * SQLite: ``sqlite:////some/absolute/path/db.sqlite3``
+  * PostgreSQL (Password): ``postgres://dino:PASSWORD@127.0.0.1:5432/dino``
+  * PostgreSQL (UNIX-Socket / Peer Auth): ``postgres://%2Fpath%2Fto%2Fsocket/dino``
+  * MySQL: ``mysql://dino:PASSWORD@127.0.0.1:3306/dino``
+
+  Further information can be found in the `dj-database-url`_ documentation.
+
+.. _`dj-database-url`: https://github.com/kennethreitz/dj-database-url#url-schema
 
 Service
 ^^^^^^^
