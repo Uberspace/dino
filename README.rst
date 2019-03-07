@@ -22,6 +22,9 @@ dino
     :alt: Python 3.6+
     :scale: 100%
 
+a modern DNS record editor for PowerDNS. It uses the PowerDNS-API, has a high
+test coverage, rich documentation and comes with batteries included!
+
 
 Setup
 -----
