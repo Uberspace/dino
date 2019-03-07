@@ -292,3 +292,18 @@ Finishing up
 
 You're done! Fire up your browser and open the URL configured in your webserver.
 Then you can log in using the account created earlier.
+
+Updates
+-------
+
+To update dino repeat the ``pip3 install`` and ``dino migrate`` steps from the
+installation guide. Afterwards, restart dino to load the new code.
+
+.. code-block:: console
+
+  root@ubuntu-bionic:~# sudo -Hu www-dino pip3 install --user \
+    https://github.com/Uberspace/dino/archive/master.zip#subdirectory=src
+  (...)
+  root@ubuntu-bionic:~# sudo -Hu www-dino python3 -m dino migrate
+  (...)
+  root@ubuntu-bionic:~# systemctl restart dino
