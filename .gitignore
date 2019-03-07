@@ -80,6 +80,8 @@ instance/
 
 # Sphinx documentation
 doc/_build/
+# auto generated
+doc/config.rst
 
 # PyBuilder
 target/

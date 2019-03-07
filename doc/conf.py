@@ -171,3 +171,18 @@ epub_title = project
 
 # A list of files that should not be packed into the epub file.
 epub_exclude_files = ['search.html']
+
+
+# -- Configuration Options --------------------------------------------------
+
+from dino.settings import cfg
+
+options = cfg.settings_rst()
+options = '.. include:: config_prefix.rst\n\n' + options
+
+with open('config.rst') as f:
+    current_options = f.read()
+
+if options != current_options:
+    with open('config.rst', 'w') as f:
+        f.write(options)

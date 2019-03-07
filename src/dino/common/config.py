@@ -141,6 +141,17 @@ class Config():
 
             yield (setting.env_key, OrderedDict(fields))
 
+    def settings_rst(self):
+        result = ""
+
+        for env_key, fields in self._settings_human():
+            result += f'{env_key}\n'
+            result += '^' * len(env_key) + '\n\n'
+            result += (fields.pop('description') or '') + '\n\n'
+            result += '\n'.join(f'* **{k}**: ``{v}``' for k, v in fields.items()) + '\n\n'
+
+        return result
+
     def settings_plaintext(self):
         result = ""
 
