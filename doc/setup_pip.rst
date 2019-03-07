@@ -298,6 +298,14 @@ Then, create our new configuration in ``/etc/nginx/sites-enabled/dino``:
   anything else considered state-of-the-art. Expand it according to best
   practices as needed.
 
+Start nginx
+^^^^^^^^^^^
+
+.. code-block:: console
+
+  root@ubuntu-bionic:~# systemctl enable nginx
+  root@ubuntu-bionic:~# systemctl restart nginx
+
 Finishing up
 ^^^^^^^^^^^^
 
