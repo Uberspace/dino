@@ -177,6 +177,10 @@ epub_exclude_files = ['search.html']
 
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dino.test_settings")
+
+import django
+django.setup()
+
 from dino.settings import cfg
 
 options = cfg.settings_rst()
