@@ -140,7 +140,7 @@ Create ``/etc/dino.cfg`` with the following content, adapt as needed.
   # not publicly acccessible
   DINO_BASE_DIR=/opt/dino
   # make use of the X-Forwarded-Host/Proto headers in nginx config
-  TRUST_PROXY=True
+  DINO_TRUST_PROXY=True
 
 .. note::
   By default, dino uses a SQLite database inside ``DINO_BASE_DIR``. If you'd
