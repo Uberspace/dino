@@ -31,13 +31,36 @@ cfg = Config('DINO', env_files=env_files)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 DEFAULT_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BASE_DIR = cfg.get('BASE_DIR', DEFAULT_BASE_DIR)
+BASE_DIR = cfg.get(
+    'BASE_DIR', DEFAULT_BASE_DIR, example='/opt/dino',
+    doc='Directory to drop internal data; must exist and be writeable and not publicly acccessible.'
+)
 
-SECRET_KEY = cfg.get('SECRET_KEY')
-DEBUG = cfg.get('DEBUG', False, bool)
-ALLOWED_HOSTS = cfg.get('ALLOWED_HOSTS', [], list)
-PDNS_APIURL = cfg.get('PDNS_APIURL')
-PDNS_APIKEY = cfg.get('PDNS_APIKEY')
+SECRET_KEY = cfg.get(
+    'SECRET_KEY',
+    django=True, example='Aixa1ahs1euyo2oopii-Y:eex8sie~d5',
+    doc='Long (>64 chars), random and ascii string of characters. Used to derive crypto keys for cookies and other places. Keep secret.'
+)
+DEBUG = cfg.get(
+    'DEBUG', False, bool,
+    django=True,
+    doc='Run in development mode. Do not enable in production.'
+)
+ALLOWED_HOSTS = cfg.get(
+    'ALLOWED_HOSTS', [], list,
+    django=True, example='dino.company.com,dino.internal',
+    doc='Comma-seperated list of hostnames under which dino should be accessible at.'
+)
+PDNS_APIURL = cfg.get(
+    'PDNS_APIURL',
+    example='https://yourpowerdns.com/api/v1',
+    doc='Full URL to your PowerDNS server API endpoint.'
+)
+PDNS_APIKEY = cfg.get(
+    'PDNS_APIKEY',
+    example='wooviex7ui0Eiy2Gohth4foovoob5Eip',
+    doc='PowerDNS API key from pdns.conf.'
+)
 
 # Application definition
 
@@ -130,8 +153,13 @@ LOGIN_REDIRECT_URL = '/'
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
 default_db_url = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
+db_url = cfg.get(
+    'DB_URL', default_db_url,
+    example='mysql://dino:password@host/dino',
+    doc='Database to connect to, refer to `dj-database-url <https://github.com/kennethreitz/dj-database-url#url-schema>`_ for information on the URL schema.',
+)
 DATABASES = {
-    'default': dj_database_url.config(default=cfg.get('DB_URL', default_db_url), conn_max_age=600),
+    'default': dj_database_url.config(default=db_url, conn_max_age=600),
 }
 
 # Password validation
@@ -155,7 +183,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Proxy Handling
 
-TRUST_PROXY = cfg.get('TRUST_PROXY', False, cast=bool)
+TRUST_PROXY = cfg.get(
+    'TRUST_PROXY', False, cast=bool,
+    doc='Whether to trust information in X-Forwarded-Proto/Host, or not. Set this, if dino is behind a reverse proxy and it is setting those headers'
+)
 
 if TRUST_PROXY:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -164,7 +195,10 @@ if TRUST_PROXY:
 
 # HTTPS
 
-HTTPS_ONLY = cfg.get('HTTPS_ONLY', False, cast=bool)
+HTTPS_ONLY = cfg.get(
+    'HTTPS_ONLY', False, cast=bool,
+    doc='Whether to enforce HTTPS, set HSTS and send cookies on HTTPS only. Recommended.',
+)
 
 if HTTPS_ONLY:
     SECURE_SSL_REDIRECT = True
@@ -185,7 +219,11 @@ X_FRAME_OPTIONS = 'DENY'
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = cfg.get('TIMEZONE', 'UTC')
+TIME_ZONE = cfg.get(
+    'TIMEZONE', 'UTC',
+    django=True,
+    doc='Timezone to use for auditing and logging.'
+)
 
 USE_I18N = True
 
@@ -225,13 +263,26 @@ LOGGING = {
 
 
 # Custom Settings
-ENABLE_SIGNUP = cfg.get('ENABLE_SIGNUP', False, cast=bool)
-# may be 'Native', 'Master' or 'Slave'
-# see https://doc.powerdns.com/authoritative/http-api/zone.html#zone
-ZONE_DEFAULT_KIND = cfg.get('ZONE_DEFAULT_KIND', 'Native', cast=bool)
-ZONE_DEFAULT_NAMESERVERS = cfg.get('ZONE_DEFAULT_NAMESERVERS', [], cast=list)
+ENABLE_SIGNUP = cfg.get(
+    'ENABLE_SIGNUP', False, cast=bool,
+    doc='Whether to let users create permissionless accounts without any prior authentication.',
+)
+ZONE_DEFAULT_KIND = cfg.get(
+    'ZONE_DEFAULT_KIND', 'Native', cast=bool,
+    doc='PowerDNS kind to set for new zones, may be Native, Master or Slave. See `PowerDNS Docs <see https://doc.powerdns.com/authoritative/http-api/zone.html#zone>`_',
+)
+ZONE_DEFAULT_NAMESERVERS = cfg.get(
+    'ZONE_DEFAULT_NAMESERVERS', [], cast=list,
+    example='ns1.company.com,ns2.company.com',
+    doc='Nameservers to set for new zones.',
+)
 
-if cfg.get('USE_DEFAULT_RECORD_TYPES', True, cast=bool):
+USE_DEFAULT_RECORD_TYPES = cfg.get(
+    'USE_DEFAULT_RECORD_TYPES', True, cast=bool,
+    doc='Whether to offer a selection of default record types (A, AAAA, MX, CAA, ...) in the GUI, or rely on DINO_CUSTOM_RECORD_TYPES only.',
+)
+
+if USE_DEFAULT_RECORD_TYPES:
     RECORD_TYPES = [
         'A', 'AAAA', 'AFSDB', 'ALIAS', 'CAA', 'CERT', 'CDNSKEY', 'CDS',
         'CNAME', 'DNAME', 'DS', 'KEY', 'LOC', 'MX', 'NAPTR',
@@ -241,7 +292,13 @@ if cfg.get('USE_DEFAULT_RECORD_TYPES', True, cast=bool):
 else:
     RECORD_TYPES = []
 
-RECORD_TYPES = RECORD_TYPES + cfg.get('CUSTOM_RECORD_TYPES', [], cast=list)
+
+CUSTOM_RECORD_TYPES = cfg.get(
+    'CUSTOM_RECORD_TYPES', [], cast=list,
+    example='X25,SPF,DS',
+    doc='Additional record types to offer in the GUI. Any record type can be used here, but PowerDNS or secondary DNS servers might not be able to handle them.',
+)
+RECORD_TYPES = RECORD_TYPES + CUSTOM_RECORD_TYPES
 RECORD_TYPES = [(t, t) for t in RECORD_TYPES]
 
 if not cfg.check_errors():

@@ -59,7 +59,7 @@ class Config():
     def _cast(self, value, cast):
         return self.CASTS[cast](value)
 
-    def get(self, key, default=None, cast=str):
+    def get(self, key, default=None, cast=str, django=False, example=None, doc=None):
         value = default
         env_key = self._env_key(key)
 
