@@ -7,7 +7,8 @@ However, there is no permanent storage of the zone records. The zone list is
 refreshed each time a user opens the zone list.
 
 Modifications like creating zones or deleting records are always carried out
-live via the PowerDNS API and are not synced later.
+live via the PowerDNS API, if and only if the appropriate UI features are used.
+There is no syncing happening in the background.
 
 Modifcation outside dino
 ------------------------
