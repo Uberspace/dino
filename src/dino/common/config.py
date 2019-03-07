@@ -1,8 +1,8 @@
 import contextlib
-from collections import OrderedDict
 import distutils.util
 import os
 import sys
+from collections import OrderedDict
 
 
 class Setting():
