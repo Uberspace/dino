@@ -155,7 +155,7 @@ class ZoneDetailMixin(PermissionRequiredMixin):
 class ZoneRecordsView(PDNSDataView, ZoneDetailMixin, TemplateView):
     permission_required = 'tenants.view_zone'
     template_name = "zoneeditor/zone_records.html"
-    filter_properties = ['name']
+    filter_properties = ['rtype', 'name']
 
     def get_objects(self):
         try:
