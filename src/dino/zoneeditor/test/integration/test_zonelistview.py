@@ -26,11 +26,21 @@ def test_zonelistview_sync(client_admin, mock_pdns_get_zones):
 
 @pytest.mark.django_db()
 def test_zonelistview_filter(client_admin, mock_pdns_get_zones):
-    response = client_admin.get(reverse('zoneeditor:zone_list') + '?q=example.org.')
+    response = client_admin.get(reverse('zoneeditor:zone_list') + '?q=xample.org.')
     response.content.decode()
     assert response.status_code == 200
     assert len(response.context['object_list']) == 1
     assert response.context['object_list'][0].name == 'example.org.'
+
+
+@pytest.mark.parametrize('q', [
+    'example.org',
+    'example.org.',
+])
+@pytest.mark.django_db()
+def test_zonelistview_jump(client_admin, mock_pdns_get_zones, q):
+    response = client_admin.get(reverse('zoneeditor:zone_list') + f'?q={q}')
+    TestCase().assertRedirects(response, f'/zones/example.org.', fetch_redirect_response=False)
 
 
 @pytest.mark.django_db()

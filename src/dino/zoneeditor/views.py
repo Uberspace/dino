@@ -5,7 +5,7 @@ from django.core import signing
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.core.paginator import Paginator
 from django.core.validators import RegexValidator, URLValidator
-from django.http import Http404, HttpResponseNotAllowed
+from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.views.generic.base import TemplateView
@@ -70,14 +70,26 @@ class ZoneListView(PermissionRequiredMixin, ListView):
     model = Zone
     paginate_by = 20
 
+    def render_to_response(self, context, **response_kwargs):
+        page_obj = context['page_obj']
+        object_list = context['object_list']
+        found_only_one = (page_obj.number == 1 and object_list.count() == 1)
+
+        if found_only_one and self.query and object_list[0].name.strip('.') == self.query.strip('.'):
+            return HttpResponseRedirect(reverse('zoneeditor:zone_detail', kwargs={'zone': object_list[0].name}))
+        else:
+            return super().render_to_response(context, **response_kwargs)
+
+    @property
+    def query(self):
+        return self.request.GET.get('q')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['search_form'] = SearchForm(initial={'q': self.request.GET.get('q')})
+        context['search_form'] = SearchForm(initial={'q': self.query})
         return context
 
     def get_queryset(self):
-        q = self.request.GET.get('q')
-
         # TODO: doing this every time the list is loaded is a bad idea
         Zone.import_from_powerdns(pdns().get_zones())
 
@@ -86,8 +98,8 @@ class ZoneListView(PermissionRequiredMixin, ListView):
         if not self.request.user.is_superuser:
             zones = zones.filter(tenants__users=self.request.user)
 
-        if q:
-            zones = zones.filter(name__icontains=q)
+        if self.query:
+            zones = zones.filter(name__icontains=self.query)
 
         return zones
 
