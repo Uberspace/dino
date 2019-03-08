@@ -89,6 +89,25 @@ def test_pdnsdataview_search_case():
     assert list(data['object_list']) == [{'content': '0.0.0.0', 'name': 'something.domain.com.'}]
 
 
+def test_pdnsdataview_search_apex():
+    class C(T):
+        _request = '/?q=%40'
+        zone_name = 'domain.com.'
+
+        def get_objects(self):
+            return [
+                {'name': 'domain.com.', 'content': '0.0.0.0'},
+                {'name': 'something.domain.com.', 'content': '0.0.0.0'},
+            ]
+
+    c = C()
+
+    c.filter_properties = ['name']
+    data = c.get_context_data()
+    assert len(data['object_list']) == 1
+    assert list(data['object_list']) == [{'content': '0.0.0.0', 'name': 'domain.com.'}]
+
+
 def test_pdnsdataview_page():
     class C(T):
         _request = '/?page=2'

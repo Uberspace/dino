@@ -51,11 +51,12 @@ class PDNSDataView():
 
         if q:
             q = q.lower()
+            apex_search = (q == '@')
 
             return [
                 o for o in self.get_objects()
                 if any(
-                    q in o.get(p).lower()
+                    q in o.get(p).lower() or (apex_search and p == 'name' and o.get(p) == self.zone_name)
                     for p in self.filter_properties
                 )
             ]
