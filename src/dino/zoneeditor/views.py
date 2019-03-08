@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from django.core.validators import RegexValidator, URLValidator
 from django.http import Http404, HttpResponseNotAllowed
 from django.urls import reverse, reverse_lazy
+from django.utils.functional import cached_property
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from rules.contrib.views import PermissionRequiredMixin
@@ -18,21 +19,21 @@ from dino.synczones.models import Zone
 from dino.tenants.models import PermissionLevels, Tenant
 
 
+class SearchForm(forms.Form):
+    q = forms.CharField(max_length=100, label="Search", required=False)
+
+
 class PDNSDataView():
     """ provide filtering and basic context for objects w/o a database """
     filter_properties = []
     paginate_by = 20
-    context_paginator_name = 'paginator'
-    context_object_name = 'objects'
-
-    class SearchForm(forms.Form):
-        q = forms.CharField(max_length=100, label="Search", required=False)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['search_form'] = PDNSDataView.SearchForm(initial={'q': self.request.GET.get('q')})
-        context[self.context_paginator_name] = self._paginator
-        context[self.context_object_name] = self.current_page
+        context['search_form'] = SearchForm(initial={'q': self.request.GET.get('q')})
+        context['object_list'] = self.current_page.object_list
+        context['page_obj'] = self.current_page
+        context['paginator'] = self._paginator
         return context
 
     @property
@@ -41,9 +42,10 @@ class PDNSDataView():
 
     @property
     def _paginator(self):
-        return Paginator(self.get_final_objects(), self.paginate_by)
+        return Paginator(self.final_objects, self.paginate_by)
 
-    def get_final_objects(self):
+    @cached_property
+    def final_objects(self):
         q = self.request.GET.get('q')
 
         if q:

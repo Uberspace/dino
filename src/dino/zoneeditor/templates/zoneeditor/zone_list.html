@@ -21,7 +21,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for zone in objects %}
+        {% for zone in object_list %}
         <tr>
             <td>
                 <a href="{% url 'zoneeditor:zone_detail' zone=zone.name %}">{{ zone.name }}</a>
