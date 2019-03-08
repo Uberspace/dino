@@ -12,7 +12,7 @@ def test_zonelistview(client_admin, mock_pdns_get_zones):
     assert response.status_code == 200
     assert 'example.com.' in content
     assert 'example.org.' in content
-    assert 'example16.org' in content
+    assert 'example11.org' in content
     assert 'example400.org' not in content
 
 
@@ -29,15 +29,15 @@ def test_zonelistview_filter(client_admin, mock_pdns_get_zones):
     response = client_admin.get(reverse('zoneeditor:zone_list') + '?q=example.org.')
     response.content.decode()
     assert response.status_code == 200
-    assert len(response.context['objects']) == 1
-    assert response.context['objects'][0].name == 'example.org.'
+    assert len(response.context['object_list']) == 1
+    assert response.context['object_list'][0].name == 'example.org.'
 
 
 @pytest.mark.django_db()
 def test_zonelistview_unauthenicated(client):
     url = reverse('zoneeditor:zone_list')
     response = client.get(url)
-    TestCase().assertRedirects(response, f'/accounts/login/?next={url}')
+    TestCase().assertRedirects(response, f'/accounts/login/?next={url}', fetch_redirect_response=False)
 
 
 @pytest.mark.django_db()

@@ -10,6 +10,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
+from django.views.generic.list import ListView
 from rules.contrib.views import PermissionRequiredMixin
 
 from dino.common.fields import SignedHiddenField
@@ -54,7 +55,7 @@ class PDNSDataView():
             return [
                 o for o in self.get_objects()
                 if any(
-                    q in (o.get(p) if isinstance(o, dict) else getattr(o, p)).lower()
+                    q in o.get(p).lower()
                     for p in self.filter_properties
                 )
             ]
@@ -62,17 +63,31 @@ class PDNSDataView():
             return self.get_objects()
 
 
-class ZoneListView(PDNSDataView, PermissionRequiredMixin, TemplateView):
+class ZoneListView(PermissionRequiredMixin, ListView):
     permission_required = 'tenants.list_zones'
     template_name = "zoneeditor/zone_list.html"
-    filter_properties = ['name']
+    model = Zone
+    paginate_by = 20
 
-    def get_objects(self):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_form'] = SearchForm(initial={'q': self.request.GET.get('q')})
+        return context
+
+    def get_queryset(self):
+        q = self.request.GET.get('q')
+
         # TODO: doing this every time the list is loaded is a bad idea
         Zone.import_from_powerdns(pdns().get_zones())
-        zones = Zone.objects.all()
+
+        zones = Zone.objects.all().order_by('name')
+
         if not self.request.user.is_superuser:
             zones = zones.filter(tenants__users=self.request.user)
+
+        if q:
+            zones = zones.filter(name__icontains=q)
+
         return zones
 
 
