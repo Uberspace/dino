@@ -72,6 +72,23 @@ def test_pdnsdataview_search():
     assert list(data['objects']) == [{'content': '0.0.0.0', 'name': 'something.domain.com.'}, {'content': 'something.else.domain.com.', 'name': ''}]
 
 
+def test_pdnsdataview_search_case():
+    class C(T):
+        _request = '/?q=SOMEthing'
+
+        def get_objects(self):
+            return [
+                {'name': 'something.domain.com.', 'content': '0.0.0.0'},
+            ]
+
+    c = C()
+
+    c.filter_properties = ['name']
+    data = c.get_context_data()
+    assert len(data['objects']) == 1
+    assert list(data['objects']) == [{'content': '0.0.0.0', 'name': 'something.domain.com.'}]
+
+
 def test_pdnsdataview_page():
     class C(T):
         _request = '/?page=2'

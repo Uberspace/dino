@@ -47,10 +47,12 @@ class PDNSDataView():
         q = self.request.GET.get('q')
 
         if q:
+            q = q.lower()
+
             return [
                 o for o in self.get_objects()
                 if any(
-                    q in (o.get(p) if isinstance(o, dict) else getattr(o, p))
+                    q in (o.get(p) if isinstance(o, dict) else getattr(o, p)).lower()
                     for p in self.filter_properties
                 )
             ]
