@@ -19,6 +19,7 @@ to your liking.
    database
    setup_pip
    config
+   webserver
    backups
 
 .. toctree::
