@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
 
+{% load i18n %}
+
 {% block content %}
 {{ form.errors }}
-Do you really want to delete {{ identifier }}?
+{% blocktrans %} Do you really want to delete {{ identifier }}?{% endblocktrans %}
 
 <form method="POST">
     {% csrf_token %}
     {{ form.identifier }}
-    <button type="submit" class="button alert" name="confirm" value="true" autofocus>yes</button>
-    <button type="submit" class="button success" name="confirm" value="false">no</button>
+    <button type="submit" class="button alert" name="confirm" value="true" autofocus>{% trans "yes" context 'delete dialog' %}</button>
+    <button type="submit" class="button success" name="confirm" value="false">{% trans "no" context 'delete dialog' %}</button>
 </form>
 {% endblock %}

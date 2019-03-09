@@ -1,6 +1,7 @@
 import django.forms as forms
 from django.contrib import messages
 from django.http import HttpResponseNotAllowed, HttpResponseRedirect
+from django.utils.translation import gettext_lazy as _
 from django.views.generic.edit import FormView
 
 from dino.pdns_api import PDNSError
@@ -35,7 +36,7 @@ class DeleteConfirmForm(forms.Form):
         try:
             self.delete_entity(identifier)
         except PDNSError as e:
-            self.add_error(None, f'PowerDNS error: {e.message}')
+            self.add_error(None, _('PowerDNS error: {}').format(e.message))
 
 
 class DeleteConfirmView(FormView):
@@ -130,7 +131,7 @@ class DeleteConfirmView(FormView):
 
     def get_success_message(self, identifier):
         identifier = self.get_display_identifier(identifier)
-        return f'{identifier} has been deleted.'
+        return _('{} has been deleted.').format(identifier)
 
     def get_redirect_url(self, identifier):
         if self.redirect_url:

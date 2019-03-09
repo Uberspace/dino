@@ -8,6 +8,7 @@ from django.core.validators import RegexValidator, URLValidator
 from django.http import Http404, HttpResponseNotAllowed, HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.utils.functional import cached_property
+from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.views.generic.list import ListView
@@ -21,7 +22,7 @@ from dino.tenants.models import PermissionLevels, Tenant
 
 
 class SearchForm(forms.Form):
-    q = forms.CharField(max_length=100, label="Search", required=False)
+    q = forms.CharField(max_length=100, label=_("Search"), required=False)
 
 
 class ZoneListView(PermissionRequiredMixin, ListView):
@@ -102,7 +103,7 @@ class ZoneCreateForm(forms.Form):
 
     def clean_tenants(self):
         if self.user and not self.user.has_perm('is_admin') and self.cleaned_data['tenants'].count() == 0:
-            raise forms.ValidationError('Please choose a tenant, as you will otherwise not be able to access the new zone after creation.')
+            raise forms.ValidationError(_('Please choose a tenant, as you will otherwise not be able to access the new zone after creation.'))
 
         return self.cleaned_data['tenants']
 
@@ -122,7 +123,7 @@ class ZoneCreateForm(forms.Form):
             for tenant in self.cleaned_data['tenants']:
                 tenant.zones.add(zone)
         except PDNSError as e:
-            self.add_error(None, f'PowerDNS error: {e.message}')
+            self.add_error(None, _('PowerDNS error: {}').format(e.message))
 
 
 class ZoneCreateView(PermissionRequiredMixin, SuccessMessageMixin, FormView):
@@ -135,7 +136,7 @@ class ZoneCreateView(PermissionRequiredMixin, SuccessMessageMixin, FormView):
         return reverse('zoneeditor:zone_detail', kwargs={'zone': name})
 
     def get_success_message(self, cleaned_data):
-        return f'Zone {cleaned_data["name"]} has been created.'
+        return _('Zone {} has been created.').format(cleaned_data["name"])
 
     def form_valid(self, form):
         self.form = form  # give get_success_url access
@@ -219,9 +220,9 @@ class ZoneDeleteView(PermissionRequiredMixin, DeleteConfirmView):
 
 
 class RecordForm(forms.Form):
-    name = forms.CharField(required=False)
-    rtype = forms.ChoiceField(choices=settings.RECORD_TYPES, initial='A', label='Record Type')
-    ttl = forms.IntegerField(min_value=1, initial=300, label='TTL')
+    name = forms.CharField(validators=(RecordNameValidator(),), required=False)
+    rtype = forms.ChoiceField(choices=settings.RECORD_TYPES, initial='A', label=_('Type'))
+    ttl = forms.IntegerField(min_value=1, initial=300, label=_('TTL'))
     content = forms.CharField()
 
     def __init__(self, zone_name, *args, **kwargs):
@@ -258,7 +259,7 @@ class RecordCreateForm(RecordForm, forms.Form):
                 content=self.cleaned_data['content'],
             )
         except PDNSError as e:
-            self.add_error(None, f'PowerDNS error: {e.message}')
+            self.add_error(None, _('PowerDNS error: {}').format(e.message))
 
 
 class RecordEditForm(RecordForm, forms.Form):
@@ -301,18 +302,18 @@ class RecordEditForm(RecordForm, forms.Form):
         try:
             self._create(self.new_record)
         except PDNSError as e_new:
-            self.add_error(None, f'Could not create new record. PowerDNS error: {e_new.message}')
+            self.add_error(None, _('Could not create new record.') + _('PowerDNS error: {}').format(e_new.message))
             return
 
         try:
             self._delete(self.old_record)
         except PDNSError as e:
-            self.add_error(None, f'Could not delete old record. PowerDNS error: {e.message}')
+            self.add_error(None, _('Could not delete old record.') + _('PowerDNS error: {}').format(e.message))
 
             try:
                 self._delete(self.new_record)
             except PDNSError as e:
-                self.add_error(None, f'Could not delete new record; it may be duplicated now. PowerDNS error: {e.message}')
+                self.add_error(None, _('Could not delete new record; it may be duplicated now.') + _('PowerDNS error: {}').format(e.message))
 
 
 class RecordCreateView(ZoneDetailMixin, SuccessMessageMixin, FormView):
@@ -324,7 +325,7 @@ class RecordCreateView(ZoneDetailMixin, SuccessMessageMixin, FormView):
         return reverse('zoneeditor:zone_detail', kwargs={'zone': self.zone_name})
 
     def get_success_message(self, cleaned_data):
-        return f'Record {cleaned_data["rtype"]} {cleaned_data["name"]} has been created.'
+        return _('Record {rtype} {name} has been created.').format(rtype=cleaned_data["rtype"], name=cleaned_data["name"])
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -344,7 +345,7 @@ class RecordEditView(ZoneDetailMixin, SuccessMessageMixin, FormView):
         return reverse('zoneeditor:zone_detail', kwargs={'zone': self.zone_name})
 
     def get_success_message(self, cleaned_data):
-        return f'Record {cleaned_data["rtype"]} {cleaned_data["name"]} has been saved.'
+        return _('Record {rtype} {name} has been saved.').format(rtype=cleaned_data["rtype"], name=cleaned_data["name"])
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

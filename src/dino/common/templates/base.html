@@ -1,4 +1,6 @@
 {% load static %}
+{% load i18n %}
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <link rel="stylesheet" href="{% static 'style/zoneeditor.css' %}">
@@ -9,12 +11,12 @@
     <div class="grid-x grid-margin-x">
         <div class="cell">
             <div class="float-right">
-                <a href="{% url 'account_logout' %}">logout</a>
+                <a href="{% url 'account_logout' %}">{% trans 'logout' %}</a>
             </div>
             <h1>dino</h1>
             <nav>
                 <ul class="breadcrumbs">
-                    <li><a href="/">Home</a></li>
+                    <li><a href="/">{% trans "Home" context "nagivation" %}</a></li>
                     {% for crumb in breadcrumbs %}
                     <li>
                         {% if crumb.url and not forloop.last %}
