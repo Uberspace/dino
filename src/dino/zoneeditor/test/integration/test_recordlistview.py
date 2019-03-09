@@ -18,6 +18,47 @@ def test_recordlistview(client, mock_pdns_get_records):
     assert 'mail.example.org.' in content
 
 
+@pytest.mark.django_db()
+def test_recordlistview_pagination(client_admin, mock_pdns_get_records):
+    response = client_admin.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'}))
+    assert len(response.context_data['object_list']) == 20
+    assert response.context_data['object_list'][0]['name'] == 'mail.example.com.'
+    assert response.context_data['object_list'][-1]['name'] == 'r17.example.com.'
+
+
+@pytest.mark.django_db()
+def test_recordlistview_pagination_page(client_admin, mock_pdns_get_records):
+    response = client_admin.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'}) + '?page=5')
+    assert len(response.context_data['object_list']) == 20
+    assert response.context_data['object_list'][0]['name'] == 'r78.example.com.'
+    assert response.context_data['object_list'][-1]['name'] == 'r97.example.com.'
+
+
+@pytest.mark.parametrize('q,count,name', [
+    ('r170', 1, 'r170.example.com.'),
+    ('R170', 1, 'r170.example.com.'),
+    ('%40', 1, 'example.com.'),
+])
+@pytest.mark.django_db()
+def test_recordlistview_search_name(client_admin, mock_pdns_get_records, q, count, name):
+    response = client_admin.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'}) + f'?q={q}')
+    assert len(response.context_data['object_list']) == count
+    assert response.context_data['object_list'][0]['name'] == name
+
+
+@pytest.mark.django_db()
+def test_recordlistview_search_rtype(client_admin, mock_pdns_get_records):
+    response = client_admin.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'}) + '?q=MX')
+    assert len(response.context_data['object_list']) == 1
+    assert response.context_data['object_list'][0]['name'] == 'example.com.'
+
+
+@pytest.mark.django_db()
+def test_recordlistview_search_echo(client_admin, mock_pdns_get_records):
+    response = client_admin.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'}) + '?q=MX')
+    assert response.context_data['search_form'].initial['q'] == 'MX'
+
+
 @pytest.mark.parametrize('client', [
     (pytest.lazy_fixture('client_user_tenant_admin')),
     (pytest.lazy_fixture('client_user_tenant_user')),

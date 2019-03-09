@@ -24,46 +24,6 @@ class SearchForm(forms.Form):
     q = forms.CharField(max_length=100, label="Search", required=False)
 
 
-class PDNSDataView():
-    """ provide filtering and basic context for objects w/o a database """
-    filter_properties = []
-    paginate_by = 20
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['search_form'] = SearchForm(initial={'q': self.request.GET.get('q')})
-        context['object_list'] = self.current_page.object_list
-        context['page_obj'] = self.current_page
-        context['paginator'] = self._paginator
-        return context
-
-    @property
-    def current_page(self):
-        return self._paginator.page(self.request.GET.get('page', 1))
-
-    @property
-    def _paginator(self):
-        return Paginator(self.final_objects, self.paginate_by)
-
-    @cached_property
-    def final_objects(self):
-        q = self.request.GET.get('q')
-
-        if q:
-            q = q.lower()
-            apex_search = (q == '@')
-
-            return [
-                o for o in self.get_objects()
-                if any(
-                    q in o.get(p).lower() or (apex_search and p == 'name' and o.get(p) == self.zone_name)
-                    for p in self.filter_properties
-                )
-            ]
-        else:
-            return self.get_objects()
-
-
 class ZoneListView(PermissionRequiredMixin, ListView):
     permission_required = 'tenants.list_zones'
     template_name = "zoneeditor/zone_list.html"
@@ -193,16 +153,49 @@ class ZoneDetailMixin(PermissionRequiredMixin):
         return self.kwargs['zone']
 
 
-class ZoneRecordsView(PDNSDataView, ZoneDetailMixin, TemplateView):
+class ZoneRecordsView(ZoneDetailMixin, TemplateView):
     permission_required = 'tenants.view_zone'
     template_name = "zoneeditor/zone_records.html"
-    filter_properties = ['rtype', 'name']
+    paginate_by = 20
 
-    def get_objects(self):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['search_form'] = SearchForm(initial={'q': self.request.GET.get('q')})
+        context['object_list'] = self.current_page.object_list
+        context['page_obj'] = self.current_page
+        context['paginator'] = self._paginator
+        return context
+
+    @property
+    def current_page(self):
+        return self._paginator.page(self.request.GET.get('page', 1))
+
+    @property
+    def _paginator(self):
+        return Paginator(self.filtered_records, self.paginate_by)
+
+    @cached_property
+    def filtered_records(self):
+        q = self.request.GET.get('q')
+
         try:
-            return pdns().get_records(self.zone_name)
+            records = pdns().get_records(self.zone_name)
         except PDNSNotFoundException:
             raise Http404()
+
+        if q:
+            q = q.lower()
+            is_apex_search = (q == '@')
+
+            return [
+                r for r in records
+                if
+                    q.upper() == r['rtype'] or
+                    q in r['name'].lower() or
+                    (is_apex_search and r['name'] == self.zone_name)
+            ]
+        else:
+            return records
 
 
 class ZoneDeleteView(PermissionRequiredMixin, DeleteConfirmView):

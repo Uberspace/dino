@@ -121,7 +121,7 @@ def mock_pdns_get_records(mocker):
         for r in [
             ('mail.example.com.', 300, 'A', '1.2.3.4'),
             ('example.com.', 300, 'MX', '0 mail.example.org.'),
-        ]
+        ] + [(f'r{i}.example.com.', 300, 'A', '4.3.2.1') for i in range(500)]
     ]
     return mocker.patch('dino.pdns_api.pdns.get_records', return_value=rval)
 
