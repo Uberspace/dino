@@ -30,15 +30,18 @@ class ZoneListView(PermissionRequiredMixin, ListView):
     model = Zone
     paginate_by = 20
 
-    def render_to_response(self, context, **response_kwargs):
-        page_obj = context['page_obj']
-        object_list = context['object_list']
-        found_only_one = (page_obj.number == 1 and object_list.count() == 1)
+    def __init__(self, **kwargs):
+        self._zones_refreshed = False
+        return super().__init__(**kwargs)
 
-        if found_only_one and self.query and object_list[0].name.strip('.') == self.query.strip('.'):
-            return HttpResponseRedirect(reverse('zoneeditor:zone_detail', kwargs={'zone': object_list[0].name}))
-        else:
-            return super().render_to_response(context, **response_kwargs)
+    def get(self, request, *args, **kwargs):
+        if self.query:
+            name = self.query.rstrip('.') + '.'
+
+            if self.get_queryset().filter(name=name).exists():
+                return HttpResponseRedirect(reverse('zoneeditor:zone_detail', kwargs={'zone': name}))
+
+        return super().get(request, *args, **kwargs)
 
     @property
     def query(self):
@@ -49,9 +52,14 @@ class ZoneListView(PermissionRequiredMixin, ListView):
         context['search_form'] = SearchForm(initial={'q': self.query})
         return context
 
+    def _refresh_zones(self):
+        if not self._zones_refreshed:
+            # TODO: doing this every time the list is loaded is a bad idea
+            Zone.import_from_powerdns(pdns().get_zones())
+            self._zones_refreshed = True
+
     def get_queryset(self):
-        # TODO: doing this every time the list is loaded is a bad idea
-        Zone.import_from_powerdns(pdns().get_zones())
+        self._refresh_zones()
 
         zones = Zone.objects.all().order_by('name')
 
