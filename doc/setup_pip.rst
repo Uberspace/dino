@@ -121,8 +121,10 @@ Dino
   (...)
   Successfully installed (...) dino-0.1 (...)
 
-Basic Configuration
-^^^^^^^^^^^^^^^^^^^
+.. _configuration:
+
+Configuration
+^^^^^^^^^^^^^
 
 Create ``/etc/dino.cfg`` with the following content, adapt as needed.
 
@@ -194,10 +196,13 @@ Finally, load the newly create service:
 Finishing up
 ^^^^^^^^^^^^
 
-Create a database
-"""""""""""""""""
+Initialize the database
+"""""""""""""""""""""""
 
-By default, a SQLite database is used.
+The following command creates all tables needed by dino. This will connect to
+the database server specified in ``DINO_DB_URL``, which defaults to using a
+file-based SQLite database. If you'd like to use a different database, jump back
+to the :ref:`configuration` section and adpat the setting.
 
 .. code-block:: console
 
