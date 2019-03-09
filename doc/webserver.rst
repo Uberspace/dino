@@ -9,7 +9,8 @@ Apache, Lighttpd or Traefik.
 .. note::
 
   Just like the pip setup guide, this guide assumes a fresh ubuntu 18.04 bionic
-  box. Most of the steps are the same or easily adapted for other distributions.
+  box. Most of the steps are the same or can be easily adapted for other
+  distributions.
 
 Installation
 ------------
