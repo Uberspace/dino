@@ -115,6 +115,18 @@ def db_zone():
 
 
 @pytest.fixture
+def mock_pdns_get_records(mocker):
+    rval = [
+        {'name': r[0], 'ttl': r[1], 'rtype': r[2], 'content': r[3]}
+        for r in [
+            ('mail.example.com.', 300, 'A', '1.2.3.4'),
+            ('example.com.', 300, 'MX', '0 mail.example.org.'),
+        ]
+    ]
+    return mocker.patch('dino.pdns_api.pdns.get_records', return_value=rval)
+
+
+@pytest.fixture
 def mock_delete_entity(mocker):
     return mocker.patch('dino.common.views.DeleteConfirmView.delete_entity')
 
