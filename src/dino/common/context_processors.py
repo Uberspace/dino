@@ -56,8 +56,8 @@ def get_breadcrumb(url, kwargs, prefix):
     url = '/' + url
 
     for k, v in kwargs.items():
-        url = url.replace(f'<{k}>', v)
-        crumb = crumb.replace(f'<{k}>', v)
+        url = re.sub(fr'<([^>]+:)?{k}>', v, url)
+        crumb = re.sub(fr'<([^>]+:)?{k}>', v, crumb)
 
     if '/' in crumb:
         # URL parts are not seperated => ['profile', 'edit/image']

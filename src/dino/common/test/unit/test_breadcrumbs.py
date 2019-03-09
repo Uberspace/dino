@@ -6,7 +6,7 @@ import dino.common.context_processors as cp
 def test_breadcrumbs_list_urls():
     urls = cp.list_urls()
     assert len(urls) > 20
-    assert 'zones/<zone>/records' in urls
+    assert 'zones/<zonename:zone>/records' in urls
 
 
 def test_breadcrumbs_assemble():
@@ -14,10 +14,10 @@ def test_breadcrumbs_assemble():
 
 
 def test_breadcrumbs_parent_urls():
-    assert cp.get_parent_urls('/zones/<zone>/records') == [
+    assert cp.get_parent_urls('/zones/zone.com./records') == [
         'zones',
-        'zones/<zone>',
-        'zones/<zone>/records',
+        'zones/<zonename:zone>',
+        'zones/<zonename:zone>/records',
     ]
 
 

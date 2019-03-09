@@ -74,7 +74,12 @@ class ZoneListView(PermissionRequiredMixin, ListView):
 
 
 class ZoneNameValidator(RegexValidator):
-    regex = fr'^{URLValidator.hostname_re}{URLValidator.domain_re}{URLValidator.tld_re}\Z'
+    unanchored_regex = fr'{URLValidator.hostname_re}{URLValidator.domain_re}{URLValidator.tld_re}'
+    regex = fr'^{unanchored_regex}\Z'
+
+
+class RecordNameValidator(RegexValidator):
+    regex = fr'^(@\Z|{URLValidator.hostname_re}({URLValidator.domain_re}{URLValidator.tld_re})?)\Z'
 
 
 class ZoneCreateForm(forms.Form):
@@ -223,7 +228,7 @@ class RecordForm(forms.Form):
     name = forms.CharField(validators=(RecordNameValidator(),), required=False)
     rtype = forms.ChoiceField(choices=settings.RECORD_TYPES, initial='A', label=_('Type'))
     ttl = forms.IntegerField(min_value=1, initial=300, label=_('TTL'))
-    content = forms.CharField()
+    content = forms.CharField(max_length=65536)
 
     def __init__(self, zone_name, *args, **kwargs):
         super().__init__(*args, **kwargs)
