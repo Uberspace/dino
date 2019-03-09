@@ -15,6 +15,7 @@ to your liking.
 .. toctree::
    :hidden:
    :caption: Setup:
+   :numbered:
 
    database
    setup_pip
