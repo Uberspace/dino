@@ -34,28 +34,28 @@ DEFAULT_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = cfg.get(
     'BASE_DIR', DEFAULT_BASE_DIR, example='/opt/dino',
     display_default='.../lib/python3.x/site-packages/dino/',
-    doc='Directory to drop internal data; must exist and be writeable and not publicly acccessible.'
+    doc='Existing directory for dino to write internal data to. It must thus be created beforehand and be writeable by the user you use to run dino. It is currently only used to store the SQLite database (if used), but may contain other data in future releases. Note that this directory must **not** be accssible publicly.'
 )
 
 SECRET_KEY = cfg.get(
     'SECRET_KEY',
     django=True, example='Aixa1ahs1euyo2oopii-Y:eex8sie~d5',
-    doc='Long (>64 chars), random and ascii string of characters. Used to derive crypto keys for cookies and other places. Keep secret.'
+    doc='Long (>64 chars), random and ascii string of characters. It is used by django to derive crypto keys for cookies and other security-critical applications. Ensure that the string is private at all times. It can be changed without negative effect, if leaked accidentially.'
 )
 DEBUG = cfg.get(
     'DEBUG', False, bool,
     django=True,
-    doc='Run in development mode. Do not enable in production.'
+    doc='Run dino in development mode. Do not enable this setting in production, as it might leak sensitive information to clients.'
 )
 ALLOWED_HOSTS = cfg.get(
     'ALLOWED_HOSTS', [], list,
     django=True, example='dino.company.com,dino.internal',
-    doc='Comma-seperated list of hostnames under which dino should be accessible at.'
+    doc='List of hostnames under which dino should be accessible at. Accessing dino using a ``Host:`` header not in this list, yields an 400 Bad Request error.'
 )
 PDNS_APIURL = cfg.get(
     'PDNS_APIURL',
     example='https://yourpowerdns.com/api/v1',
-    doc='Full URL to your PowerDNS server API endpoint.'
+    doc='Full URL to your PowerDNS server API endpoint, including the ``/api/v1`` path.'
 )
 PDNS_APIKEY = cfg.get(
     'PDNS_APIKEY',
@@ -163,7 +163,7 @@ default_db_url = 'sqlite:///' + os.path.join(BASE_DIR, 'db.sqlite3')
 db_url = cfg.get(
     'DB_URL', default_db_url,
     example='mysql://dino:password@host/dino',
-    doc='Database to connect to, refer to `dj-database-url <https://github.com/kennethreitz/dj-database-url#url-schema>`_ for information on the URL schema.',
+    doc='Database to connect to; refer to `dj-database-url <https://github.com/kennethreitz/dj-database-url#url-schema>`_ for information on the URL schema.',
 )
 DATABASES = {
     'default': dj_database_url.config(default=db_url, conn_max_age=600),
@@ -192,7 +192,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 TRUST_PROXY = cfg.get(
     'TRUST_PROXY', False, cast=bool,
-    doc='Whether to trust information in X-Forwarded-Proto/Host, or not. Set this, if dino is behind a reverse proxy and it is setting those headers'
+    doc='Whether to trust the information given in the ``X-Forwarded-Proto`` and ``X-Forwarded-Host`` HTTP headers. If dino is behind a reverse proxy, set this to ``True``. Ensure that your server software is a) setting these headers and b) discards any content provided by clients.'
 )
 
 if TRUST_PROXY:
@@ -204,7 +204,7 @@ if TRUST_PROXY:
 
 HTTPS_ONLY = cfg.get(
     'HTTPS_ONLY', False, cast=bool,
-    doc='Whether to enforce HTTPS, set HSTS and send cookies on HTTPS only. Recommended.',
+    doc='Whether to enforce HTTPS, set HSTS and send cookies on HTTPS only. Recommended, if your setup exposes dino on HTTPS (which, again, is recommended).',
 )
 
 if HTTPS_ONLY:
@@ -228,7 +228,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = cfg.get(
     'TIMEZONE', 'UTC',
-    django=True,
+    example='Europ/Berlin', django=True,
     doc='Timezone to use for auditing and logging.'
 )
 
@@ -272,21 +272,21 @@ LOGGING = {
 # Custom Settings
 ENABLE_SIGNUP = cfg.get(
     'ENABLE_SIGNUP', False, cast=bool,
-    doc='Whether to let users create permissionless accounts without any prior authentication.',
+    doc='Whether to let users create permissionless accounts without any prior authentication. not recommended.',
 )
 ZONE_DEFAULT_KIND = cfg.get(
     'ZONE_DEFAULT_KIND', 'Native',
-    doc='PowerDNS kind to set for new zones, may be Native, Master or Slave. See `PowerDNS Docs <see https://doc.powerdns.com/authoritative/http-api/zone.html#zone>`_',
+    doc='PowerDNS kind to set for new zones, may be Native, Master or Slave. See `PowerDNS Docs <see https://doc.powerdns.com/authoritative/http-api/zone.html#zone>`_.',
 )
 ZONE_DEFAULT_NAMESERVERS = cfg.get(
     'ZONE_DEFAULT_NAMESERVERS', [], cast=list,
     example='ns1.company.com,ns2.company.com',
-    doc='Nameservers to set for new zones.',
+    doc='List of nameservers to set for new zones.',
 )
 
 USE_DEFAULT_RECORD_TYPES = cfg.get(
     'USE_DEFAULT_RECORD_TYPES', True, cast=bool,
-    doc='Whether to offer a selection of default record types (A, AAAA, MX, CAA, ...) in the GUI, or rely on DINO_CUSTOM_RECORD_TYPES only.',
+    doc='Whether to offer a selection of default record types (A, AAAA, MX, CAA, ...) in the GUI, or rely on ``DINO_CUSTOM_RECORD_TYPES`` only.',
 )
 
 if USE_DEFAULT_RECORD_TYPES:
