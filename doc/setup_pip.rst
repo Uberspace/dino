@@ -126,7 +126,9 @@ Dino
 Configuration
 ^^^^^^^^^^^^^
 
-Create ``/etc/dino.cfg`` with the following content, adapt as needed.
+Create a file called ``/etc/dino.cfg`` with the following content. It provides a
+bare-bones configuration for django, which should be extended. Please go through
+the :doc:`list of config options <config>` and set the appropriate values.
 
 .. code-block:: ini
 
