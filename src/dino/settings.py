@@ -90,7 +90,13 @@ INSTALLED_APPS = [
     'rules.apps.AutodiscoverRulesConfig',
 ]
 
-for provider in cfg.get('LOGIN_PROVIDERS', [], list):
+login_providers = cfg.get(
+    'LOGIN_PROVIDERS', [], list,
+    example='google,soundcloud',
+    doc='Social login providers to load and offer to users. Please refer to the `django-allauth docs <https://django-allauth.readthedocs.io/en/latest/installation.html>`_ for a list of available providers.',
+)
+
+for provider in login_providers:
     INSTALLED_APPS.append(
         f'allauth.socialaccount.providers.{provider}',
     )
