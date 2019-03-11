@@ -33,6 +33,7 @@ cfg = Config('DINO', env_files=env_files)
 DEFAULT_BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BASE_DIR = cfg.get(
     'BASE_DIR', DEFAULT_BASE_DIR, example='/opt/dino',
+    display_default='.../lib/python3.x/site-packages/dino/',
     doc='Directory to drop internal data; must exist and be writeable and not publicly acccessible.'
 )
 

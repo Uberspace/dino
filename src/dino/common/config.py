@@ -85,11 +85,11 @@ class Config():
     def _cast(self, value, cast):
         return self.CASTS[cast](value)
 
-    def get(self, key, default=None, cast=str, django=False, example=None, doc=None):
+    def get(self, key, default=None, cast=str, *, display_default=None, django=False, example=None, doc=None):
         value = default
         env_key = self._env_key(key)
 
-        self.settings.append(Setting(key, env_key, default, cast, django, example, doc))
+        self.settings.append(Setting(key, env_key, display_default or default, cast, django, example, doc))
 
         if cast not in self.CAST_NAMES:
             raise Exception(_('Invalid cast {}.').format(cast))
