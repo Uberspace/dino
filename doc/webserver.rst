@@ -44,6 +44,10 @@ Then, create our new configuration in ``/etc/nginx/sites-enabled/dino``:
 .. code-block:: nginx
 
   server {
+    # this configuration does not include any HTTP, which is a bad idea.
+    # use the generator below or any other resource to add transport encryption
+    # to your requests.
+    # https://mozilla.github.io/server-side-tls/ssl-config-generator/
     listen 80 default_server;
     listen [::]:80 default_server;
 
@@ -59,12 +63,6 @@ Then, create our new configuration in ``/etc/nginx/sites-enabled/dino``:
       proxy_pass http://localhost:8080;
     }
   }
-
-.. note::
-
-  The above configuration only includes the bare minimum - no HTTPS, caching or
-  anything else considered state-of-the-art. Expand it according to best
-  practices as needed.
 
 Start nginx
 -----------
