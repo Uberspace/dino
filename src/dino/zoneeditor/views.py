@@ -22,7 +22,7 @@ from dino.tenants.models import PermissionLevels, Tenant
 
 
 class SearchForm(forms.Form):
-    q = forms.CharField(max_length=100, label=_("Search"), required=False)
+    q = forms.CharField(max_length=100, label=_("Search"), required=False, widget=forms.TextInput(attrs={'class': 'input-group-field'}))
 
 
 class ZoneListView(PermissionRequiredMixin, ListView):
