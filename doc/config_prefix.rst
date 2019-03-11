@@ -1,7 +1,13 @@
 Configuration
 =============
 
-There are multiple ways to set configuration options in dino:
+Dino provides a variety of configuration options. Have a quick list through the
+list to see which ones are relevant to you!
+
+Location
+--------
+
+There are multiple ways to set configuration options:
 
 1. File ``/etc/dino.cfg``, global config
 2. File ``~/.dino.cfg``, user config
@@ -13,9 +19,8 @@ They are loaded in the order above; later files overwrite earlier ones.
 File Format
 -----------
 
-Configuration is stored in a simple, non-nested key=value format. Comments can
-be added using ``#`` on dedicated lines. Lines without ``=`` are ignored. Look
-at the example below for a valid example:
+Configuration is stored in a simple, non-nested ``key=value`` format. Comments
+can be added using ``#`` on dedicated lines. Lines without ``=`` are ignored.
 
 .. code-block:: ini
 

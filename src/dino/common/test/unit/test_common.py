@@ -142,16 +142,18 @@ def test_config_settings_human():
     c.get('SECRET_KEY', default='default', cast=str, django=True, example='example', doc='doc')
     r = list(c._settings_human())
     assert len(r) == 2
-    assert r[0][0] == 'DINO_BASE_DIR'
-    assert r[0][1] == {
+    assert r[0][0] == 'BASE_DIR'
+    assert r[0][1] == 'DINO_BASE_DIR'
+    assert r[0][2] == {
         'type': 'string',
         'description': 'doc',
         'required': 'yes',
         'default': None,
         'example': 'example',
     }
-    assert r[1][0] == 'DINO_SECRET_KEY'
-    assert r[1][1] == {
+    assert r[1][0] == 'SECRET_KEY'
+    assert r[1][1] == 'DINO_SECRET_KEY'
+    assert r[1][2] == {
         'type': 'string',
         'description': 'doc',
         'required': 'no',

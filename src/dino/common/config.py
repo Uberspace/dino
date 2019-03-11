@@ -134,23 +134,43 @@ class Config():
             if setting.django:
                 fields.append(('django docs', f'https://docs.djangoproject.com/en/2.1/ref/settings/#std:setting-{setting.key}'))
 
-            yield (setting.env_key, OrderedDict(fields))
+            yield (setting.key, setting.env_key, OrderedDict(fields))
 
     def settings_rst(self):
         result = ""
 
-        for env_key, fields in self._settings_human():
+        for key, env_key, fields in self._settings_human():
+            description = fields.pop('description', '')
+            django_url = fields.pop('django docs', None)
+
+            if fields.get('default', '') in [None, []]:
+                del fields['default']
+
+            for f in ['default', 'example']:
+                if f in fields:
+                    fields[f] = f'``{fields[f]}``'
+
+            if fields['type'] == 'boolean':
+                fields.pop('example', None)
+
+            fields['type'] = fields["type"].capitalize()
+
             result += f'{env_key}\n'
-            result += '^' * len(env_key) + '\n\n'
-            result += (fields.pop('description') or '') + '\n\n'
-            result += '\n'.join(f'* **{k}**: ``{v}``' for k, v in fields.items()) + '\n\n'
+            result += '"' * len(env_key) + '\n\n'
+            result += f'{description}\n\n'
+            result += '\n'.join(f'* **{k}**: {v}' for k, v in fields.items()) + '\n\n'
+
+            if django_url:
+                result += f'This is a stock django setting; refer to the `"{key}" django docs <{django_url}>`_ for more information.'
+
+            result += '\n\n'
 
         return result
 
     def settings_plaintext(self):
         result = ""
 
-        for env_key, fields in self._settings_human():
+        for key, env_key, fields in self._settings_human():
             result += env_key + '\n'
             result += '\n'.join(f'  {k:11}: {v}' for k, v in fields.items()) + '\n'
 
