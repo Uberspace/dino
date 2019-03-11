@@ -64,6 +64,22 @@ Then, create our new configuration in ``/etc/nginx/sites-enabled/dino``:
     }
   }
 
+Static Files
+------------
+
+Dino is able to serve all requests itself - this includes static files like
+CSS or JavaScript. For small setups, pinging python and django for each and
+every static file is quite fast enough; refer to the `whitenoise documentation`_
+details. Bigger setups with a high volume of requests might benefit from caching
+those requests.
+
+You can cache everything that is requested from the ``/static/`` directory. URLs
+look like ``/static/style/zoneeditor.d7de63624ec9.css``, contain a hash, which
+changes when the content changes. This means that you can cache them without any
+kind of timeout or cache invalidation.
+
+.. _`whitenoise documentation`: http://whitenoise.evans.io/en/stable/index.html#isn-t-serving-static-files-from-python-horribly-inefficient
+
 Start nginx
 -----------
 
