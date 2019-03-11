@@ -3,3 +3,11 @@ table.zoneeditor button {
     float: right;
     margin-left: 0.5rem;
 }
+
+h1 {
+    margin: 0;
+}
+
+hr {
+    margin-top: 0;
+}
