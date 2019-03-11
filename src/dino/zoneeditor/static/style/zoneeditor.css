@@ -11,3 +11,7 @@ h1 {
 hr {
     margin-top: 0;
 }
+
+.monospace {
+    font-family: monospace;
+}
