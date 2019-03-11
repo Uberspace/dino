@@ -274,7 +274,7 @@ ENABLE_SIGNUP = cfg.get(
     doc='Whether to let users create permissionless accounts without any prior authentication.',
 )
 ZONE_DEFAULT_KIND = cfg.get(
-    'ZONE_DEFAULT_KIND', 'Native', cast=bool,
+    'ZONE_DEFAULT_KIND', 'Native',
     doc='PowerDNS kind to set for new zones, may be Native, Master or Slave. See `PowerDNS Docs <see https://doc.powerdns.com/authoritative/http-api/zone.html#zone>`_',
 )
 ZONE_DEFAULT_NAMESERVERS = cfg.get(
