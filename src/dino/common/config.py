@@ -4,8 +4,6 @@ import os
 import sys
 from collections import OrderedDict
 
-from django.utils.translation import gettext_lazy as _
-
 
 class Setting():
     def __init__(self, key, env_key, default, cast, django, example, doc):
@@ -20,11 +18,11 @@ class Setting():
     @property
     def cast_str(self):
         if self.cast == str:
-            return _('string')
+            return 'string'
         elif self.cast == list:
-            return _('list')
+            return 'list'
         elif self.cast == bool:
-            return _('boolean')
+            return 'boolean'
         else:
             return str(self.cast)
 
@@ -92,7 +90,7 @@ class Config():
         self.settings.append(Setting(key, env_key, display_default or default, cast, django, example, doc))
 
         if cast not in self.CAST_NAMES:
-            raise Exception(_('Invalid cast {}.').format(cast))
+            raise Exception(f'Invalid cast {cast}.')
 
         try:
             with contextlib.suppress(KeyError):
@@ -100,11 +98,11 @@ class Config():
             with contextlib.suppress(KeyError):
                 value = self._cast(os.environ[env_key], cast)
         except ValueError as exc:
-            self.add_error(_('Configuration value {key}/${env_key} was invalid: {exc}.').format(key=key, env_key=env_key, exc=exc))
+            self.add_error(f'Configuration value {key}/${env_key} was invalid: {exc}.')
             return None
 
         if value is None:
-            self.add_error(_('Configuration value {key}/${env_key} is required and not set.').format(key=key, env_key=env_key))
+            self.add_error(f'Configuration value {key}/${env_key} is required and not set.')
             return None
 
         return value
@@ -114,8 +112,8 @@ class Config():
             return True
         else:
             print(
-                _('Dino cannot be started because of missing configuration values.\n'
-                'Please correct the errors below:') + '\n' +
+                'Dino cannot be started because of missing configuration values.\n'
+                'Please correct the errors below:' + '\n' +
                 '\n'.join(f'  {e}' for e in self._errors),
                 file=sys.stderr,
             )
