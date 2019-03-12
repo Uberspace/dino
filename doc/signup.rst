@@ -14,7 +14,10 @@ to your dino configuration (``/etc/dino.cfg``, or another location):
 
 .. code-block:: ini
 
+  # enable signup via email/password
   DINO_ENABLE_EMAIL_SIGNUP=True
+  # and/or enable social signup, see below
+  #DINO_ENABLE_SOCIAL_SIGNUP=True
 
 .. warning::
 
@@ -35,17 +38,16 @@ and restart dino:
 
 .. code-block:: ini
 
-  DINO_ENABLE_EMAIL_SIGNUP=True
   DINO_VALID_SIGNUP_DOMAINS=example.com
 
 The above configuration allows anyone with a ``...@example.com`` mail address to
 create accounts.
 
-Social Login
-------------
+Social Accounts
+---------------
 
 Dino utilizes `django-allauth <https://www.intenct.nl/projects/django-allauth/>`_
-to enable login using various login providers. Most of them will not be of much
+to enable login and signup using various providers. Most of them will not be of much
 use in typical dino deployments; you might find Google, GitLab or OpenID useful,
 if your organisation uses one of them for authentication interally.
 
@@ -61,6 +63,8 @@ First, we need to load the `google provider`_. In ``/etc/dino.cfg``
 .. code-block:: ini
 
   DINO_LOGIN_PROVIDERS=google
+  # and optionally
+  #DINO_ENABLE_SOCIAL_SIGNUP=True
 
 .. _`google provider`: https://django-allauth.readthedocs.io/en/latest/providers.html#google
 
