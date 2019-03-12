@@ -12,6 +12,10 @@ hr {
     margin-top: 0;
 }
 
+.messages {
+    margin-left: 0;
+}
+
 .monospace {
     font-family: monospace;
 }
