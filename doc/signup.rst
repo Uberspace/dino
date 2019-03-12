@@ -9,12 +9,12 @@ right users to create accounts themselves might be required.
 Enabling Signup
 ---------------
 
-To enable users to create accounts themselves, add the ``ENABLE_SIGNUP`` setting
+To enable users to create accounts themselves, add the ``ENABLE_EMAIL_SIGNUP`` setting
 to your dino configuration (``/etc/dino.cfg``, or another location):
 
 .. code-block:: ini
 
-  ENABLE_SIGNUP=True
+  ENABLE_EMAIL_SIGNUP=True
 
 .. warning::
 
@@ -35,7 +35,7 @@ and restart dino:
 
 .. code-block:: ini
 
-  ENABLE_SIGNUP=True
+  ENABLE_EMAIL_SIGNUP=True
   VALID_SIGNUP_DOMAINS=example.com
 
 The above configuration allows anyone with a ``...@example.com`` mail address to

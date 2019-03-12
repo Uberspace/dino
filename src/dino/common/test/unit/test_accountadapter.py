@@ -8,21 +8,36 @@ from django.test.utils import override_settings
 from ...allauth import DinoAccountAdapter, DinoSocialAccountAdapter, _check_email_domain
 
 
-@pytest.mark.parametrize('adpaterclass,args', [
-    (DinoAccountAdapter, []),
-    (DinoSocialAccountAdapter, [None])
-])
-def test_accountadapter_signup(adpaterclass, args):
-    adapter = adpaterclass()
+def test_accountadapter_signup():
+    adapter = DinoAccountAdapter()
     request = RequestFactory().get('/')
 
-    assert adapter.is_open_for_signup(request, *args) is False
+    assert adapter.is_open_for_signup(request) is False
 
-    with override_settings(ENABLE_SIGNUP=False):
-        assert adapter.is_open_for_signup(request, *args) is False
+    with override_settings(ENABLE_EMAIL_SIGNUP=False):
+        assert adapter.is_open_for_signup(request) is False
 
-    with override_settings(ENABLE_SIGNUP=True):
-        assert adapter.is_open_for_signup(request, *args) is True
+    with override_settings(ENABLE_SOCIAL_SIGNUP=True):
+        assert adapter.is_open_for_signup(request) is False
+
+    with override_settings(ENABLE_EMAIL_SIGNUP=True):
+        assert adapter.is_open_for_signup(request) is True
+
+
+def test_socialaccountadapter_signup():
+    adapter = DinoSocialAccountAdapter()
+    request = RequestFactory().get('/')
+
+    assert adapter.is_open_for_signup(request) is False
+
+    with override_settings(ENABLE_SOCIAL_SIGNUP=False):
+        assert adapter.is_open_for_signup(request) is False
+
+    with override_settings(ENABLE_EMAIL_SIGNUP=True):
+        assert adapter.is_open_for_signup(request) is False
+
+    with override_settings(ENABLE_SOCIAL_SIGNUP=True):
+        assert adapter.is_open_for_signup(request) is True
 
 
 def test_accountadapter_email():

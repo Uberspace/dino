@@ -27,6 +27,9 @@ class DinoSocialAccountAdapter(DefaultSocialAccountAdapter):
         except forms.ValidationError:
             raise ImmediateHttpResponse(HttpResponseForbidden())
 
+    def is_open_for_signup(self, request):
+        return settings.ENABLE_SOCIAL_SIGNUP
+
 
 class DinoAccountAdapter(DefaultAccountAdapter):
     def clean_email(self, email):
@@ -34,4 +37,4 @@ class DinoAccountAdapter(DefaultAccountAdapter):
         return super().clean_email(email)
 
     def is_open_for_signup(self, request):
-        return settings.ENABLE_SIGNUP
+        return settings.ENABLE_EMAIL_SIGNUP

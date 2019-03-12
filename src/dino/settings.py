@@ -271,16 +271,20 @@ LOGGING = {
 
 
 # Custom Settings
-ENABLE_SIGNUP = cfg.get(
-    'ENABLE_SIGNUP', False, cast=bool,
-    doc='Whether to let users create permissionless accounts without any prior authentication. not recommended.',
+ENABLE_EMAIL_SIGNUP = cfg.get(
+    'ENABLE_EMAIL_SIGNUP', False, cast=bool,
+    doc='Whether to let users create permissionless accounts without any prior authentication using username/password. not recommended, refer to :doc:`signup` for details.',
+)
+ENABLE_SOCIAL_SIGNUP = cfg.get(
+    'ENABLE_SOCIAL_SIGNUP', False, cast=bool,
+    doc='Whether to let users create permissionless accounts without any prior authentication social login (google, openid, ...). not recommended, refer to :doc:`signup` for details.',
 )
 VALID_SIGNUP_DOMAINS_DEFAULT = object()
 VALID_SIGNUP_DOMAINS = cfg.get(
     'VALID_SIGNUP_DOMAINS', VALID_SIGNUP_DOMAINS_DEFAULT, cast=list,
     display_default='[]',
     example='company.com,company.internal',
-    doc='If ``DINO_ENABLE_SIGNUP`` is enabled, restrict creation of new users to the given domains. Any user, who can receive mail at a whitelisted domain will then be able to create a permissionless account without any prior authentication. Accounts need to be activated by verifiying the email address, though.'
+    doc='If ``DINO_ENABLE_EMAIL_SIGNUP`` is enabled, restrict creation of new users to the given domains. Any user, who can receive mail at a whitelisted domain will then be able to create a permissionless account without any prior authentication. Accounts need to be activated by verifiying the email address, though.'
 )
 ZONE_DEFAULT_KIND = cfg.get(
     'ZONE_DEFAULT_KIND', 'Native',
