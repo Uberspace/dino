@@ -11,7 +11,7 @@ There are multiple ways to set configuration options:
 
 1. File ``/etc/dino.cfg``, global config
 2. File ``~/.dino.cfg``, user config
-3. File ``./dini.cfg``, local config
+3. File ``./dino.cfg``, local config
 4. Process Environment (e.g. ``$DINO_BASE_DIR``)
 
 They are loaded in the order above; later files overwrite earlier ones.
