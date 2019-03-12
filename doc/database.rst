@@ -37,8 +37,9 @@ Create a new user and database for dino:
   postgres@host:~$ createdb dino --owner=dino
 
 .. note::
-  If you are installing dino using ``pip``, the setup can be password-less using
-  a UNIX socket connection and `Peer Authentication`_.
+  If dino and PostgreSQL are running on the same host, your setup can be
+  password-less using a UNIX socket connection and `Peer Authentication`_.
+  Skip the ``-P`` parameter in this case.
 
 .. _`Peer Authentication`: https://www.postgresql.org/docs/current/auth-peer.html
 
