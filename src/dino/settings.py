@@ -153,7 +153,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 SITE_ID = 1
-ACCOUNT_ADAPTER = 'dino.common.allauth.NoNewUsersAccountAdapter'
+ACCOUNT_ADAPTER = 'dino.common.allauth.DinoAccountAdapter'
 LOGIN_REDIRECT_URL = '/'
 
 # Database

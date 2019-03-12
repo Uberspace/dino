@@ -4,7 +4,7 @@ from django.test.utils import override_settings
 from ...allauth import NoNewUsersAccountAdapter
 
 
-def test_nonewusersaccountadapter():
+def test_accountadapter_signup():
     adapter = NoNewUsersAccountAdapter()
     request = RequestFactory().get('/')
 
