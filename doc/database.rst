@@ -40,6 +40,17 @@ Create a new user and database for dino:
   If you are installing dino using ``pip``, the setup can be password-less using
   a UNIX socket connection and `Peer Authentication`_.
 
+Install the python PostgreSQL client library:
+
+.. code-block:: console
+
+  root@host:~# pip install psycopg2
+  Collecting psycopg2
+    Cache entry deserialization failed, entry ignored
+    Downloading https://files.pythonhosted.org/packages/...
+  (...)
+  Successfully installed psycopg2-2.7.7
+
 .. _`Peer Authentication`: https://www.postgresql.org/docs/current/auth-peer.html
 
 MySQL / MariaDB
@@ -59,3 +70,14 @@ Create a new user and database for dino:
   mysql> CREATE DATABASE dino DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_general_ci;
   mysql> GRANT ALL PRIVILEGES ON dino.* TO dino@'localhost' IDENTIFIED BY '*********';
   mysql> FLUSH PRIVILEGES;
+
+Install the python MySQL client library:
+
+.. code-block:: console
+
+  root@host:~# pip install mysqlclient
+  Collecting mysqlclient
+  Cache entry deserialization failed, entry ignored
+  Downloading https://files.pythonhosted.org/packages/...
+  (...)
+  Successfully installed mysqlclient-1.4.2.post1
