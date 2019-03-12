@@ -1,3 +1,5 @@
+import allauth.account.adapter
+import allauth.socialaccount.adapter
 import django.forms as forms
 import pytest
 from allauth.exceptions import ImmediateHttpResponse
@@ -5,11 +7,11 @@ from django.contrib.auth import get_user_model
 from django.test import RequestFactory
 from django.test.utils import override_settings
 
-from ...allauth import DinoAccountAdapter, DinoSocialAccountAdapter, _check_email_domain
+from ...allauth import _check_email_domain
 
 
 def test_accountadapter_signup():
-    adapter = DinoAccountAdapter()
+    adapter = allauth.account.adapter.get_adapter()
     request = RequestFactory().get('/')
 
     assert adapter.is_open_for_signup(request) is False
@@ -25,7 +27,7 @@ def test_accountadapter_signup():
 
 
 def test_socialaccountadapter_signup():
-    adapter = DinoSocialAccountAdapter()
+    adapter = allauth.socialaccount.adapter.get_adapter()
     request = RequestFactory().get('/')
 
     assert adapter.is_open_for_signup(request) is False
@@ -41,7 +43,7 @@ def test_socialaccountadapter_signup():
 
 
 def test_accountadapter_email():
-    adpater = DinoAccountAdapter()
+    adpater = allauth.account.adapter.get_adapter()
 
     assert adpater.clean_email('some@example.com')
 
@@ -65,7 +67,7 @@ class FakeSocialLogin():
 
 
 def test_accountadapter_pre_social_login():
-    adpater = DinoSocialAccountAdapter()
+    adpater = allauth.socialaccount.adapter.get_adapter()
 
     adpater.pre_social_login(None, FakeSocialLogin('some@example.com'))
 
