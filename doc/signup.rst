@@ -9,12 +9,12 @@ right users to create accounts themselves might be required.
 Enabling Signup
 ---------------
 
-To enable users to create accounts themselves, add the ``ENABLE_EMAIL_SIGNUP`` setting
+To enable users to create accounts themselves, add the ``DINO_ENABLE_EMAIL_SIGNUP`` setting
 to your dino configuration (``/etc/dino.cfg``, or another location):
 
 .. code-block:: ini
 
-  ENABLE_EMAIL_SIGNUP=True
+  DINO_ENABLE_EMAIL_SIGNUP=True
 
 .. warning::
 
@@ -35,8 +35,8 @@ and restart dino:
 
 .. code-block:: ini
 
-  ENABLE_EMAIL_SIGNUP=True
-  VALID_SIGNUP_DOMAINS=example.com
+  DINO_ENABLE_EMAIL_SIGNUP=True
+  DINO_VALID_SIGNUP_DOMAINS=example.com
 
 The above configuration allows anyone with a ``...@example.com`` mail address to
 create accounts.
@@ -60,7 +60,7 @@ First, we need to load the `google provider`_. In ``/etc/dino.cfg``
 
 .. code-block:: ini
 
-  LOGIN_PROVIDERS=google
+  DINO_LOGIN_PROVIDERS=google
 
 .. _`google provider`: https://django-allauth.readthedocs.io/en/latest/providers.html#google
 
