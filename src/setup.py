@@ -52,6 +52,12 @@ setup(
         'django-csp==3.5',
     ],
     extras_require={
+        'mysql': [
+            'mysqlclient>=1.3.13',
+        ],
+        'pgsql': [
+            'psycopg2>=2.5.4',
+        ],
         'dev': [
             'isort',
             'pylama',

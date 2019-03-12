@@ -121,6 +121,17 @@ Dino
   (...)
   Successfully installed (...) dino-0.1 (...)
 
+.. note::
+
+  If you'd like to use a database other than SQLite, the corresponding python
+  client library needs to be installed. Use one of the following urls instead of
+  the one given above:
+
+  * MySQL/MariaDB: https://github.com/Uberspace/dino/archive/master.zip\#egg\=dino\[mysql\]\&subdirectory\=src
+  * PostgreSQL: https://github.com/Uberspace/dino/archive/master.zip\#egg\=dino\[pgsql\]\&subdirectory\=src
+
+  Additionally, the ``libmariadbclient-dev`` apt package is required for mysql.
+
 .. _configuration:
 
 Configuration
