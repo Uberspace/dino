@@ -15,3 +15,9 @@ hr {
 .monospace {
     font-family: monospace;
 }
+
+button.square {
+    font-size: 0.6rem;
+    height: 2rem;
+    width: 2rem;
+}
