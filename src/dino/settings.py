@@ -154,6 +154,7 @@ AUTHENTICATION_BACKENDS = (
 
 SITE_ID = 1
 ACCOUNT_ADAPTER = 'dino.common.allauth.DinoAccountAdapter'
+SOCIALACCOUNT_ADAPTER = 'dino.common.allauth.DinoSocialAccountAdapter'
 LOGIN_REDIRECT_URL = '/'
 
 # Database
@@ -274,6 +275,13 @@ ENABLE_SIGNUP = cfg.get(
     'ENABLE_SIGNUP', False, cast=bool,
     doc='Whether to let users create permissionless accounts without any prior authentication. not recommended.',
 )
+VALID_SIGNUP_DOMAINS_DEFAULT = object()
+VALID_SIGNUP_DOMAINS = cfg.get(
+    'VALID_SIGNUP_DOMAINS', VALID_SIGNUP_DOMAINS_DEFAULT, cast=list,
+    display_default='[]',
+    example='company.com,company.internal',
+    doc='If ``DINO_ENABLE_SIGNUP`` is enabled, restrict creation of new users to the given domains. Any user, who can receive mail at a whitelisted domain will then be able to create a permissionless account without any prior authentication. Accounts need to be activated by verifiying the email address, though.'
+)
 ZONE_DEFAULT_KIND = cfg.get(
     'ZONE_DEFAULT_KIND', 'Native',
     doc='PowerDNS kind to set for new zones, may be Native, Master or Slave. See `PowerDNS Docs <see https://doc.powerdns.com/authoritative/http-api/zone.html#zone>`_.',
@@ -298,6 +306,24 @@ if USE_DEFAULT_RECORD_TYPES:
     ]
 else:
     RECORD_TYPES = []
+
+
+if VALID_SIGNUP_DOMAINS != VALID_SIGNUP_DOMAINS_DEFAULT:
+    SOCIALACCOUNT_EMAIL_VERIFICATION = False
+    SOCIALACCOUNT_EMAIL_REQUIRED = True
+    ACCOUNT_EMAIL_VERIFICATION = True
+    ACCOUNT_EMAIL_REQUIRED = True
+
+    if len(VALID_SIGNUP_DOMAINS) == 1:
+        # add hinting for google. this just makes the signup process faster for
+        # the user, but does not actually limit signups to the given domain.
+        SOCIALACCOUNT_PROVIDERS = {
+            'google': {
+                'AUTH_PARAMS': {
+                    'hd': VALID_SIGNUP_DOMAINS[0],
+                }
+            }
+        }
 
 
 CUSTOM_RECORD_TYPES = cfg.get(

@@ -29,3 +29,4 @@ to your liking.
 
    users
    zonedata
+   signup
