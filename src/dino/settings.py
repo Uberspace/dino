@@ -48,7 +48,7 @@ DEBUG = cfg.get(
     doc='Run dino in development mode. Do not enable this setting in production, as it might leak sensitive information to clients.'
 )
 ALLOWED_HOSTS = cfg.get(
-    'ALLOWED_HOSTS', [], list,
+    'ALLOWED_HOSTS', ['*'] if DEBUG else None, list,
     django=True, example='dino.company.com,dino.internal',
     doc='List of hostnames under which dino should be accessible at. Accessing dino using a ``Host:`` header not in this list, yields an 400 Bad Request error.'
 )
