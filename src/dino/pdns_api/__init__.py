@@ -31,6 +31,27 @@ class pdns():
     def delete_zone(self, name):
         self._server.delete_zone(name)
 
+    def _encode_content(self, rtype, content):
+        """ convert a record to PowerDNS format """
+        if rtype == 'TXT':
+            content = content.replace("\\", "\\\\")  # \ => \\
+            content = content.replace('"', '\\"')     # " => \"
+            content = f'"{content}"'
+
+        return content
+
+    def _decode_content(self, rtype, content):
+        """ convert a record from PowerDNS format """
+        if rtype == 'TXT':
+            content = content.replace('\\"', '"')    # \" => "
+            content = content.replace("\\\\", "\\")  # \\ => \
+            if content.endswith('"'):
+                content = content[:-1]
+            if content.startswith('"'):
+                content = content[1:]
+
+        return content
+
     def get_all_records(self, zone):
         zone = self._server.get_zone(zone)
         if zone is None:
@@ -43,7 +64,7 @@ class pdns():
                 'name': r[0],
                 'ttl': int(r[1]),
                 'rtype': r[2],
-                'content': r[3],
+                'content': self._decode_content(r[2], r[3]),
             }
             for r in lines
         )
@@ -62,6 +83,7 @@ class pdns():
 
     def _update_records(self, zone, name, rtype, ttl, contents):
         assert isinstance(contents, list)
+        contents = [self._encode_content(rtype, c) for c in contents]
         rrset = powerdns.RRSet(name, rtype, contents, ttl)
         zone = self._server.get_zone(zone)
         zone.create_records([rrset])

@@ -72,6 +72,7 @@ def mock_lib_pdns_axfr(mocker):
 www.example.com.\t300\tAAAA\t1.2.3.4
 www.example.com.\t300\tAAAA\t4.3.2.1
 mail.example.com.\t600\tA\t4.3.2.1
+foo.example.com.\t600\tTXT\t"\\\\\\"\\""
 '''
         }
     )
@@ -84,6 +85,7 @@ def test_pdns_get_all_records(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
         {'zone': 'example.com.', 'name': 'www.example.com.', 'ttl': 300, 'rtype': 'AAAA', 'content': '1.2.3.4'},
         {'zone': 'example.com.', 'name': 'www.example.com.', 'ttl': 300, 'rtype': 'AAAA', 'content': '4.3.2.1'},
         {'zone': 'example.com.', 'name': 'mail.example.com.', 'ttl': 600, 'rtype': 'A', 'content': '4.3.2.1'},
+        {'zone': 'example.com.', 'name': 'foo.example.com.', 'ttl': 600, 'rtype': 'TXT', 'content': '\\""'},
     ]
 
 
@@ -94,6 +96,7 @@ def test_pdns_get_records(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
         {'zone': 'example.com.', 'name': 'www.example.com.', 'ttl': 300, 'rtype': 'AAAA', 'content': '1.2.3.4'},
         {'zone': 'example.com.', 'name': 'www.example.com.', 'ttl': 300, 'rtype': 'AAAA', 'content': '4.3.2.1'},
         {'zone': 'example.com.', 'name': 'mail.example.com.', 'ttl': 600, 'rtype': 'A', 'content': '4.3.2.1'},
+        {'zone': 'example.com.', 'name': 'foo.example.com.', 'ttl': 600, 'rtype': 'TXT', 'content': '\\""'},
     ]
 
 
@@ -131,6 +134,15 @@ def test_pdns_create_record(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone, mo
         {'content': '1.2.3.4', 'disabled': False},
         {'content': '4.3.2.1', 'disabled': False},
         {'content': '0 example.org.', 'disabled': False},
+    ]
+
+
+def test_pdns_create_record_quotes(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone, mock_create_records):
+    pdns.create_record('example.com.', 'www.example.com.', 'TXT', 400, '"\\')
+    mock_create_records.assert_called_once()
+    rrsets = mock_create_records.call_args[0]
+    assert rrsets[0][0]['records'] == [
+        {'content': r'"\"\\"', 'disabled': False}
     ]
 
 
