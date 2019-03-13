@@ -312,20 +312,21 @@ class RecordEditForm(RecordForm, forms.Form):
             return
 
         try:
-            self._create(self.new_record)
-        except PDNSError as e_new:
-            self.add_error(None, _('Could not create new record.') + ' ' + _('PowerDNS error: {}').format(e_new.message))
-            return
-
-        try:
             self._delete(self.old_record)
         except PDNSError as e:
             self.add_error(None, _('Could not delete old record.') + ' ' + _('PowerDNS error: {}').format(e.message))
+            return
+
+        try:
+            self._create(self.new_record)
+        except PDNSError as e_new:
+            self.add_error(None, _('Could not create new record.') + ' ' + _('PowerDNS error: {}').format(e_new.message))
 
             try:
-                self._delete(self.new_record)
+                self._create(self.old_record)
             except PDNSError as e:
-                self.add_error(None, _('Could not delete new record; it may be duplicated now.') + ' ' + _('PowerDNS error: {}').format(e.message))
+                self.add_error(None, _('Could not re-create old record; it may be missing now.') + ' ' + _('PowerDNS error: {}').format(e.message))
+                return
 
 
 class RecordCreateView(ZoneDetailMixin, SuccessMessageMixin, FormView):

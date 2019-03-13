@@ -39,7 +39,7 @@ def test_recordeditview_post_granted(client, mock_create_record, mock_delete_rec
 
 @pytest.mark.django_db()
 def test_recordeditview_post_submit(client_admin, mock_create_record, mock_delete_record, record_data, signed_record_data):
-    record_data['content'] = '1 example.com.'
+    record_data['rtype'] = 'AAAA'
     response = client_admin.post(
         reverse('zoneeditor:zone_record_edit', kwargs={'zone': 'example.com.'}),
         data={'identifier': signed_record_data, **record_data}
@@ -54,9 +54,9 @@ def test_recordeditview_post_submit(client_admin, mock_create_record, mock_delet
     mock_create_record.assert_called_once_with(
         zone='example.com.',
         name='mail.example.com.',
-        rtype='MX',
+        rtype='AAAA',
         ttl=300,
-        content='1 example.com.',
+        content='0 example.org.',
     )
 
 

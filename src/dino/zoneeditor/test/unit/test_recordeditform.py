@@ -24,7 +24,7 @@ def test_recordeditform_invalid(mock_create_record, mock_delete_record, record_d
 
 
 def test_recordeditform_api_error_create(broken_create_record, mock_delete_record, record_data, signed_record_data):
-    record_data['content'] = '1 example.com.'
+    record_data['rtype'] = 'AAAA'
     form = RecordEditForm('example.com.', data={
         'identifier': signed_record_data,
         **record_data,
@@ -32,12 +32,28 @@ def test_recordeditform_api_error_create(broken_create_record, mock_delete_recor
     assert not form.is_valid()
     assert 'broken' in form.errors['__all__'][0]
     assert 'create new record' in form.errors['__all__'][0]
-    assert len(form.errors['__all__']) == 1
-    broken_create_record.assert_called_once()
+    assert 'broken' in form.errors['__all__'][1]
+    assert 're-create old record' in form.errors['__all__'][1]
+    assert len(form.errors['__all__']) == 2
+    assert len(broken_create_record.call_args) == 2
+    broken_create_record.assert_any_call(
+        zone='example.com.',
+        name='mail.example.com.',
+        rtype='MX',
+        ttl=300,
+        content='0 example.org.',
+    )
+    broken_create_record.assert_any_call(
+        zone='example.com.',
+        name='mail.example.com.',
+        rtype='AAAA',
+        ttl=300,
+        content='0 example.org.',
+    )
 
 
 def test_recordeditform_api_error_delete(mock_create_record, broken_delete_record, record_data, signed_record_data):
-    record_data['content'] = '1 example.com.'
+    record_data['rtype'] = 'AAAA'
     form = RecordEditForm('example.com.', data={
         'identifier': signed_record_data,
         **record_data,
@@ -45,22 +61,9 @@ def test_recordeditform_api_error_delete(mock_create_record, broken_delete_recor
     assert not form.is_valid()
     assert 'broken' in form.errors['__all__'][0]
     assert 'delete old record' in form.errors['__all__'][0]
-    assert 'broken' in form.errors['__all__'][1]
-    assert 'delete new record' in form.errors['__all__'][1]
-    assert len(form.errors['__all__']) == 2
-    mock_create_record.assert_called_once()
-    broken_delete_record.assert_any_call(
-        zone='example.com.',
-        name='mail.example.com.',
-        rtype='MX',
-        content='0 example.org.',
-    )
-    broken_delete_record.assert_any_call(
-        zone='example.com.',
-        name='mail.example.com.',
-        rtype='MX',
-        content='1 example.com.',
-    )
+    assert len(form.errors['__all__']) == 1
+    broken_delete_record.assert_called_once()
+    mock_create_record.assert_not_called()
 
 
 def test_recordeditform_change(mock_create_record, mock_delete_record, record_data, signed_record_data):
