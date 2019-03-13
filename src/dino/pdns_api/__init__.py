@@ -83,6 +83,19 @@ class pdns():
         contents = [r['content'] for r in old_records if r['content'] != content]
         self._update_records(zone, name, rtype, ttl, contents)
 
+    def update_record(self, zone, name, rtype, old_content, new_ttl, new_content):
+        old_records = list(self.get_records(zone, name, rtype))
+
+        if not old_records:
+            raise PDNSNotFoundException()  # record is already gone
+        if not any(r['content'] == old_content for r in old_records):
+            raise PDNSNotFoundException()  # record is already gone
+
+        contents = [r['content'] for r in old_records if r['content'] != old_content]
+        contents.append(new_content)
+
+        self._update_records(zone, name, rtype, new_ttl, contents)
+
 
 __all__ = [
     'pdns',

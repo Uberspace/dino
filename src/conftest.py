@@ -152,6 +152,11 @@ def mock_create_record(mocker):
 
 
 @pytest.fixture
+def mock_update_record(mocker):
+    return mocker.patch('dino.pdns_api.pdns.update_record')
+
+
+@pytest.fixture
 def broken_create_record(mocker):
     return mocker.patch('dino.pdns_api.pdns.create_record', side_effect=PDNSError('/', 400, 'broken'))
 

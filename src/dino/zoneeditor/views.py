@@ -301,8 +301,15 @@ class RecordEditForm(RecordForm, forms.Form):
 
         if self.new_record['rtype'] == self.old_record['rtype'] and \
                 self.new_record['name'] == self.old_record['name']:
-            # TODO: replace cleanely in API
-            pass
+            pdns().update_record(
+                zone=self.zone_name,
+                name=self.old_record['name'],
+                rtype=self.old_record['rtype'],
+                old_content=self.old_record['content'],
+                new_ttl=self.new_record['ttl'],
+                new_content=self.new_record['content'],
+            )
+            return
 
         try:
             self._create(self.new_record)

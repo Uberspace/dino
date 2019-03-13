@@ -110,3 +110,43 @@ def test_recordeditform_change_content_only(mock_create_record, mock_delete_reco
         ttl=300,
         content='1 example.com.',
     )
+
+
+def test_recordeditform_change_ttl_only(mock_create_record, mock_delete_record, mock_update_record, record_data, signed_record_data):
+    record_data['ttl'] = '1337'
+    form = RecordEditForm('example.com.', data={
+        'identifier': signed_record_data,
+        **record_data,
+    })
+    assert not form.errors
+    assert form.is_valid()
+    mock_delete_record.assert_not_called()
+    mock_create_record.assert_not_called()
+    mock_update_record.assert_called_once_with(
+        zone='example.com.',
+        name='mail.example.com.',
+        rtype='MX',
+        old_content='0 example.org.',
+        new_ttl=1337,
+        new_content='0 example.org.',
+    )
+
+
+def test_recordeditform_change_content_only(mock_create_record, mock_delete_record, mock_update_record, record_data, signed_record_data):
+    record_data['content'] = '100 example.org.'
+    form = RecordEditForm('example.com.', data={
+        'identifier': signed_record_data,
+        **record_data,
+    })
+    assert not form.errors
+    assert form.is_valid()
+    mock_delete_record.assert_not_called()
+    mock_create_record.assert_not_called()
+    mock_update_record.assert_called_once_with(
+        zone='example.com.',
+        name='mail.example.com.',
+        rtype='MX',
+        old_content='0 example.org.',
+        new_ttl=300,
+        new_content='100 example.org.',
+    )

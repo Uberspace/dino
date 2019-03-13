@@ -155,3 +155,24 @@ def test_pdns_delete_record_gone(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zon
     with pytest.raises(PDNSNotFoundException):
         pdns.delete_record(*args)
     mock_create_records.assert_not_called()
+
+
+def test_pdns_update_record(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone, mock_create_records):
+    pdns.update_record(
+        'example.com.',
+        'www.example.com.',
+        'AAAA',
+        '1.2.3.4',
+        '400',
+        '1.2.3.5'
+    )
+    mock_create_records.assert_called_once()
+    rrsets = mock_create_records.call_args[0]
+    assert len(rrsets) == 1
+    assert rrsets[0][0]['name'] == 'www.example.com.'
+    assert rrsets[0][0]['type'] == 'AAAA'
+    assert rrsets[0][0]['ttl'] == '400'
+    assert rrsets[0][0]['records'] == [
+        {'content': '4.3.2.1', 'disabled': False},
+        {'content': '1.2.3.5', 'disabled': False},
+    ]
