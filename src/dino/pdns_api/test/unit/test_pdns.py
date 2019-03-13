@@ -38,6 +38,11 @@ def test_pdns_create_zone(pdns, kind, mock_lib_pdns_create_zone):
     mock_lib_pdns_create_zone.assert_called_once_with('example.com.', 'Native', [])
 
 
+def test_pdns_create_zone_punycode(pdns, mock_lib_pdns_create_zone):
+    pdns.create_zone('sömething.com.', 'Native', [])
+    mock_lib_pdns_create_zone.assert_called_once_with('xn--smething-n4a.com.', 'Native', [])
+
+
 def test_pdns_create_zone_kind(pdns):
     with pytest.raises(Exception) as excinfo:
         pdns.create_zone('example.com.', 'Blargh', [])
@@ -54,28 +59,45 @@ def test_pdns_delete_zone(pdns, mock_lib_pdns_delete_zone):
     mock_lib_pdns_delete_zone.assert_called_once_with('example.com.')
 
 
+def test_pdns_delete_zone_punycode(pdns, mock_lib_pdns_delete_zone):
+    pdns.delete_zone('sömething.com')
+    mock_lib_pdns_delete_zone.assert_called_once_with('xn--smething-n4a.com')
+
+
 @pytest.fixture
 def mock_lib_pdns_get_zone(mocker, client):
-    return mocker.patch('powerdns.interface.PDNSServer.get_zone',
-        return_value=powerdns.interface.PDNSZone(client[0], client[1], {
-            'name': 'example.com.',
+    def f(zone):
+        return powerdns.interface.PDNSZone(client[0], client[1], {
+            'name': zone,
             'url': '',
         })
-    )
+
+    return mocker.patch('powerdns.interface.PDNSServer.get_zone', side_effect=f)
 
 
 @pytest.fixture
 def mock_lib_pdns_axfr(mocker):
-    return mocker.patch('powerdns.client.PDNSApiClient.request',
-        return_value={
-            'zone': '''
+    def f(path, method):
+        if path == '/servers/localhost/zones/example.com./export':
+            return {
+                'zone': '''
 www.example.com.\t300\tAAAA\t1.2.3.4
 www.example.com.\t300\tAAAA\t4.3.2.1
 mail.example.com.\t600\tA\t4.3.2.1
 foo.example.com.\t600\tTXT\t"\\\\\\"\\""
 '''
-        }
-    )
+            }
+        elif path == '/servers/localhost/zones/xn--smething-n4a.com./export':
+            return {
+                'zone': '''
+xn--smething-n4a.com.\t300\tA\t1.2.3.4
+xn--wht-rla.xn--smething-n4a.com.\t300\tA\t4.3.2.1
+'''
+            }
+        else:
+            raise Exception('unknown domain, fix the test or extend this mock.')
+
+    return mocker.patch('powerdns.client.PDNSApiClient.request', side_effect=f)
 
 
 def test_pdns_get_all_records(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
@@ -86,6 +108,15 @@ def test_pdns_get_all_records(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
         {'zone': 'example.com.', 'name': 'www.example.com.', 'ttl': 300, 'rtype': 'AAAA', 'content': '4.3.2.1'},
         {'zone': 'example.com.', 'name': 'mail.example.com.', 'ttl': 600, 'rtype': 'A', 'content': '4.3.2.1'},
         {'zone': 'example.com.', 'name': 'foo.example.com.', 'ttl': 600, 'rtype': 'TXT', 'content': '\\""'},
+    ]
+
+
+def test_pdns_get_all_records_punycode(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
+    r = pdns.get_all_records('sömething.com.')
+    r = list(r)
+    assert r == [
+        {'zone': 'sömething.com.', 'name': 'sömething.com.', 'ttl': 300, 'rtype': 'A', 'content': '1.2.3.4'},
+        {'zone': 'sömething.com.', 'name': 'whät.sömething.com.', 'ttl': 300, 'rtype': 'A', 'content': '4.3.2.1'},
     ]
 
 
@@ -143,6 +174,19 @@ def test_pdns_create_record_quotes(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_z
     rrsets = mock_create_records.call_args[0]
     assert rrsets[0][0]['records'] == [
         {'content': r'"\"\\"', 'disabled': False}
+    ]
+
+
+def test_pdns_create_record_punycode(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone, mock_create_records):
+    pdns.create_record('sömething.com.', 'mail.sömething.com.', 'MX', 400, '0 example.org')
+    mock_create_records.assert_called_once()
+    mock_lib_pdns_get_zone.assert_called_with('xn--smething-n4a.com.')
+    rrsets = mock_create_records.call_args[0]
+    assert rrsets[0][0]['name'] == 'mail.xn--smething-n4a.com.'
+    assert rrsets[0][0]['type'] == 'MX'
+    assert rrsets[0][0]['ttl'] == 400
+    assert rrsets[0][0]['records'] == [
+        {'content': '0 example.org', 'disabled': False}
     ]
 
 

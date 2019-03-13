@@ -51,6 +51,7 @@ setup(
         'whitenoise==4.1.*',
         'django-csp==3.5',
         'django-foundation-formtags==0.1.*',
+        'idna>=2.8',
     ],
     extras_require={
         'mysql': [
