@@ -20,7 +20,10 @@ class pdns():
         return self.api.servers[0]
 
     def get_zones(self):
-        return self._server.zones
+        return [
+            z.name
+            for z in self._server.zones
+        ]
 
     def create_zone(self, name, kind, nameservers):
         if kind not in ('Native', 'Master', 'Slave'):

@@ -8,11 +8,11 @@ def test_zone_str():
 
 
 @pytest.mark.django_db()
-def test_zone_import_from_powerdns(MockPDNSZone):
+def test_zone_import_from_powerdns():
     Zone().import_from_powerdns((
-        MockPDNSZone('example.com.'),
-        MockPDNSZone('example.org.'),
-        MockPDNSZone('example.co.uk.'),
+        'example.com.',
+        'example.org.',
+        'example.co.uk.',
     ))
 
     assert Zone.objects.all().count() == 3

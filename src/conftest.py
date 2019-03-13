@@ -172,16 +172,11 @@ def broken_delete_record(mocker):
 
 
 @pytest.fixture
-def MockPDNSZone():
-    return namedtuple('MockPDNSZone', ['name'])
-
-
-@pytest.fixture
-def mock_pdns_get_zones(mocker, MockPDNSZone):
+def mock_pdns_get_zones(mocker):
     rval = [
-        MockPDNSZone('example.com.'),
-        MockPDNSZone('example.org.'),
-    ] + [MockPDNSZone(f'example{i}.org') for i in range(500)]
+        'example.com.',
+        'example.org.',
+    ] + [f'example{i}.org' for i in range(500)]
     return mocker.patch('dino.pdns_api.pdns.get_zones', return_value=rval)
 
 
