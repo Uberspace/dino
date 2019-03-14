@@ -68,7 +68,7 @@ We also need some further dependencies to install uWSGI via pip in the next step
 
 .. code-block:: console
 
-  root@ubuntu-bionic:~# apt install -y python3-setuptools build-essential
+  root@ubuntu-bionic:~# apt install -y python3-setuptools build-essential python3-dev
   Reading package lists... Done
   Building dependency tree       
   Reading state information... Done
