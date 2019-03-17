@@ -35,7 +35,7 @@
             <td>{{ rr.content }}</td>
             <td>{{ rr.ttl }}</td>
             <td>
-                <form action="{% url 'zoneeditor:zone_record_edit' zone=zone_name %}" method="POST">
+                <form action="{% url 'zoneeditor:zone_record_edit' zone=zone_name %}" method="POST" class="edit">
                     {% csrf_token %}
                     <input type="hidden" name="identifier" value="{{ rr|sign }}">
                     <button type="submit" class="button square warning" {% btn_perm 'tenants.edit_record' request.user zone_name %}>
@@ -43,7 +43,8 @@
                         <span class="show-for-sr">{% trans 'edit' %}</span>
                     </button>
                 </form>
-                <form action="{% url 'zoneeditor:zone_record_delete' zone=zone_name %}" method="POST">
+                {% if rr.rtype != 'SOA' %}
+                <form action="{% url 'zoneeditor:zone_record_delete' zone=zone_name %}" method="POST" class="delete">
                     {% csrf_token %}
                     <input type="hidden" name="identifier" value="{{ rr|sign }}">
                     <button type="submit" class="button square alert" {% btn_perm 'tenants.delete_record' request.user zone_name %}>
@@ -51,6 +52,7 @@
                         <span class="show-for-sr">{% trans 'delete' %}</span>
                     </button>
                 </form>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

@@ -61,6 +61,35 @@ def test_recordlistview_pagination_controls_last(client_admin, db_zone, mock_pdn
 
 
 @pytest.mark.django_db()
+def test_recordlistview_buttons(client_admin, db_zone, mock_pdns_get_zones, mock_pdns_get_records):
+    response = client_admin.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'}))
+    content = response.content.decode()
+    soup = BeautifulSoup(content, 'html.parser')
+
+    edit_btns = soup.select('table tbody tr td .edit')
+    assert len(edit_btns) == 20
+
+    delete_btns = soup.select('table tbody tr td .delete')
+    assert len(delete_btns) == 20
+
+
+@pytest.mark.django_db()
+def test_recordlistview_buttons_delete_soa(client_admin, db_zone, mock_pdns_get_zones, mock_pdns_get_records):
+    response = client_admin.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'}) + '?q=SOA')
+    content = response.content.decode()
+
+    assert 'a.misconfigured.powerdns.server.' in content
+
+    soup = BeautifulSoup(content, 'html.parser')
+
+    delete_btns = soup.select('table tbody tr')
+    assert len(delete_btns) > 0
+
+    delete_btns = soup.select('table tbody tr td .delete')
+    assert len(delete_btns) == 0
+
+
+@pytest.mark.django_db()
 def test_recordlistview_pagination(client_admin, mock_pdns_get_records):
     response = client_admin.get(reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'}))
     assert len(response.context_data['object_list']) == 20
