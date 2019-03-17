@@ -25,6 +25,12 @@ dino
 a modern DNS record editor for PowerDNS. It uses the PowerDNS-API, has a high
 test coverage, rich documentation and comes with batteries included!
 
+Setup
+-----
+
+Refer to `our documentation <https://dino.readthedocs.io/>`_ to learn how to use
+dino in a production environment.
+
 Development
 -----------
 
