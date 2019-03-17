@@ -1,6 +1,5 @@
 import os
 import sys
-from collections import namedtuple
 
 import pytest
 from django.contrib.auth import get_user_model
