@@ -3,7 +3,7 @@
 <nav aria-label="Pagination">
     <ul class="pagination text-center" role="navigation" aria-label="Pagination">
         {% if page_obj.has_previous %}
-        <li><a href="?page={{ objects.previous_page_number }}" aria-label="{% trans 'Previous page' %}">
+        <li><a href="?page={{ page_obj.previous_page_number }}" aria-label="{% trans 'Previous page' %}">
             {% trans 'Previous page' %}
         </a></li>
         {% else %}
@@ -19,7 +19,7 @@
         {% endfor %}
 
         {% if page_obj.has_next %}
-        <li><a href="?page={{ object_list.next_page_number }}" aria-label="{% trans 'Next page' %}">
+        <li><a href="?page={{ page_obj.next_page_number }}" aria-label="{% trans 'Next page' %}">
             {% trans 'Next page' %}
         </a></li>
         {% else %}

@@ -1,4 +1,7 @@
+import math
+
 import pytest
+from bs4 import BeautifulSoup
 from django.shortcuts import reverse
 from django.test import TestCase
 
@@ -16,6 +19,45 @@ def test_recordlistview(client, mock_pdns_get_records):
     assert 'mail.example.com.' in content
     assert 'example.com.' in content
     assert 'mail.example.org.' in content
+
+
+@pytest.mark.django_db()
+def test_recordlistview_pagination_controls_first(client_admin, db_zone, mock_pdns_get_zones, mock_pdns_get_records):
+    url = reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'})
+    response = client_admin.get(url)
+    content = response.content.decode()
+    soup = BeautifulSoup(content, 'html.parser')
+
+    previous_page = soup.select('.pagination li:first-child')[0]
+    assert 'disabled' in previous_page['class']
+
+    next_page = soup.select('.pagination li:last-child')[0]
+    next_page_url = next_page.select('a')[0]['href']
+    assert 'disabled' not in next_page.get('class', '')
+
+    first_num = soup.select('.pagination li:nth-child(3)')[0]
+    assert first_num.select('a')[0]['href'] == next_page_url
+
+    response = client_admin.get(url + next_page_url)
+    assert response.status_code == 200
+
+
+@pytest.mark.django_db()
+def test_recordlistview_pagination_controls_last(client_admin, db_zone, mock_pdns_get_zones, mock_pdns_get_records):
+    url = reverse('zoneeditor:zone_records', kwargs={'zone': 'example.com.'})
+    pages = math.ceil(len(mock_pdns_get_records())/20)
+    response = client_admin.get(f'{url}?page={pages}')
+    content = response.content.decode()
+    soup = BeautifulSoup(content, 'html.parser')
+
+    previous_page = soup.select('.pagination li:first-child')[0]
+    assert 'disabled' not in previous_page.get('class', '')
+
+    response = client_admin.get(url + previous_page.select('a')[0]['href'])
+    assert response.status_code == 200
+
+    next_page = soup.select('.pagination li:last-child')[0]
+    assert 'disabled' in next_page['class']
 
 
 @pytest.mark.django_db()

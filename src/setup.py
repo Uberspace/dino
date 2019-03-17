@@ -70,6 +70,7 @@ setup(
             'pytest-django',
             'pytest-mock',
             'pytest-lazy-fixture==0.5.*',
+            'beautifulsoup4',
         ],
         'doc': [
             'sphinx',
