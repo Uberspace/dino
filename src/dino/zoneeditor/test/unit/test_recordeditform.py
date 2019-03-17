@@ -92,29 +92,6 @@ def test_recordeditform_change(mock_create_record, mock_delete_record, record_da
     )
 
 
-def test_recordeditform_change_content_only(mock_create_record, mock_delete_record, record_data, signed_record_data):
-    record_data['content'] = '1 example.com.'
-    form = RecordEditForm('example.com.', data={
-        'identifier': signed_record_data,
-        **record_data,
-    })
-    assert not form.errors
-    assert form.is_valid()
-    mock_delete_record.assert_called_once_with(
-        zone='example.com.',
-        name='mail.example.com.',
-        rtype='MX',
-        content='0 example.org.',
-    )
-    mock_create_record.assert_called_once_with(
-        zone='example.com.',
-        name='mail.example.com.',
-        rtype='MX',
-        ttl=300,
-        content='1 example.com.',
-    )
-
-
 def test_recordeditform_change_ttl_only(mock_create_record, mock_delete_record, mock_update_record, record_data, signed_record_data):
     record_data['ttl'] = '1337'
     form = RecordEditForm('example.com.', data={
