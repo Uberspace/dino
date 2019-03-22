@@ -83,7 +83,7 @@ class ZoneNameValidator(RegexValidator):
 
 
 class RecordNameValidator(RegexValidator):
-    regex = fr'^(@\Z|{ZoneNameValidator.hostname_re}({ZoneNameValidator.domain_re}{URLValidator.tld_re})?)\Z'
+    regex = fr'^(@\Z|{ZoneNameValidator.hostname_re}({ZoneNameValidator.domain_re})?({URLValidator.tld_re})?)\Z'
 
 
 class ZoneCreateForm(forms.Form):
