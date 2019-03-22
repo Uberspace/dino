@@ -66,6 +66,14 @@ def test_zonecreateform_name_add_dot(mock_create_zone):
 
 
 @pytest.mark.django_db
+def test_zonecreateform_name_underscore(mock_create_zone):
+    form = ZoneCreateForm(data={'name': '_some._example._thing.example.com.'})
+    assert form.is_valid()
+    mock_create_zone.assert_called_once_with(name='_some._example._thing.example.com.', kind='Native', nameservers=[])
+    assert Zone.objects.filter(name='_some._example._thing.example.com.').exists()
+
+
+@pytest.mark.django_db
 def test_zonecreateform_settings(mock_create_zone):
     with override_settings(ZONE_DEFAULT_KIND='Master', ZONE_DEFAULT_NAMESERVERS=['ns1.example.org']):
         form = ZoneCreateForm(data={'name': 'example.com.'})

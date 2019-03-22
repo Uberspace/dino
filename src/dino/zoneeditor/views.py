@@ -74,12 +74,16 @@ class ZoneListView(PermissionRequiredMixin, ListView):
 
 
 class ZoneNameValidator(RegexValidator):
-    unanchored_regex = fr'{URLValidator.hostname_re}{URLValidator.domain_re}{URLValidator.tld_re}'
+    # identical to URLValidator.hostname_re, except for leading underscroes
+    hostname_re = r'[_a-z' + URLValidator.ul + r'0-9](?:[a-z' + URLValidator.ul + r'0-9-]{0,61}[a-z' + URLValidator.ul + r'0-9])?'
+    # identical to URLValidator.domain_re, except for leading underscroes
+    domain_re = r'(?:\.(?!-)[_a-z' + URLValidator.ul + r'0-9-]{1,63}(?<!-))*'
+    unanchored_regex = fr'{hostname_re}{domain_re}{URLValidator.tld_re}'
     regex = fr'^{unanchored_regex}\Z'
 
 
 class RecordNameValidator(RegexValidator):
-    regex = fr'^(@\Z|{URLValidator.hostname_re}({URLValidator.domain_re}{URLValidator.tld_re})?)\Z'
+    regex = fr'^(@\Z|{ZoneNameValidator.hostname_re}({ZoneNameValidator.domain_re}{URLValidator.tld_re})?)\Z'
 
 
 class ZoneCreateForm(forms.Form):

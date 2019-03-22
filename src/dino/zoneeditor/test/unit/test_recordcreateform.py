@@ -16,6 +16,20 @@ def test_recordcreateform(mock_create_record, record_data):
     )
 
 
+def test_recordcreateform_name_underscore(mock_create_record, record_data):
+    record_data.update(name='_some._example._thing.example.com')
+    form = RecordCreateForm('example.com.', data=record_data)
+    assert not form.errors
+    assert form.is_valid()
+    mock_create_record.assert_called_once_with(
+        zone='example.com.',
+        name='_some._example._thing.example.com.',
+        rtype='MX',
+        ttl=300,
+        content='0 example.org.',
+    )
+
+
 def test_recordcreateform_name_add_zone(mock_create_record, record_data):
     record_data.update(name='mail')
     form = RecordCreateForm('example.com.', data=record_data)
