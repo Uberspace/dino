@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 
 {% load i18n %}
+{% load foundation_formtags %}
 
 {% block content %}
 <form method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form|as_foundation }}
     <input type="submit" value="{% trans 'Create Zone' %}" class="button">
 </form>
 {% endblock %}

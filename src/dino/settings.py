@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'rules.apps.AutodiscoverRulesConfig',
+    'foundation_formtags',
 ]
 
 login_providers = cfg.get(
