@@ -312,23 +312,21 @@ if USE_DEFAULT_RECORD_TYPES:
 else:
     RECORD_TYPES = []
 
+SOCIALACCOUNT_EMAIL_VERIFICATION = False
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = True
+ACCOUNT_EMAIL_REQUIRED = True
 
-if VALID_SIGNUP_DOMAINS != VALID_SIGNUP_DOMAINS_DEFAULT:
-    SOCIALACCOUNT_EMAIL_VERIFICATION = False
-    SOCIALACCOUNT_EMAIL_REQUIRED = True
-    ACCOUNT_EMAIL_VERIFICATION = True
-    ACCOUNT_EMAIL_REQUIRED = True
-
-    if len(VALID_SIGNUP_DOMAINS) == 1:
-        # add hinting for google. this just makes the signup process faster for
-        # the user, but does not actually limit signups to the given domain.
-        SOCIALACCOUNT_PROVIDERS = {
-            'google': {
-                'AUTH_PARAMS': {
-                    'hd': VALID_SIGNUP_DOMAINS[0],
-                }
+if VALID_SIGNUP_DOMAINS != VALID_SIGNUP_DOMAINS_DEFAULT and len(VALID_SIGNUP_DOMAINS) == 1:
+    # add hinting for google. this just makes the signup process faster for
+    # the user, but does not actually limit signups to the given domain.
+    SOCIALACCOUNT_PROVIDERS = {
+        'google': {
+            'AUTH_PARAMS': {
+                'hd': VALID_SIGNUP_DOMAINS[0],
             }
         }
+    }
 
 
 CUSTOM_RECORD_TYPES = cfg.get(
