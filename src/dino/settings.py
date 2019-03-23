@@ -328,6 +328,7 @@ if VALID_SIGNUP_DOMAINS != VALID_SIGNUP_DOMAINS_DEFAULT and len(VALID_SIGNUP_DOM
         }
     }
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 CUSTOM_RECORD_TYPES = cfg.get(
     'CUSTOM_RECORD_TYPES', [], cast=list,
