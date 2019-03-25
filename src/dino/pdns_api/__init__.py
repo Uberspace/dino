@@ -20,13 +20,21 @@ class pdns():
     def _encode_name(cls, name):
         """ convert a record to punnycode format """
         assert isinstance(name, str)
-        return idna.encode(name).decode('ascii')
+
+        if name.startswith('*.'):
+            return '*.' + idna.encode(name[2:]).decode('ascii')
+        else:
+            return idna.encode(name).decode('ascii')
 
     @classmethod
     def _decode_name(cls, name):
         """ convert a record from punnycode format """
         assert isinstance(name, str)
-        return idna.decode(name)
+
+        if name.startswith('*.'):
+            return '*.' + idna.decode(name[2:])
+        else:
+            return idna.decode(name)
 
     @property
     def _server(self):

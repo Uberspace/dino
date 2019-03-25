@@ -232,3 +232,22 @@ def test_pdns_update_record(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone, mo
         {'content': '4.3.2.1', 'disabled': False},
         {'content': '1.2.3.5', 'disabled': False},
     ]
+
+
+punyzones = [
+    ['example.com', 'example.com'],
+    ['*.example.com', '*.example.com'],
+    ['exämple.com', 'xn--exmple-cua.com'],
+    ['*.exämple.com', '*.xn--exmple-cua.com'],
+    ['asd.cöm', 'asd.xn--cm-fka'],
+]
+
+
+@pytest.mark.parametrize('name,punycode', punyzones)
+def test_encode_name(pdns, name, punycode):
+    assert pdns._encode_name(name) == punycode
+
+
+@pytest.mark.parametrize('punycode,name', punyzones)
+def test_decode_name(pdns, punycode, name):
+    assert pdns._decode_name(name) == punycode
