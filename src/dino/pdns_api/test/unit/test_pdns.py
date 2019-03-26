@@ -240,6 +240,7 @@ punyzones = [
     ['exämple.com', 'xn--exmple-cua.com'],
     ['*.exämple.com', '*.xn--exmple-cua.com'],
     ['asd.cöm', 'asd.xn--cm-fka'],
+    ['exa_mple.com.', 'exa_mple.com.'],
 ]
 
 

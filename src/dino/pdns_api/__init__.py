@@ -8,6 +8,13 @@ class PDNSNotFoundException(LookupError):
     pass
 
 
+# allow underscores in zone and record names
+# see https://github.com/kjd/idna/issues/50
+idna.idnadata.codepoint_classes['PVALID'] = tuple(
+    sorted(list(idna.idnadata.codepoint_classes['PVALID']) + [0x5f0000005f])
+)
+
+
 class pdns():
     def __init__(self):
         api_client = powerdns.PDNSApiClient(
