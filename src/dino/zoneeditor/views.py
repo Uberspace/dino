@@ -17,7 +17,7 @@ from rules.contrib.views import PermissionRequiredMixin
 from dino.common.fields import SignedHiddenField
 from dino.common.views import DeleteConfirmView
 from dino.pdns_api import PDNSError, PDNSNotFoundException, pdns
-from dino.synczones.models import Zone
+from dino.synczones.models import Zone, LogAction
 from dino.tenants.models import PermissionLevels, Tenant
 
 
@@ -90,16 +90,15 @@ class ZoneCreateForm(forms.Form):
     name = forms.CharField(validators=(ZoneNameValidator(),))
     tenants = forms.ModelMultipleChoiceField(queryset=Tenant.objects.none(), required=False)
 
-    def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
         super().__init__(*args, **kwargs)
 
-        if self.user:
-            if self.user.has_perm('is_admin'):
-                self.fields['tenants'].queryset = Tenant.objects.all()
-            else:
-                # tenants.create_zone
-                self.fields['tenants'].queryset = self.user.tenants.filter(membership__level=PermissionLevels.ADMIN)
+        if self.user.has_perm('is_admin'):
+            self.fields['tenants'].queryset = Tenant.objects.all()
+        else:
+            # tenants.create_zone
+            self.fields['tenants'].queryset = self.user.tenants.filter(membership__level=PermissionLevels.ADMIN)
 
         if self.fields['tenants'].queryset.count() == 0:
             self.fields['tenants'].widget = forms.HiddenInput()
@@ -129,6 +128,7 @@ class ZoneCreateForm(forms.Form):
             )
 
             zone = Zone.objects.create(name=self.cleaned_data['name'])
+            zone.log_action(self.user, LogAction.CREATED)
             for tenant in self.cleaned_data['tenants']:
                 tenant.zones.add(zone)
         except PDNSError as e:
@@ -225,7 +225,9 @@ class ZoneDeleteView(PermissionRequiredMixin, DeleteConfirmView):
             raise PermissionDenied()
 
         pdns().delete_zone(pk)
-        Zone.objects.filter(name=pk).delete()
+        zone = Zone.objects.get(name=pk)
+        zone.log_action(self.request.user, LogAction.DELETED)
+        zone.delete()
 
 
 class RecordForm(forms.Form):
@@ -234,9 +236,11 @@ class RecordForm(forms.Form):
     ttl = forms.IntegerField(min_value=1, initial=300, label=_('TTL'))
     content = forms.CharField(max_length=65536)
 
-    def __init__(self, zone_name, *args, **kwargs):
+    def __init__(self, zone_name, user, *args, **kwargs):
+        self.user = user
         super().__init__(*args, **kwargs)
         self.zone_name = zone_name
+        self.zone = Zone.objects.get(name=zone_name)
 
     def clean_name(self):
         name = self.cleaned_data['name']
@@ -267,6 +271,7 @@ class RecordCreateForm(RecordForm, forms.Form):
                 ttl=self.cleaned_data['ttl'],
                 content=self.cleaned_data['content'],
             )
+            self.zone.log_action(self.user, LogAction.CREATED, (self.cleaned_data['rtype'], self.cleaned_data['name']))
         except PDNSError as e:
             self.add_error(None, _('PowerDNS error: {}').format(e.message))
 
@@ -313,6 +318,7 @@ class RecordEditForm(RecordForm, forms.Form):
                 new_ttl=self.new_record['ttl'],
                 new_content=self.new_record['content'],
             )
+            self.zone.log_action(self.user, LogAction.UPDATED, (self.old_record['rtype'], self.old_record['name']))
             return
 
         try:
@@ -332,6 +338,9 @@ class RecordEditForm(RecordForm, forms.Form):
                 self.add_error(None, _('Could not re-create old record; it may be missing now.') + ' ' + _('PowerDNS error: {}').format(e.message))
                 return
 
+        self.zone.log_action(self.user, LogAction.DELETED, (self.old_record['rtype'], self.old_record['name']))
+        self.zone.log_action(self.user, LogAction.CREATED, (self.new_record['rtype'], self.new_record['name']))
+
 
 class RecordCreateView(ZoneDetailMixin, SuccessMessageMixin, FormView):
     permission_required = 'tenants.create_record'
@@ -347,6 +356,7 @@ class RecordCreateView(ZoneDetailMixin, SuccessMessageMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['zone_name'] = self.zone_name
+        kwargs['user'] = self.request.user
         return kwargs
 
 
@@ -367,6 +377,7 @@ class RecordEditView(ZoneDetailMixin, SuccessMessageMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['zone_name'] = self.zone_name
+        kwargs['user'] = self.request.user
         if kwargs['data'].keys() - {'csrfmiddlewaretoken'} == {'identifier'}:
             # initial submit from record list: fill fields with old record data
             # and make django belive that there never was a submit, to skip
@@ -394,6 +405,7 @@ class RecordDeleteView(ZoneDetailMixin, DeleteConfirmView):
         if rr['zone'] != self.kwargs['zone']:
             raise SuspiciousOperation('zone name in kwargs does not match zone name in payload.')
         pdns().delete_record(rr['zone'], rr['name'], rr['rtype'], rr['content'])
+        self.zone.log_action(self.request.user, LogAction.DELETED, (rr['rtype'], rr['name']))
 
     def get_redirect_url(self, rr):
         return reverse('zoneeditor:zone_records', kwargs={'zone': rr['zone']})
