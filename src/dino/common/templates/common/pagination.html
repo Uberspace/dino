@@ -1,9 +1,10 @@
 {% load i18n %}
+{% load add_querystring %}
 
 <nav aria-label="Pagination">
     <ul class="pagination text-center" role="navigation" aria-label="Pagination">
         {% if page_obj.has_previous %}
-        <li><a href="?page={{ page_obj.previous_page_number }}" aria-label="{% trans 'Previous page' %}">
+        <li><a href="{% add_querystring page=page_obj.previous_page_number %}" aria-label="{% trans 'Previous page' %}">
             {% trans 'Previous page' %}
         </a></li>
         {% else %}
@@ -14,12 +15,12 @@
         {% if p == page_obj.number %}
         <li class="current"><span class="show-for-sr">{% trans "You're on page" %}</span> {{ page_obj.number }}</li>
         {% elif p|add:"-3" <= page_obj.number and page_obj.number <= p|add:"3" %}
-        <li><a href="?page={{ p }}" aria-label="Page {{ p }}">{{ p }}</a></li>
+        <li><a href="{% add_querystring page=p %}" aria-label="Page {{ p }}">{{ p }}</a></li>
         {% endif %}
         {% endfor %}
 
         {% if page_obj.has_next %}
-        <li><a href="?page={{ page_obj.next_page_number }}" aria-label="{% trans 'Next page' %}">
+        <li><a href="{% add_querystring page=page_obj.next_page_number %}" aria-label="{% trans 'Next page' %}">
             {% trans 'Next page' %}
         </a></li>
         {% else %}
