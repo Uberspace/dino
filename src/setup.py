@@ -45,7 +45,7 @@ setup(
         'Django==2.2b1',
         'dj-database-url==0.5.*',
         'requests',  # should be installed with python-powerdns ... ?
-        'python-powerdns@https://github.com/vente-privee/python-powerdns/archive/1c61c574399e3e486a6e0b9d1e3d0521b2fa00a0.zip',
+        'python-powerdns@https://github.com/outini/python-powerdns/archive/173763c11bb4fe9f3017625847be5c1f65125ceb.zip',
         'django-allauth==0.38.*',
         'rules==2.0.*',
         'whitenoise==4.1.*',
