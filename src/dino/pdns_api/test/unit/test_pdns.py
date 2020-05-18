@@ -34,18 +34,18 @@ def mock_lib_pdns_create_zone(mocker, client):
 
 @pytest.mark.parametrize('kind', ['Native', 'Master', 'Slave'])
 def test_pdns_create_zone(pdns, kind, mock_lib_pdns_create_zone):
-    pdns.create_zone('example.com.', 'Native', [])
-    mock_lib_pdns_create_zone.assert_called_once_with('example.com.', 'Native', [])
+    pdns.create_zone('example.com.', 'Native', [], ['ns1'])
+    mock_lib_pdns_create_zone.assert_called_once_with('example.com.', 'Native', [], ['ns1'])
 
 
 def test_pdns_create_zone_punycode(pdns, mock_lib_pdns_create_zone):
-    pdns.create_zone('sömething.com.', 'Native', [])
-    mock_lib_pdns_create_zone.assert_called_once_with('xn--smething-n4a.com.', 'Native', [])
+    pdns.create_zone('sömething.com.', 'Native', [], ['ns1'])
+    mock_lib_pdns_create_zone.assert_called_once_with('xn--smething-n4a.com.', 'Native', [], ['ns1'])
 
 
 def test_pdns_create_zone_kind(pdns):
     with pytest.raises(Exception) as excinfo:
-        pdns.create_zone('example.com.', 'Blargh', [])
+        pdns.create_zone('example.com.', 'Blargh', [], [])
     assert 'Native' in str(excinfo)
 
 

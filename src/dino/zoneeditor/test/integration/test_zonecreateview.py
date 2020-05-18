@@ -27,7 +27,7 @@ def test_zonecreateview_post_granted(client, tenant, mock_create_zone, zone_name
         'tenants': tenant.pk,
     })
     TestCase().assertRedirects(response, '/zones/example.co.uk.', target_status_code=302)
-    mock_create_zone.assert_called_with(kind='Native', name='example.co.uk.', nameservers=[])
+    mock_create_zone.assert_called_with(kind='Native', name='example.co.uk.', nameservers=[], masters=[])
 
 
 @pytest.mark.parametrize('client,zone_name', [

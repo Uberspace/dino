@@ -126,6 +126,7 @@ class ZoneCreateForm(forms.Form):
                 name=self.cleaned_data['name'],
                 kind=settings.ZONE_DEFAULT_KIND,
                 nameservers=settings.ZONE_DEFAULT_NAMESERVERS,
+                masters=settings.ZONE_DEFAULT_MASTERS,
             )
 
             zone = Zone.objects.create(name=self.cleaned_data['name'])

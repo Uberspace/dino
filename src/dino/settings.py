@@ -296,6 +296,11 @@ ZONE_DEFAULT_NAMESERVERS = cfg.get(
     example='ns1.company.com,ns2.company.com',
     doc='List of nameservers to set for new zones.',
 )
+ZONE_DEFAULT_MASTERS = cfg.get(
+    'ZONE_DEFAULT_MASTERS', [], cast=list,
+    example='1.3.3.7,1.3.3.8',
+    doc='List of masters to set for new zones.',
+)
 
 USE_DEFAULT_RECORD_TYPES = cfg.get(
     'USE_DEFAULT_RECORD_TYPES', True, cast=bool,

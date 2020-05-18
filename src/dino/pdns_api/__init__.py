@@ -53,12 +53,12 @@ class pdns():
             for z in self._server.zones
         ]
 
-    def create_zone(self, name, kind, nameservers):
+    def create_zone(self, name, kind, nameservers, masters):
         if kind not in ('Native', 'Master', 'Slave'):
             raise Exception(f'kind must be Native, Master or Slave; not {kind}.')
 
         name = self._encode_name(name)
-        self._server.create_zone(name, kind, nameservers)
+        self._server.create_zone(name, kind, nameservers, masters)
 
     def delete_zone(self, name):
         name = self._encode_name(name)
