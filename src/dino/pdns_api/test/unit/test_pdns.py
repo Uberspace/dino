@@ -87,6 +87,14 @@ mail.example.com.\t600\tA\t4.3.2.1
 foo.example.com.\t600\tTXT\t"\\\\\\"\\""
 '''
             }
+        if path == '/servers/localhost/zones/new.example.com./export':
+            # https://github.com/Uberspace/dino/issues/83
+            return {
+                'zone': '''
+www.example.com.\t300\tIN\tAAAA\t1.2.3.4
+www.example.com.\t300\tIN\tAAAA\t4.3.2.1
+'''
+            }
         elif path == '/servers/localhost/zones/xn--smething-n4a.com./export':
             return {
                 'zone': '''
@@ -108,6 +116,16 @@ def test_pdns_get_all_records(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
         {'zone': 'example.com.', 'name': 'www.example.com.', 'ttl': 300, 'rtype': 'AAAA', 'content': '4.3.2.1'},
         {'zone': 'example.com.', 'name': 'mail.example.com.', 'ttl': 600, 'rtype': 'A', 'content': '4.3.2.1'},
         {'zone': 'example.com.', 'name': 'foo.example.com.', 'ttl': 600, 'rtype': 'TXT', 'content': '\\""'},
+    ]
+
+
+def test_pdns_get_all_records_new_pdns(pdns, mock_lib_pdns_axfr, mock_lib_pdns_get_zone):
+    # https://github.com/Uberspace/dino/issues/83
+    r = pdns.get_all_records('new.example.com.')
+    r = list(r)
+    assert r == [
+        {'zone': 'new.example.com.', 'name': 'www.example.com.', 'ttl': 300, 'type': 'IN', 'rtype': 'AAAA', 'content': '1.2.3.4'},
+        {'zone': 'new.example.com.', 'name': 'www.example.com.', 'ttl': 300, 'type': 'IN', 'rtype': 'AAAA', 'content': '4.3.2.1'},
     ]
 
 

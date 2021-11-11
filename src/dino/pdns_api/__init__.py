@@ -91,17 +91,31 @@ class pdns():
         if zone is None:
             raise PDNSNotFoundException()
         axfr = zone._get(zone.url + '/export')['zone'].strip()
-        lines = (r.split('\t') for r in axfr.split('\n'))
-        return (
-            {
-                'zone': self._decode_name(zone.name),
-                'name': self._decode_name(r[0]),
-                'ttl': int(r[1]),
-                'rtype': r[2],
-                'content': self._decode_content(r[2], r[3]),
-            }
-            for r in lines
-        )
+        lines = [r.split('\t') for r in axfr.split('\n')]
+        if lines and len(lines[0]) == 5:
+            # https://github.com/Uberspace/dino/issues/83
+            return (
+                {
+                    'zone': self._decode_name(zone.name),
+                    'name': self._decode_name(r[0]),
+                    'ttl': int(r[1]),
+                    'type': r[2],  # IN
+                    'rtype': r[3],  # A, AAAA, SOA, ...
+                    'content': self._decode_content(r[3], r[4]),
+                }
+                for r in lines
+            )
+        else:
+            return (
+                {
+                    'zone': self._decode_name(zone.name),
+                    'name': self._decode_name(r[0]),
+                    'ttl': int(r[1]),
+                    'rtype': r[2],
+                    'content': self._decode_content(r[2], r[3]),
+                }
+                for r in lines
+            )
 
     def get_records(self, zone, name=None, rtype=None):
         """ get all records within zone whose name and rtype match (if given). """
