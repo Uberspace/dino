@@ -52,7 +52,7 @@ class Config():
         """
         with open(env_file) as f:
             for l in f.readlines():
-                if l.lstrip()[0] == '#':
+                if l.lstrip().startswith('#'):
                     continue
 
                 k, sep, v = l.partition('=')
