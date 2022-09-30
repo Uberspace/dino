@@ -175,7 +175,7 @@ def mock_pdns_get_zones(mocker):
     rval = [
         'example.com.',
         'example.org.',
-    ] + [f'example{i}.org' for i in range(500)]
+    ] + [f'example{i}.org' for i in range(500)] + ['localhost.']
     return mocker.patch('dino.pdns_api.pdns.get_zones', return_value=rval)
 
 
