@@ -78,7 +78,7 @@ class ZoneNameValidator(RegexValidator):
     hostname_re = r'[_a-z' + URLValidator.ul + r'0-9](?:[a-z' + URLValidator.ul + r'0-9-]{0,61}[a-z' + URLValidator.ul + r'0-9])?'
     # identical to URLValidator.domain_re, except for leading underscroes
     domain_re = r'(?:\.(?!-)[_a-z' + URLValidator.ul + r'0-9-]{1,63}(?<!-))*'
-    unanchored_regex = fr'{hostname_re}{domain_re}{URLValidator.tld_re}'
+    unanchored_regex = fr'({hostname_re}{domain_re}{URLValidator.tld_re}|{URLValidator.tld_re[1:]})'
     regex = fr'^{unanchored_regex}\Z'
 
 
